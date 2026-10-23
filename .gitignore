@@ -1,0 +1,35 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+TestResults/
+
+# Node / Vite+
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+.vite-plus/
+
+# Runtime data (SQLite database, uploads)
+data/
+*.db
+*.db-shm
+*.db-wal
+
+# Published output
+publish/
+backend/src/Complot.Api/wwwroot/
+
+# Editors / OS
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
+
+# Local environment
+.env
+*.local
