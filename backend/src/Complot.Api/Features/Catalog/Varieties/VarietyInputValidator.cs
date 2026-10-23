@@ -43,12 +43,7 @@ public sealed class VarietyInputValidator : AbstractValidator<VarietyInput>
         RuleFor(x => x.HarvestWeeks).InclusiveBetween(0, 104).When(x => x.HarvestWeeks is not null);
         RuleFor(x => x.MaxYearsInBed).InclusiveBetween(1, 100).When(x => x.MaxYearsInBed is not null);
 
-        RuleForEach(x => x.Actions).ChildRules(action =>
-        {
-            action.RuleFor(a => a.Title).NotEmpty().MaximumLength(120);
-            action.RuleFor(a => a.Month).InclusiveBetween(1, 12);
-            action.RuleFor(a => a.EstimatedMinutes).InclusiveBetween(1, 1440);
-        });
+        RuleForEach(x => x.Actions).SetValidator(new YearlyActionDtoValidator());
 
         RuleForEach(x => x.Suppliers).ChildRules(supplier =>
         {

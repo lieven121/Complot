@@ -24,5 +24,11 @@ internal sealed class DatabaseInitializer(
             await Seed.DemoCatalog.AddToAsync(db, importer, cancellationToken);
             logger.LogInformation("Seeded the demo plant catalog");
         }
+
+        if (seed.Value.DemoData && !await db.Sites.AnyAsync(cancellationToken))
+        {
+            await Seed.DemoGarden.AddToAsync(db, cancellationToken);
+            logger.LogInformation("Seeded the demo garden");
+        }
     }
 }

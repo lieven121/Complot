@@ -55,6 +55,288 @@ export class AuthClient {
     }
 }
 
+export class PlantingsClient {
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        this.http = http ? http : window as any;
+        this.baseUrl = baseUrl ?? "";
+    }
+
+    /**
+     * @param from (optional) 
+     * @param to (optional) 
+     * @return OK
+     */
+    listPlantings(siteId: string, from?: string | undefined, to?: string | undefined, signal?: AbortSignal): Promise<PlantingDto[]> {
+        let url_ = this.baseUrl + "/api/sites/{siteId}/plantings?";
+        if (siteId === undefined || siteId === null)
+            throw new globalThis.Error("The parameter 'siteId' must be defined.");
+        url_ = url_.replace("{siteId}", encodeURIComponent("" + siteId));
+        if (from === null)
+            throw new globalThis.Error("The parameter 'from' cannot be null.");
+        else if (from !== undefined)
+            url_ += "from=" + encodeURIComponent("" + from) + "&";
+        if (to === null)
+            throw new globalThis.Error("The parameter 'to' cannot be null.");
+        else if (to !== undefined)
+            url_ += "to=" + encodeURIComponent("" + to) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            signal,
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processListPlantings(_response);
+        });
+    }
+
+    protected processListPlantings(response: Response): Promise<PlantingDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as PlantingDto[];
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<PlantingDto[]>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getSiteChecks(siteId: string, signal?: AbortSignal): Promise<PlantingWarningDto[]> {
+        let url_ = this.baseUrl + "/api/sites/{siteId}/checks";
+        if (siteId === undefined || siteId === null)
+            throw new globalThis.Error("The parameter 'siteId' must be defined.");
+        url_ = url_.replace("{siteId}", encodeURIComponent("" + siteId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            signal,
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetSiteChecks(_response);
+        });
+    }
+
+    protected processGetSiteChecks(response: Response): Promise<PlantingWarningDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as PlantingWarningDto[];
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<PlantingWarningDto[]>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    previewPlanting(body: PlanPlantingInput, signal?: AbortSignal): Promise<PlantingPreviewDto> {
+        let url_ = this.baseUrl + "/api/plantings/preview";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            signal,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processPreviewPlanting(_response);
+        });
+    }
+
+    protected processPreviewPlanting(response: Response): Promise<PlantingPreviewDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as PlantingPreviewDto;
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<PlantingPreviewDto>(null as any);
+    }
+
+    /**
+     * @return Created
+     */
+    createPlanting(body: PlanPlantingInput, signal?: AbortSignal): Promise<PlantingDto> {
+        let url_ = this.baseUrl + "/api/plantings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            signal,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreatePlanting(_response);
+        });
+    }
+
+    protected processCreatePlanting(response: Response): Promise<PlantingDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 201) {
+            return response.text().then((_responseText) => {
+            let result201: any = null;
+            result201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as PlantingDto;
+            return result201;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<PlantingDto>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    updatePlanting(id: string, body: UpdatePlantingInput, signal?: AbortSignal): Promise<PlantingDto> {
+        let url_ = this.baseUrl + "/api/plantings/{id}";
+        if (id === undefined || id === null)
+            throw new globalThis.Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "PUT",
+            signal,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processUpdatePlanting(_response);
+        });
+    }
+
+    protected processUpdatePlanting(response: Response): Promise<PlantingDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as PlantingDto;
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<PlantingDto>(null as any);
+    }
+
+    /**
+     * @return No Content
+     */
+    deletePlanting(id: string, signal?: AbortSignal): Promise<void> {
+        let url_ = this.baseUrl + "/api/plantings/{id}";
+        if (id === undefined || id === null)
+            throw new globalThis.Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "DELETE",
+            signal,
+            headers: {
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processDeletePlanting(_response);
+        });
+    }
+
+    protected processDeletePlanting(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 204) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
+}
+
 export class FamiliesClient {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
@@ -1150,7 +1432,290 @@ export class CatalogExchangeClient {
     }
 }
 
+export class SitesClient {
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        this.http = http ? http : window as any;
+        this.baseUrl = baseUrl ?? "";
+    }
+
+    /**
+     * @return OK
+     */
+    listSites(signal?: AbortSignal): Promise<SiteDto[]> {
+        let url_ = this.baseUrl + "/api/sites";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            signal,
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processListSites(_response);
+        });
+    }
+
+    protected processListSites(response: Response): Promise<SiteDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as SiteDto[];
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SiteDto[]>(null as any);
+    }
+
+    /**
+     * @return Created
+     */
+    createSite(body: SiteInput, signal?: AbortSignal): Promise<SiteDto> {
+        let url_ = this.baseUrl + "/api/sites";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            signal,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreateSite(_response);
+        });
+    }
+
+    protected processCreateSite(response: Response): Promise<SiteDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 201) {
+            return response.text().then((_responseText) => {
+            let result201: any = null;
+            result201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as SiteDto;
+            return result201;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SiteDto>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    updateSite(id: string, body: SiteInput, signal?: AbortSignal): Promise<SiteDto> {
+        let url_ = this.baseUrl + "/api/sites/{id}";
+        if (id === undefined || id === null)
+            throw new globalThis.Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "PUT",
+            signal,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processUpdateSite(_response);
+        });
+    }
+
+    protected processUpdateSite(response: Response): Promise<SiteDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as SiteDto;
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SiteDto>(null as any);
+    }
+
+    /**
+     * @return No Content
+     */
+    deleteSite(id: string, signal?: AbortSignal): Promise<void> {
+        let url_ = this.baseUrl + "/api/sites/{id}";
+        if (id === undefined || id === null)
+            throw new globalThis.Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "DELETE",
+            signal,
+            headers: {
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processDeleteSite(_response);
+        });
+    }
+
+    protected processDeleteSite(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 204) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getSiteLayout(id: string, signal?: AbortSignal): Promise<SiteLayoutDto> {
+        let url_ = this.baseUrl + "/api/sites/{id}/layout";
+        if (id === undefined || id === null)
+            throw new globalThis.Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            signal,
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetSiteLayout(_response);
+        });
+    }
+
+    protected processGetSiteLayout(response: Response): Promise<SiteLayoutDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as SiteLayoutDto;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SiteLayoutDto>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    saveSiteLayout(id: string, body: SiteLayoutDto, signal?: AbortSignal): Promise<SiteLayoutDto> {
+        let url_ = this.baseUrl + "/api/sites/{id}/layout";
+        if (id === undefined || id === null)
+            throw new globalThis.Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "PUT",
+            signal,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processSaveSiteLayout(_response);
+        });
+    }
+
+    protected processSaveSiteLayout(response: Response): Promise<SiteLayoutDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as SiteLayoutDto;
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<SiteLayoutDto>(null as any);
+    }
+}
+
 export type AuthModeKind = "none" | "oidc";
+
+export interface BedDto {
+    id: string;
+    plotId: string;
+    code: string;
+    shape: ShapeDto;
+    sun: SunExposure;
+    soil: string | undefined;
+    notes: string | undefined;
+    area: number;
+}
 
 export interface CatalogExchange {
     categories: ExchangeCategory[] | undefined;
@@ -1256,6 +1821,15 @@ export interface FamilyInput {
     rotationRestYears: number;
 }
 
+export interface FeatureDto {
+    id: string;
+    name: string;
+    type: FeatureType;
+    shape: ShapeDto;
+}
+
+export type FeatureType = "compost" | "water" | "pond" | "hedge" | "shed";
+
 export interface ImportReport {
     committed: boolean;
     categories: ImportRow[];
@@ -1311,12 +1885,106 @@ export interface MonthWindowDto {
     to: number;
 }
 
+export interface PathDto {
+    id: string;
+    name: string;
+    material: PathMaterial;
+    shape: ShapeDto;
+}
+
+export type PathMaterial = "woodChips" | "grass" | "pavers" | "gravel";
+
+export interface PhaseSegmentDto {
+    phase: PlantingPhase;
+    from: string;
+    to: string;
+}
+
+export interface PlanPlantingInput {
+    bedId: string;
+    varietyId: string;
+    share: number;
+    sowOn: string;
+    direct: boolean;
+    notes: string | undefined;
+}
+
+export interface PlantingDto {
+    id: string;
+    bedId: string;
+    varietyId: string;
+    share: number;
+    sowOn: string;
+    plantOutOn: string | undefined;
+    harvestFrom: string | undefined;
+    harvestTo: string | undefined;
+    clearOn: string | undefined;
+    notes: string | undefined;
+    plantCount: number | undefined;
+    phases: PhaseSegmentDto[];
+}
+
+export type PlantingPhase = "indoor" | "young" | "growing" | "harvest" | "clearing" | "dormant";
+
+export interface PlantingPreviewDto {
+    planting: PlantingDto;
+    warnings: PlantingWarningDto[];
+}
+
+export interface PlantingWarningDto {
+    plantingId: string;
+    bedId: string;
+    level: WarningLevel;
+    code: string;
+    date: string;
+    params: any;
+}
+
+export interface PlotDto {
+    id: string;
+    name: string;
+    type: PlotType;
+    shape: ShapeDto;
+}
+
+export type PlotType = "open" | "greenhouse" | "orchard";
+
 export interface ProblemDetails {
     type?: string | undefined;
     title?: string | undefined;
     status?: number | undefined;
     detail?: string | undefined;
     instance?: string | undefined;
+}
+
+export interface ShapeDto {
+    kind: ShapeKind;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+}
+
+export type ShapeKind = "rect" | "ellipse" | "keyhole";
+
+export interface SiteDto {
+    id: string;
+    name: string;
+    notes: string | undefined;
+    bedCount: number;
+}
+
+export interface SiteInput {
+    name: string;
+    notes: string | undefined;
+}
+
+export interface SiteLayoutDto {
+    plots: PlotDto[];
+    beds: BedDto[];
+    paths: PathDto[];
+    features: FeatureDto[];
+    trees: TreeDto[];
 }
 
 export interface StockDto {
@@ -1343,10 +2011,28 @@ export interface SupplierInput {
     notes: string | undefined;
 }
 
-export interface VarietyActionDto {
-    title: string;
-    month: number;
-    estimatedMinutes: number;
+export interface TreeDto {
+    id: string;
+    name: string;
+    cultivar: string | undefined;
+    kind: TreeKind;
+    x: number;
+    y: number;
+    crownDiameter: number;
+    plantedOn: string | undefined;
+    actions: YearlyActionDto[];
+}
+
+export type TreeKind = "tree" | "shrub";
+
+export interface UpdatePlantingInput {
+    share: number;
+    sowOn: string;
+    plantOutOn: string | undefined;
+    harvestFrom: string | undefined;
+    harvestTo: string | undefined;
+    clearOn: string | undefined;
+    notes: string | undefined;
 }
 
 export interface VarietyDto {
@@ -1374,7 +2060,7 @@ export interface VarietyDto {
     harvestWeeks: number | undefined;
     maxYearsInBed: number | undefined;
     notes: string | undefined;
-    actions: VarietyActionDto[];
+    actions: YearlyActionDto[];
     suppliers: VarietySupplierDto[];
     stock: StockDto[];
 }
@@ -1401,7 +2087,7 @@ export interface VarietyInput {
     harvestWeeks: number | undefined;
     maxYearsInBed: number | undefined;
     notes: string | undefined;
-    actions: VarietyActionDto[];
+    actions: YearlyActionDto[];
     suppliers: VarietySupplierInput[];
 }
 
@@ -1419,6 +2105,14 @@ export interface VarietySupplierInput {
     price: number;
     unit: string | undefined;
     url: string | undefined;
+}
+
+export type WarningLevel = "info" | "warning";
+
+export interface YearlyActionDto {
+    title: string;
+    month: number;
+    estimatedMinutes: number;
 }
 
 export class ApiException extends Error {

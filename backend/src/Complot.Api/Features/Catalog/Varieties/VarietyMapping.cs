@@ -11,7 +11,7 @@ public static class VarietyMapping
         v.SowDepthCm, v.SpacingInRowCm, v.SpacingBetweenRowsCm, v.HeightCm, v.Sun,
         v.SowIndoor.ToDto(), v.WeeksIndoor, v.SowOutdoor.ToDto(), v.PlantOut.ToDto(), v.Harvest.ToDto()!,
         v.Germination.ToDto(), v.DaysToFirstHarvest, v.HarvestWeeks, v.MaxYearsInBed, v.Notes,
-        v.Actions.Select(a => new VarietyActionDto(a.Title, a.Month, a.EstimatedMinutes)).ToArray(),
+        v.Actions.ToDtos(),
         v.Suppliers.OrderBy(s => s.Price)
             .Select(s => new VarietySupplierDto(s.SupplierId, s.Supplier.Name, s.Supplier.IsOwnSource, s.Price, s.Unit, s.Url)).ToArray(),
         lots.Select(l => new StockDto(l.Id, l.Quantity, l.Unit, l.StatusOn(today))).ToArray());
@@ -39,7 +39,7 @@ public static class VarietyMapping
         v.HarvestWeeks = input.HarvestWeeks;
         v.MaxYearsInBed = input.MaxYearsInBed;
         v.Notes = Clean(input.Notes);
-        v.Actions = input.Actions.Select(a => new VarietyAction { Title = a.Title.Trim(), Month = a.Month, EstimatedMinutes = a.EstimatedMinutes }).ToList();
+        v.Actions = input.Actions.ToDomain();
         v.Suppliers.SyncWith(input.Suppliers, s => s.SupplierId, s => s.SupplierId,
             s => new VarietySupplier { VarietyId = v.Id, SupplierId = s.SupplierId, Price = s.Price, Unit = Clean(s.Unit), Url = Clean(s.Url) },
             (s, existing) => { existing.Price = s.Price; existing.Unit = Clean(s.Unit); existing.Url = Clean(s.Url); });

@@ -179,7 +179,7 @@ public sealed class CatalogImporter(
             row.HarvestWeeks,
             row.MaxYearsInBed ?? (life == Life.Annual ? 1 : null),
             row.Notes,
-            (row.Actions ?? []).Select(a => new VarietyActionDto(a.Title, a.Month, a.EstimatedMinutes)).ToList(),
+            (row.Actions ?? []).Select(a => new YearlyActionDto(a.Title, a.Month, a.EstimatedMinutes)).ToList(),
             (row.Suppliers ?? []).Where(s => !string.IsNullOrWhiteSpace(s.Name)).DistinctBy(s => s.Name.Trim(), StringComparer.OrdinalIgnoreCase)
                 .Select(s => new VarietySupplierInput(ResolveSupplier(s.Name, warnings), s.Price ?? 0, s.Unit, s.Url)).ToList());
     }

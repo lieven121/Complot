@@ -38,20 +38,12 @@ public sealed class PlantVariety : Entity
 
     public string? Notes { get; set; }
 
-    public List<VarietyAction> Actions { get; set; } = [];
+    public List<YearlyAction> Actions { get; set; } = [];
     public List<VarietySupplier> Suppliers { get; set; } = [];
 
     public PlantFamily? EffectiveFamily => Family ?? Category.DefaultFamily;
 
     public int RotationRestYears => Category.RotationExempt ? 0 : EffectiveFamily?.RotationRestYears ?? 0;
-}
-
-/// <summary>Yearly care action for perennials (e.g. winter pruning in February), becomes a task.</summary>
-public sealed class VarietyAction
-{
-    public required string Title { get; set; }
-    public int Month { get; set; }
-    public int EstimatedMinutes { get; set; }
 }
 
 public sealed class VarietySupplier

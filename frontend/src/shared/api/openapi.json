@@ -25,6 +25,90 @@
         }
       }
     },
+    "/api/sites/{siteId}/plantings": {
+      "get": {
+        "tags": [
+          "Plantings"
+        ],
+        "operationId": "ListPlantings",
+        "parameters": [
+          {
+            "name": "siteId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PlantingDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sites/{siteId}/checks": {
+      "get": {
+        "tags": [
+          "Plantings"
+        ],
+        "operationId": "GetSiteChecks",
+        "parameters": [
+          {
+            "name": "siteId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PlantingWarningDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/families": {
       "get": {
         "tags": [
@@ -830,6 +914,373 @@
           }
         }
       }
+    },
+    "/api/sites": {
+      "get": {
+        "tags": [
+          "Sites"
+        ],
+        "operationId": "ListSites",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SiteDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Sites"
+        ],
+        "operationId": "CreateSite",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SiteInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SiteDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sites/{id}": {
+      "put": {
+        "tags": [
+          "Sites"
+        ],
+        "operationId": "UpdateSite",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SiteInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SiteDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Sites"
+        ],
+        "operationId": "DeleteSite",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/api/sites/{id}/layout": {
+      "get": {
+        "tags": [
+          "Sites"
+        ],
+        "operationId": "GetSiteLayout",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SiteLayoutDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Sites"
+        ],
+        "operationId": "SaveSiteLayout",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SiteLayoutDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SiteLayoutDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/plantings/preview": {
+      "post": {
+        "tags": [
+          "Plantings"
+        ],
+        "operationId": "PreviewPlanting",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlanPlantingInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlantingPreviewDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/plantings": {
+      "post": {
+        "tags": [
+          "Plantings"
+        ],
+        "operationId": "CreatePlanting",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlanPlantingInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlantingDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/plantings/{id}": {
+      "put": {
+        "tags": [
+          "Plantings"
+        ],
+        "operationId": "UpdatePlanting",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePlantingInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlantingDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Plantings"
+        ],
+        "operationId": "DeletePlanting",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -839,6 +1290,51 @@
           "none",
           "oidc"
         ]
+      },
+      "BedDto": {
+        "required": [
+          "id",
+          "plotId",
+          "code",
+          "shape",
+          "sun",
+          "soil",
+          "notes",
+          "area"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "plotId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "shape": {
+            "$ref": "#/components/schemas/ShapeDto"
+          },
+          "sun": {
+            "$ref": "#/components/schemas/SunExposure"
+          },
+          "soil": {
+            "type": "string",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "area": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
       },
       "CatalogExchange": {
         "required": [
@@ -1327,6 +1823,40 @@
         },
         "additionalProperties": false
       },
+      "FeatureDto": {
+        "required": [
+          "id",
+          "name",
+          "type",
+          "shape"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/FeatureType"
+          },
+          "shape": {
+            "$ref": "#/components/schemas/ShapeDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FeatureType": {
+        "enum": [
+          "compost",
+          "water",
+          "pond",
+          "hedge",
+          "shed"
+        ]
+      },
       "ImportReport": {
         "required": [
           "committed",
@@ -1557,6 +2087,269 @@
         },
         "additionalProperties": false
       },
+      "PathDto": {
+        "required": [
+          "id",
+          "name",
+          "material",
+          "shape"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "material": {
+            "$ref": "#/components/schemas/PathMaterial"
+          },
+          "shape": {
+            "$ref": "#/components/schemas/ShapeDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PathMaterial": {
+        "enum": [
+          "woodChips",
+          "grass",
+          "pavers",
+          "gravel"
+        ]
+      },
+      "PhaseSegmentDto": {
+        "required": [
+          "phase",
+          "from",
+          "to"
+        ],
+        "type": "object",
+        "properties": {
+          "phase": {
+            "$ref": "#/components/schemas/PlantingPhase"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PlanPlantingInput": {
+        "required": [
+          "bedId",
+          "varietyId",
+          "share",
+          "sowOn",
+          "direct",
+          "notes"
+        ],
+        "type": "object",
+        "properties": {
+          "bedId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "varietyId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "share": {
+            "type": "number",
+            "format": "double"
+          },
+          "sowOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "direct": {
+            "type": "boolean"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PlantingDto": {
+        "required": [
+          "id",
+          "bedId",
+          "varietyId",
+          "share",
+          "sowOn",
+          "plantOutOn",
+          "harvestFrom",
+          "harvestTo",
+          "clearOn",
+          "notes",
+          "plantCount",
+          "phases"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "bedId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "varietyId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "share": {
+            "type": "number",
+            "format": "double"
+          },
+          "sowOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "plantOutOn": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "harvestFrom": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "harvestTo": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "clearOn": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "plantCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "phases": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PhaseSegmentDto"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "PlantingPhase": {
+        "enum": [
+          "indoor",
+          "young",
+          "growing",
+          "harvest",
+          "clearing",
+          "dormant"
+        ]
+      },
+      "PlantingPreviewDto": {
+        "required": [
+          "planting",
+          "warnings"
+        ],
+        "type": "object",
+        "properties": {
+          "planting": {
+            "$ref": "#/components/schemas/PlantingDto"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlantingWarningDto"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "PlantingWarningDto": {
+        "required": [
+          "plantingId",
+          "bedId",
+          "level",
+          "code",
+          "date",
+          "params"
+        ],
+        "type": "object",
+        "properties": {
+          "plantingId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "bedId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "level": {
+            "$ref": "#/components/schemas/WarningLevel"
+          },
+          "code": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "params": {
+            "type": "object"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PlotDto": {
+        "required": [
+          "id",
+          "name",
+          "type",
+          "shape"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/PlotType"
+          },
+          "shape": {
+            "$ref": "#/components/schemas/ShapeDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PlotType": {
+        "enum": [
+          "open",
+          "greenhouse",
+          "orchard"
+        ]
+      },
       "ProblemDetails": {
         "type": "object",
         "properties": {
@@ -1580,6 +2373,132 @@
           "instance": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ShapeDto": {
+        "required": [
+          "kind",
+          "x",
+          "y",
+          "width",
+          "height"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "$ref": "#/components/schemas/ShapeKind"
+          },
+          "x": {
+            "type": "number",
+            "format": "double"
+          },
+          "y": {
+            "type": "number",
+            "format": "double"
+          },
+          "width": {
+            "type": "number",
+            "format": "double"
+          },
+          "height": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ShapeKind": {
+        "enum": [
+          "rect",
+          "ellipse",
+          "keyhole"
+        ]
+      },
+      "SiteDto": {
+        "required": [
+          "id",
+          "name",
+          "notes",
+          "bedCount"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "bedCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SiteInput": {
+        "required": [
+          "name",
+          "notes"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SiteLayoutDto": {
+        "required": [
+          "plots",
+          "beds",
+          "paths",
+          "features",
+          "trees"
+        ],
+        "type": "object",
+        "properties": {
+          "plots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlotDto"
+            }
+          },
+          "beds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BedDto"
+            }
+          },
+          "paths": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PathDto"
+            }
+          },
+          "features": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FeatureDto"
+            }
+          },
+          "trees": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TreeDto"
+            }
           }
         },
         "additionalProperties": false
@@ -1674,24 +2593,109 @@
         },
         "additionalProperties": false
       },
-      "VarietyActionDto": {
+      "TreeDto": {
         "required": [
-          "title",
-          "month",
-          "estimatedMinutes"
+          "id",
+          "name",
+          "cultivar",
+          "kind",
+          "x",
+          "y",
+          "crownDiameter",
+          "plantedOn",
+          "actions"
         ],
         "type": "object",
         "properties": {
-          "title": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
             "type": "string"
           },
-          "month": {
-            "type": "integer",
-            "format": "int32"
+          "cultivar": {
+            "type": "string",
+            "nullable": true
           },
-          "estimatedMinutes": {
-            "type": "integer",
-            "format": "int32"
+          "kind": {
+            "$ref": "#/components/schemas/TreeKind"
+          },
+          "x": {
+            "type": "number",
+            "format": "double"
+          },
+          "y": {
+            "type": "number",
+            "format": "double"
+          },
+          "crownDiameter": {
+            "type": "number",
+            "format": "double"
+          },
+          "plantedOn": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/YearlyActionDto"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "TreeKind": {
+        "enum": [
+          "tree",
+          "shrub"
+        ]
+      },
+      "UpdatePlantingInput": {
+        "required": [
+          "share",
+          "sowOn",
+          "plantOutOn",
+          "harvestFrom",
+          "harvestTo",
+          "clearOn",
+          "notes"
+        ],
+        "type": "object",
+        "properties": {
+          "share": {
+            "type": "number",
+            "format": "double"
+          },
+          "sowOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "plantOutOn": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "harvestFrom": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "harvestTo": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "clearOn": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1872,7 +2876,7 @@
           "actions": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/VarietyActionDto"
+              "$ref": "#/components/schemas/YearlyActionDto"
             }
           },
           "suppliers": {
@@ -2049,7 +3053,7 @@
           "actions": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/VarietyActionDto"
+              "$ref": "#/components/schemas/YearlyActionDto"
             }
           },
           "suppliers": {
@@ -2124,12 +3128,43 @@
           }
         },
         "additionalProperties": false
+      },
+      "WarningLevel": {
+        "enum": [
+          "info",
+          "warning"
+        ]
+      },
+      "YearlyActionDto": {
+        "required": [
+          "title",
+          "month",
+          "estimatedMinutes"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "month": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "estimatedMinutes": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
       }
     }
   },
   "tags": [
     {
       "name": "Auth"
+    },
+    {
+      "name": "Plantings"
     },
     {
       "name": "Families"
@@ -2148,6 +3183,9 @@
     },
     {
       "name": "CatalogExchange"
+    },
+    {
+      "name": "Sites"
     }
   ]
 }

@@ -309,6 +309,341 @@ namespace Complot.Api.Data.Migrations
                     b.ToTable("Suppliers");
                 });
 
+            modelBuilder.Entity("Complot.Domain.Garden.Bed", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(12)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("PlotId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("SiteId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Soil")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Sun")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Shape", "Complot.Domain.Garden.Bed.Shape#Shape", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<double>("Height")
+                                .HasColumnType("REAL");
+
+                            b1.Property<int>("Kind")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<double>("Width")
+                                .HasColumnType("REAL");
+
+                            b1.Property<double>("X")
+                                .HasColumnType("REAL");
+
+                            b1.Property<double>("Y")
+                                .HasColumnType("REAL");
+                        });
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlotId");
+
+                    b.HasIndex("SiteId", "Code")
+                        .IsUnique();
+
+                    b.ToTable("Beds");
+                });
+
+            modelBuilder.Entity("Complot.Domain.Garden.GardenFeature", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("SiteId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Shape", "Complot.Domain.Garden.GardenFeature.Shape#Shape", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<double>("Height")
+                                .HasColumnType("REAL");
+
+                            b1.Property<int>("Kind")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<double>("Width")
+                                .HasColumnType("REAL");
+
+                            b1.Property<double>("X")
+                                .HasColumnType("REAL");
+
+                            b1.Property<double>("Y")
+                                .HasColumnType("REAL");
+                        });
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SiteId");
+
+                    b.ToTable("Features", (string)null);
+                });
+
+            modelBuilder.Entity("Complot.Domain.Garden.GardenPath", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Material")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("SiteId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Shape", "Complot.Domain.Garden.GardenPath.Shape#Shape", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<double>("Height")
+                                .HasColumnType("REAL");
+
+                            b1.Property<int>("Kind")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<double>("Width")
+                                .HasColumnType("REAL");
+
+                            b1.Property<double>("X")
+                                .HasColumnType("REAL");
+
+                            b1.Property<double>("Y")
+                                .HasColumnType("REAL");
+                        });
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SiteId");
+
+                    b.ToTable("Paths", (string)null);
+                });
+
+            modelBuilder.Entity("Complot.Domain.Garden.Plot", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("SiteId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Shape", "Complot.Domain.Garden.Plot.Shape#Shape", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<double>("Height")
+                                .HasColumnType("REAL");
+
+                            b1.Property<int>("Kind")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<double>("Width")
+                                .HasColumnType("REAL");
+
+                            b1.Property<double>("X")
+                                .HasColumnType("REAL");
+
+                            b1.Property<double>("Y")
+                                .HasColumnType("REAL");
+                        });
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SiteId");
+
+                    b.ToTable("Plots");
+                });
+
+            modelBuilder.Entity("Complot.Domain.Garden.Site", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Sites");
+                });
+
+            modelBuilder.Entity("Complot.Domain.Garden.Tree", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double>("CrownDiameter")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("Cultivar")
+                        .HasMaxLength(120)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Kind")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly?>("PlantedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("SiteId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double>("X")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("Y")
+                        .HasColumnType("REAL");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SiteId");
+
+                    b.ToTable("Trees");
+                });
+
+            modelBuilder.Entity("Complot.Domain.Plantings.Planting", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("BedId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly?>("ClearOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly?>("HarvestFrom")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly?>("HarvestTo")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly?>("PlantOutOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double>("Share")
+                        .HasColumnType("REAL");
+
+                    b.Property<DateOnly>("SowOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("VarietyId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BedId");
+
+                    b.HasIndex("VarietyId");
+
+                    b.ToTable("Plantings");
+                });
+
             modelBuilder.Entity("Complot.Domain.Catalog.InventoryLot", b =>
                 {
                     b.HasOne("Complot.Domain.Catalog.Supplier", "Supplier")
@@ -380,7 +715,7 @@ namespace Complot.Api.Data.Migrations
                         .HasForeignKey("FamilyId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.OwnsMany("Complot.Domain.Catalog.VarietyAction", "Actions", b1 =>
+                    b.OwnsMany("Complot.Domain.Common.YearlyAction", "Actions", b1 =>
                         {
                             b1.Property<Guid>("PlantVarietyId");
 
@@ -450,6 +785,104 @@ namespace Complot.Api.Data.Migrations
                     b.Navigation("Family");
 
                     b.Navigation("Suppliers");
+                });
+
+            modelBuilder.Entity("Complot.Domain.Garden.Bed", b =>
+                {
+                    b.HasOne("Complot.Domain.Garden.Plot", null)
+                        .WithMany()
+                        .HasForeignKey("PlotId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Complot.Domain.Garden.Site", null)
+                        .WithMany()
+                        .HasForeignKey("SiteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Complot.Domain.Garden.GardenFeature", b =>
+                {
+                    b.HasOne("Complot.Domain.Garden.Site", null)
+                        .WithMany()
+                        .HasForeignKey("SiteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Complot.Domain.Garden.GardenPath", b =>
+                {
+                    b.HasOne("Complot.Domain.Garden.Site", null)
+                        .WithMany()
+                        .HasForeignKey("SiteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Complot.Domain.Garden.Plot", b =>
+                {
+                    b.HasOne("Complot.Domain.Garden.Site", null)
+                        .WithMany()
+                        .HasForeignKey("SiteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Complot.Domain.Garden.Tree", b =>
+                {
+                    b.HasOne("Complot.Domain.Garden.Site", null)
+                        .WithMany()
+                        .HasForeignKey("SiteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsMany("Complot.Domain.Common.YearlyAction", "Actions", b1 =>
+                        {
+                            b1.Property<Guid>("TreeId");
+
+                            b1.Property<int>("__synthesizedOrdinal")
+                                .ValueGeneratedOnAddOrUpdate();
+
+                            b1.Property<int>("EstimatedMinutes");
+
+                            b1.Property<int>("Month");
+
+                            b1.Property<string>("Title")
+                                .IsRequired();
+
+                            b1.HasKey("TreeId", "__synthesizedOrdinal");
+
+                            b1.ToTable("Trees");
+
+                            b1
+                                .ToJson("Actions")
+                                .HasColumnType("TEXT");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TreeId");
+                        });
+
+                    b.Navigation("Actions");
+                });
+
+            modelBuilder.Entity("Complot.Domain.Plantings.Planting", b =>
+                {
+                    b.HasOne("Complot.Domain.Garden.Bed", "Bed")
+                        .WithMany()
+                        .HasForeignKey("BedId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Complot.Domain.Catalog.PlantVariety", "Variety")
+                        .WithMany()
+                        .HasForeignKey("VarietyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Bed");
+
+                    b.Navigation("Variety");
                 });
 #pragma warning restore 612, 618
         }

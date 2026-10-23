@@ -3,8 +3,6 @@ using Complot.Domain.Catalog;
 
 namespace Complot.Api.Features.Catalog.Varieties;
 
-public sealed record VarietyActionDto(string Title, int Month, int EstimatedMinutes);
-
 public sealed record VarietySupplierDto(Guid SupplierId, string SupplierName, bool IsOwnSource, decimal Price, string? Unit, string? Url);
 
 public sealed record StockDto(Guid LotId, decimal Quantity, string Unit, LotStatus Status);
@@ -35,7 +33,7 @@ public sealed record VarietyDto(
     int? HarvestWeeks,
     int? MaxYearsInBed,
     string? Notes,
-    IReadOnlyList<VarietyActionDto> Actions,
+    IReadOnlyList<YearlyActionDto> Actions,
     IReadOnlyList<VarietySupplierDto> Suppliers,
     IReadOnlyList<StockDto> Stock);
 
@@ -63,5 +61,5 @@ public sealed record VarietyInput(
     int? HarvestWeeks,
     int? MaxYearsInBed,
     string? Notes,
-    List<VarietyActionDto> Actions,
+    List<YearlyActionDto> Actions,
     List<VarietySupplierInput> Suppliers);

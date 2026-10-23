@@ -1,0 +1,1239 @@
+{
+  "sites": [
+    {
+      "name": "Thuis",
+      "plots": [
+        {
+          "key": "P1",
+          "name": "Moestuin",
+          "type": "open",
+          "shape": {
+            "kind": "rect",
+            "x": 0,
+            "y": 0,
+            "width": 7.3,
+            "height": 9.5
+          }
+        },
+        {
+          "key": "P2",
+          "name": "Serre",
+          "type": "greenhouse",
+          "shape": {
+            "kind": "rect",
+            "x": 8.5,
+            "y": 0,
+            "width": 4,
+            "height": 6.5
+          }
+        },
+        {
+          "key": "P3",
+          "name": "Fruithoek",
+          "type": "orchard",
+          "shape": {
+            "kind": "rect",
+            "x": 8.5,
+            "y": 7.5,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "key": "P4",
+          "name": "Kruidenhoek",
+          "type": "open",
+          "shape": {
+            "kind": "ellipse",
+            "x": 0.1,
+            "y": 12.6,
+            "width": 2.8,
+            "height": 2.8
+          }
+        }
+      ],
+      "beds": [
+        {
+          "code": "A1",
+          "plot": "P1",
+          "shape": {
+            "kind": "rect",
+            "x": 0.5,
+            "y": 0.5,
+            "width": 1.2,
+            "height": 4
+          },
+          "sun": "full",
+          "soil": "Zandleem, compost 3 cm/jaar"
+        },
+        {
+          "code": "A2",
+          "plot": "P1",
+          "shape": {
+            "kind": "rect",
+            "x": 2.2,
+            "y": 0.5,
+            "width": 1.2,
+            "height": 4
+          },
+          "sun": "full",
+          "soil": "Zandleem, compost 3 cm/jaar"
+        },
+        {
+          "code": "A3",
+          "plot": "P1",
+          "shape": {
+            "kind": "rect",
+            "x": 3.9,
+            "y": 0.5,
+            "width": 1.2,
+            "height": 4
+          },
+          "sun": "full",
+          "soil": "Zandleem, compost 3 cm/jaar"
+        },
+        {
+          "code": "A4",
+          "plot": "P1",
+          "shape": {
+            "kind": "rect",
+            "x": 5.6,
+            "y": 0.5,
+            "width": 1.2,
+            "height": 4
+          },
+          "sun": "full",
+          "soil": "Zandleem, compost 3 cm/jaar"
+        },
+        {
+          "code": "B1",
+          "plot": "P1",
+          "shape": {
+            "kind": "rect",
+            "x": 0.5,
+            "y": 5,
+            "width": 1.2,
+            "height": 4
+          },
+          "sun": "half",
+          "soil": "Zandleem, compost 3 cm/jaar"
+        },
+        {
+          "code": "B2",
+          "plot": "P1",
+          "shape": {
+            "kind": "rect",
+            "x": 2.2,
+            "y": 5,
+            "width": 1.2,
+            "height": 4
+          },
+          "sun": "full",
+          "soil": "Zandleem, compost 3 cm/jaar"
+        },
+        {
+          "code": "B3",
+          "plot": "P1",
+          "shape": {
+            "kind": "rect",
+            "x": 3.9,
+            "y": 5,
+            "width": 1.2,
+            "height": 4
+          },
+          "sun": "full",
+          "soil": "Zandleem, compost 3 cm/jaar"
+        },
+        {
+          "code": "B4",
+          "plot": "P1",
+          "shape": {
+            "kind": "rect",
+            "x": 5.6,
+            "y": 5,
+            "width": 1.2,
+            "height": 4
+          },
+          "sun": "half",
+          "soil": "Zandleem, compost 3 cm/jaar"
+        },
+        {
+          "code": "K1",
+          "plot": "P2",
+          "shape": {
+            "kind": "rect",
+            "x": 8.9,
+            "y": 0.5,
+            "width": 1.2,
+            "height": 5.5
+          },
+          "sun": "full",
+          "soil": "Zandleem + bladcompost"
+        },
+        {
+          "code": "K2",
+          "plot": "P2",
+          "shape": {
+            "kind": "rect",
+            "x": 10.9,
+            "y": 0.5,
+            "width": 1.2,
+            "height": 5.5
+          },
+          "sun": "full",
+          "soil": "Zandleem + bladcompost"
+        },
+        {
+          "code": "F1",
+          "plot": "P3",
+          "shape": {
+            "kind": "rect",
+            "x": 9,
+            "y": 8,
+            "width": 5,
+            "height": 1.2
+          },
+          "sun": "full",
+          "soil": "Leem, houtsnipper-mulch"
+        },
+        {
+          "code": "F3",
+          "plot": "P3",
+          "shape": {
+            "kind": "rect",
+            "x": 9,
+            "y": 9.7,
+            "width": 5,
+            "height": 1.2
+          },
+          "sun": "full",
+          "soil": "Leem, houtsnipper-mulch"
+        },
+        {
+          "code": "F2",
+          "plot": "P3",
+          "shape": {
+            "kind": "rect",
+            "x": 9,
+            "y": 11.4,
+            "width": 5,
+            "height": 1.6
+          },
+          "sun": "half",
+          "soil": "Leem, houtsnipper-mulch"
+        },
+        {
+          "code": "S1",
+          "plot": "P4",
+          "shape": {
+            "kind": "ellipse",
+            "x": 0.5,
+            "y": 13,
+            "width": 2,
+            "height": 2
+          },
+          "sun": "full",
+          "soil": "Schraal en zandig (kruidenspiraal)"
+        }
+      ],
+      "paths": [
+        {
+          "name": "Hoofdpad",
+          "material": "woodChips",
+          "shape": {
+            "kind": "rect",
+            "x": 7.5,
+            "y": -0.6,
+            "width": 0.85,
+            "height": 14.6
+          }
+        },
+        {
+          "name": "Dwarspad",
+          "material": "woodChips",
+          "shape": {
+            "kind": "rect",
+            "x": -0.5,
+            "y": 9.65,
+            "width": 8,
+            "height": 0.55
+          }
+        },
+        {
+          "name": "Pad serre",
+          "material": "pavers",
+          "shape": {
+            "kind": "rect",
+            "x": 8.35,
+            "y": 6.62,
+            "width": 6.3,
+            "height": 0.75
+          }
+        }
+      ],
+      "features": [
+        {
+          "name": "Inheemse haag",
+          "type": "hedge",
+          "shape": {
+            "kind": "rect",
+            "x": -1.5,
+            "y": -0.4,
+            "width": 0.85,
+            "height": 14.2
+          }
+        },
+        {
+          "name": "Compost (3 bakken)",
+          "type": "compost",
+          "shape": {
+            "kind": "rect",
+            "x": 0.4,
+            "y": 10.4,
+            "width": 3.3,
+            "height": 1
+          }
+        },
+        {
+          "name": "Regenwater 2×1000 L",
+          "type": "water",
+          "shape": {
+            "kind": "rect",
+            "x": 12.95,
+            "y": 0.4,
+            "width": 1.05,
+            "height": 2.3
+          }
+        },
+        {
+          "name": "Poel",
+          "type": "pond",
+          "shape": {
+            "kind": "rect",
+            "x": 3.9,
+            "y": 11.6,
+            "width": 3.4,
+            "height": 2.1
+          }
+        },
+        {
+          "name": "Tuinhuis",
+          "type": "shed",
+          "shape": {
+            "kind": "rect",
+            "x": 13,
+            "y": 3.4,
+            "width": 2,
+            "height": 2.4
+          }
+        }
+      ],
+      "trees": [
+        {
+          "name": "Appelboom",
+          "cultivar": "Elstar (halfstam)",
+          "kind": "tree",
+          "x": 17.2,
+          "y": 2.6,
+          "crownDiameter": 3.6,
+          "plantedOn": "2022-12-01",
+          "actions": [
+            {
+              "title": "Wintersnoei",
+              "month": 2,
+              "estimatedMinutes": 90
+            },
+            {
+              "title": "Boomspiegel mulchen",
+              "month": 4,
+              "estimatedMinutes": 20
+            },
+            {
+              "title": "Vruchten dunnen",
+              "month": 6,
+              "estimatedMinutes": 30
+            },
+            {
+              "title": "Appels oogsten",
+              "month": 9,
+              "estimatedMinutes": 120
+            }
+          ]
+        },
+        {
+          "name": "Perenboom",
+          "cultivar": "Conference",
+          "kind": "tree",
+          "x": 17.2,
+          "y": 7.6,
+          "crownDiameter": 3,
+          "plantedOn": "2023-11-20",
+          "actions": [
+            {
+              "title": "Wintersnoei",
+              "month": 1,
+              "estimatedMinutes": 75
+            },
+            {
+              "title": "Peren oogsten",
+              "month": 9,
+              "estimatedMinutes": 90
+            }
+          ]
+        },
+        {
+          "name": "Vlier",
+          "cultivar": "Sambucus nigra",
+          "kind": "shrub",
+          "x": 17,
+          "y": 12,
+          "crownDiameter": 2.2,
+          "plantedOn": "2024-03-10",
+          "actions": [
+            {
+              "title": "Bloesem plukken (siroop)",
+              "month": 6,
+              "estimatedMinutes": 30
+            },
+            {
+              "title": "Bessen oogsten",
+              "month": 8,
+              "estimatedMinutes": 45
+            },
+            {
+              "title": "Uitdunnen",
+              "month": 12,
+              "estimatedMinutes": 40
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Volkstuin",
+      "plots": [
+        {
+          "key": "P5",
+          "name": "Perceel 12",
+          "type": "open",
+          "shape": {
+            "kind": "rect",
+            "x": 0,
+            "y": 0,
+            "width": 10,
+            "height": 6
+          }
+        }
+      ],
+      "beds": [
+        {
+          "code": "V1",
+          "plot": "P5",
+          "shape": {
+            "kind": "rect",
+            "x": 0.5,
+            "y": 0.5,
+            "width": 4,
+            "height": 1.2
+          },
+          "sun": "full",
+          "soil": "Zware leem"
+        },
+        {
+          "code": "V2",
+          "plot": "P5",
+          "shape": {
+            "kind": "rect",
+            "x": 0.5,
+            "y": 2.2,
+            "width": 4,
+            "height": 1.2
+          },
+          "sun": "full",
+          "soil": "Zware leem"
+        },
+        {
+          "code": "V4",
+          "plot": "P5",
+          "shape": {
+            "kind": "rect",
+            "x": 0.5,
+            "y": 3.9,
+            "width": 4,
+            "height": 1.2
+          },
+          "sun": "full",
+          "soil": "Zware leem"
+        },
+        {
+          "code": "V3",
+          "plot": "P5",
+          "shape": {
+            "kind": "keyhole",
+            "x": 5.6,
+            "y": 0.8,
+            "width": 3.6,
+            "height": 3.6
+          },
+          "sun": "full",
+          "soil": "Lasagnebed (karton, compost, stro)"
+        }
+      ],
+      "paths": [
+        {
+          "name": "Graspad",
+          "material": "grass",
+          "shape": {
+            "kind": "rect",
+            "x": -0.5,
+            "y": 6.2,
+            "width": 14,
+            "height": 0.9
+          }
+        }
+      ],
+      "features": [
+        {
+          "name": "Gedeelde berging",
+          "type": "shed",
+          "shape": {
+            "kind": "rect",
+            "x": 10.6,
+            "y": 0,
+            "width": 2.2,
+            "height": 2
+          }
+        },
+        {
+          "name": "Regenton",
+          "type": "water",
+          "shape": {
+            "kind": "rect",
+            "x": 10.6,
+            "y": 2.5,
+            "width": 1.05,
+            "height": 1.05
+          }
+        }
+      ],
+      "trees": [
+        {
+          "name": "Kerselaar",
+          "cultivar": "Lapins",
+          "kind": "tree",
+          "x": 12,
+          "y": 4.8,
+          "crownDiameter": 3.4,
+          "plantedOn": "2021-11-15",
+          "actions": [
+            {
+              "title": "Kersen plukken",
+              "month": 6,
+              "estimatedMinutes": 90
+            },
+            {
+              "title": "Zomersnoei na de oogst",
+              "month": 8,
+              "estimatedMinutes": 60
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "plantings": [
+    {
+      "bed": "A1",
+      "variety": "Aardappel",
+      "cultivar": "Charlotte",
+      "share": 1,
+      "sowOn": "2025-04-12",
+      "plantOutOn": null,
+      "harvestFrom": "2025-07-21",
+      "harvestTo": "2025-09-01",
+      "clearOn": "2025-09-08"
+    },
+    {
+      "bed": "A1",
+      "variety": "Phacelia",
+      "cultivar": "Phacelia tanacetifolia",
+      "share": 1,
+      "sowOn": "2025-09-10",
+      "plantOutOn": null,
+      "harvestFrom": "2025-11-09",
+      "harvestTo": "2025-12-07",
+      "clearOn": "2025-12-14"
+    },
+    {
+      "bed": "A1",
+      "variety": "Stokboon",
+      "cultivar": "Blauhilde",
+      "share": 1,
+      "sowOn": "2026-05-12",
+      "plantOutOn": null,
+      "harvestFrom": "2026-07-26",
+      "harvestTo": "2026-09-20",
+      "clearOn": "2026-09-27"
+    },
+    {
+      "bed": "A1",
+      "variety": "Witte klaver",
+      "cultivar": "Trifolium repens",
+      "share": 1,
+      "sowOn": "2026-09-30",
+      "plantOutOn": null,
+      "harvestFrom": "2027-03-29",
+      "harvestTo": "2027-04-26",
+      "clearOn": "2027-05-03"
+    },
+    {
+      "bed": "A1",
+      "variety": "Boerenkool",
+      "cultivar": "Westlandse Winter",
+      "share": 1,
+      "sowOn": "2027-05-01",
+      "plantOutOn": "2027-06-12",
+      "harvestFrom": "2027-09-28",
+      "harvestTo": "2028-02-01",
+      "clearOn": "2028-02-08"
+    },
+    {
+      "bed": "A2",
+      "variety": "Stokboon",
+      "cultivar": "Blauhilde",
+      "share": 1,
+      "sowOn": "2025-05-15",
+      "plantOutOn": null,
+      "harvestFrom": "2025-07-29",
+      "harvestTo": "2025-09-23",
+      "clearOn": "2025-09-30"
+    },
+    {
+      "bed": "A2",
+      "variety": "Boerenkool",
+      "cultivar": "Westlandse Winter",
+      "share": 1,
+      "sowOn": "2026-05-01",
+      "plantOutOn": "2026-06-12",
+      "harvestFrom": "2026-09-28",
+      "harvestTo": "2027-02-01",
+      "clearOn": "2027-02-08"
+    },
+    {
+      "bed": "A2",
+      "variety": "Oranje wortel",
+      "cultivar": "Nantaise 2",
+      "share": 1,
+      "sowOn": "2027-04-05",
+      "plantOutOn": null,
+      "harvestFrom": "2027-07-04",
+      "harvestTo": "2027-09-12",
+      "clearOn": "2027-09-19"
+    },
+    {
+      "bed": "A3",
+      "variety": "Spruitkool",
+      "cultivar": "Groninger",
+      "share": 1,
+      "sowOn": "2025-04-20",
+      "plantOutOn": "2025-06-01",
+      "harvestFrom": "2025-10-17",
+      "harvestTo": "2026-01-09",
+      "clearOn": "2026-01-16"
+    },
+    {
+      "bed": "A3",
+      "variety": "Ui (plantuitjes)",
+      "cultivar": "Stuttgarter Riesen",
+      "share": 0.5,
+      "sowOn": "2026-03-28",
+      "plantOutOn": null,
+      "harvestFrom": "2026-07-26",
+      "harvestTo": "2026-08-23",
+      "clearOn": "2026-08-30"
+    },
+    {
+      "bed": "A3",
+      "variety": "Oranje wortel",
+      "cultivar": "Nantaise 2",
+      "share": 0.5,
+      "sowOn": "2026-04-10",
+      "plantOutOn": null,
+      "harvestFrom": "2026-07-09",
+      "harvestTo": "2026-09-17",
+      "clearOn": "2026-09-24"
+    },
+    {
+      "bed": "A3",
+      "variety": "Spinazie",
+      "cultivar": "Matador",
+      "share": 1,
+      "sowOn": "2026-09-01",
+      "plantOutOn": null,
+      "harvestFrom": "2026-10-21",
+      "harvestTo": "2026-12-02",
+      "clearOn": "2026-12-09"
+    },
+    {
+      "bed": "A3",
+      "variety": "Aardappel",
+      "cultivar": "Charlotte",
+      "share": 1,
+      "sowOn": "2027-04-12",
+      "plantOutOn": null,
+      "harvestFrom": "2027-07-21",
+      "harvestTo": "2027-09-01",
+      "clearOn": "2027-09-08"
+    },
+    {
+      "bed": "A4",
+      "variety": "Paarse wortel",
+      "cultivar": "Purple Haze",
+      "share": 1,
+      "sowOn": "2025-04-15",
+      "plantOutOn": null,
+      "harvestFrom": "2025-07-04",
+      "harvestTo": "2025-08-29",
+      "clearOn": "2025-09-05"
+    },
+    {
+      "bed": "A4",
+      "variety": "Stamboon",
+      "cultivar": "Saxa",
+      "share": 1,
+      "sowOn": "2026-05-20",
+      "plantOutOn": null,
+      "harvestFrom": "2026-07-19",
+      "harvestTo": "2026-08-16",
+      "clearOn": "2026-08-23"
+    },
+    {
+      "bed": "A4",
+      "variety": "Spinazie",
+      "cultivar": "Matador",
+      "share": 1,
+      "sowOn": "2026-08-25",
+      "plantOutOn": null,
+      "harvestFrom": "2026-10-14",
+      "harvestTo": "2026-11-25",
+      "clearOn": "2026-12-02"
+    },
+    {
+      "bed": "A4",
+      "variety": "Heirloom tomaat",
+      "cultivar": "Coeur de Boeuf",
+      "share": 1,
+      "sowOn": "2027-03-01",
+      "plantOutOn": "2027-05-18",
+      "harvestFrom": "2027-07-14",
+      "harvestTo": "2027-09-15",
+      "clearOn": "2027-09-22"
+    },
+    {
+      "bed": "B1",
+      "variety": "Pompoen",
+      "cultivar": "Red Kuri",
+      "share": 1,
+      "sowOn": "2025-04-25",
+      "plantOutOn": "2025-05-23",
+      "harvestFrom": "2025-08-23",
+      "harvestTo": "2025-09-20",
+      "clearOn": "2025-09-27"
+    },
+    {
+      "bed": "B1",
+      "variety": "Pluksla",
+      "cultivar": "Lollo Rossa",
+      "share": 0.5,
+      "sowOn": "2026-03-25",
+      "plantOutOn": null,
+      "harvestFrom": "2026-05-14",
+      "harvestTo": "2026-06-25",
+      "clearOn": "2026-07-02"
+    },
+    {
+      "bed": "B1",
+      "variety": "Prei",
+      "cultivar": "Blauwgroene Winter",
+      "share": 0.5,
+      "sowOn": "2026-03-15",
+      "plantOutOn": "2026-05-24",
+      "harvestFrom": "2026-10-01",
+      "harvestTo": "2027-01-21",
+      "clearOn": "2027-01-28"
+    },
+    {
+      "bed": "B1",
+      "variety": "Courgette",
+      "cultivar": "Black Beauty",
+      "share": 1,
+      "sowOn": "2027-04-20",
+      "plantOutOn": "2027-05-18",
+      "harvestFrom": "2027-06-24",
+      "harvestTo": "2027-09-02",
+      "clearOn": "2027-09-09"
+    },
+    {
+      "bed": "B2",
+      "variety": "Pluksla",
+      "cultivar": "Lollo Rossa",
+      "share": 1,
+      "sowOn": "2025-04-01",
+      "plantOutOn": null,
+      "harvestFrom": "2025-05-21",
+      "harvestTo": "2025-07-02",
+      "clearOn": "2025-07-09"
+    },
+    {
+      "bed": "B2",
+      "variety": "Spinazie",
+      "cultivar": "Matador",
+      "share": 1,
+      "sowOn": "2025-08-20",
+      "plantOutOn": null,
+      "harvestFrom": "2025-10-09",
+      "harvestTo": "2025-11-20",
+      "clearOn": "2025-11-27"
+    },
+    {
+      "bed": "B2",
+      "variety": "Courgette",
+      "cultivar": "Black Beauty",
+      "share": 0.7,
+      "sowOn": "2026-04-20",
+      "plantOutOn": "2026-05-18",
+      "harvestFrom": "2026-06-24",
+      "harvestTo": "2026-09-02",
+      "clearOn": "2026-09-09"
+    },
+    {
+      "bed": "B2",
+      "variety": "Goudsbloem",
+      "cultivar": "Calendula officinalis",
+      "share": 0.3,
+      "sowOn": "2026-04-15",
+      "plantOutOn": null,
+      "harvestFrom": "2026-06-14",
+      "harvestTo": "2026-09-20",
+      "clearOn": "2026-09-27"
+    },
+    {
+      "bed": "B2",
+      "variety": "Knoflook",
+      "cultivar": "Thermidrome",
+      "share": 1,
+      "sowOn": "2026-10-18",
+      "plantOutOn": null,
+      "harvestFrom": "2027-07-10",
+      "harvestTo": "2027-07-31",
+      "clearOn": "2027-08-07"
+    },
+    {
+      "bed": "B2",
+      "variety": "Phacelia",
+      "cultivar": "Phacelia tanacetifolia",
+      "share": 1,
+      "sowOn": "2027-08-12",
+      "plantOutOn": null,
+      "harvestFrom": "2027-10-11",
+      "harvestTo": "2027-11-08",
+      "clearOn": "2027-11-15"
+    },
+    {
+      "bed": "B3",
+      "variety": "Knoflook",
+      "cultivar": "Thermidrome",
+      "share": 1,
+      "sowOn": "2024-10-20",
+      "plantOutOn": null,
+      "harvestFrom": "2025-07-12",
+      "harvestTo": "2025-08-02",
+      "clearOn": "2025-08-09"
+    },
+    {
+      "bed": "B3",
+      "variety": "Phacelia",
+      "cultivar": "Phacelia tanacetifolia",
+      "share": 1,
+      "sowOn": "2025-08-15",
+      "plantOutOn": null,
+      "harvestFrom": "2025-10-14",
+      "harvestTo": "2025-11-11",
+      "clearOn": "2025-11-18"
+    },
+    {
+      "bed": "B3",
+      "variety": "Pompoen",
+      "cultivar": "Red Kuri",
+      "share": 1,
+      "sowOn": "2026-04-25",
+      "plantOutOn": "2026-05-23",
+      "harvestFrom": "2026-08-23",
+      "harvestTo": "2026-09-20",
+      "clearOn": "2026-09-27"
+    },
+    {
+      "bed": "B3",
+      "variety": "Phacelia",
+      "cultivar": "Phacelia tanacetifolia",
+      "share": 1,
+      "sowOn": "2026-09-30",
+      "plantOutOn": null,
+      "harvestFrom": "2026-11-29",
+      "harvestTo": "2026-12-27",
+      "clearOn": "2027-01-03"
+    },
+    {
+      "bed": "B3",
+      "variety": "Pluksla",
+      "cultivar": "Lollo Rossa",
+      "share": 1,
+      "sowOn": "2027-04-01",
+      "plantOutOn": null,
+      "harvestFrom": "2027-05-21",
+      "harvestTo": "2027-07-02",
+      "clearOn": "2027-07-09"
+    },
+    {
+      "bed": "B3",
+      "variety": "Spinazie",
+      "cultivar": "Matador",
+      "share": 1,
+      "sowOn": "2027-08-20",
+      "plantOutOn": null,
+      "harvestFrom": "2027-10-09",
+      "harvestTo": "2027-11-20",
+      "clearOn": "2027-11-27"
+    },
+    {
+      "bed": "B4",
+      "variety": "Pastinaak",
+      "cultivar": "Halflange Witte",
+      "share": 1,
+      "sowOn": "2025-03-25",
+      "plantOutOn": null,
+      "harvestFrom": "2025-10-11",
+      "harvestTo": "2026-01-31",
+      "clearOn": "2026-02-07"
+    },
+    {
+      "bed": "B4",
+      "variety": "Tuinboon",
+      "cultivar": "Witkiem",
+      "share": 1,
+      "sowOn": "2026-03-01",
+      "plantOutOn": null,
+      "harvestFrom": "2026-06-09",
+      "harvestTo": "2026-07-07",
+      "clearOn": "2026-07-14"
+    },
+    {
+      "bed": "B4",
+      "variety": "Witte klaver",
+      "cultivar": "Trifolium repens",
+      "share": 1,
+      "sowOn": "2026-07-20",
+      "plantOutOn": null,
+      "harvestFrom": "2027-01-16",
+      "harvestTo": "2027-02-13",
+      "clearOn": "2027-02-20"
+    },
+    {
+      "bed": "B4",
+      "variety": "Spruitkool",
+      "cultivar": "Groninger",
+      "share": 1,
+      "sowOn": "2027-04-20",
+      "plantOutOn": "2027-06-01",
+      "harvestFrom": "2027-10-17",
+      "harvestTo": "2028-01-09",
+      "clearOn": "2028-01-16"
+    },
+    {
+      "bed": "K1",
+      "variety": "Kerstomaat",
+      "cultivar": "Gardener's Delight",
+      "share": 1,
+      "sowOn": "2025-02-20",
+      "plantOutOn": "2025-04-15",
+      "harvestFrom": "2025-06-20",
+      "harvestTo": "2025-09-12",
+      "clearOn": "2025-09-19"
+    },
+    {
+      "bed": "K1",
+      "variety": "Kerstomaat",
+      "cultivar": "Gardener's Delight",
+      "share": 0.7,
+      "sowOn": "2026-02-20",
+      "plantOutOn": "2026-04-15",
+      "harvestFrom": "2026-06-20",
+      "harvestTo": "2026-09-12",
+      "clearOn": "2026-09-19"
+    },
+    {
+      "bed": "K1",
+      "variety": "Basilicum",
+      "cultivar": "Genovese",
+      "share": 0.3,
+      "sowOn": "2026-03-20",
+      "plantOutOn": "2026-05-01",
+      "harvestFrom": "2026-05-29",
+      "harvestTo": "2026-08-07",
+      "clearOn": "2026-08-14"
+    },
+    {
+      "bed": "K1",
+      "variety": "Spinazie",
+      "cultivar": "Matador",
+      "share": 1,
+      "sowOn": "2026-10-01",
+      "plantOutOn": null,
+      "harvestFrom": "2026-11-20",
+      "harvestTo": "2027-01-01",
+      "clearOn": "2027-01-08"
+    },
+    {
+      "bed": "K1",
+      "variety": "Courgette",
+      "cultivar": "Black Beauty",
+      "share": 1,
+      "sowOn": "2027-04-01",
+      "plantOutOn": "2027-04-29",
+      "harvestFrom": "2027-06-05",
+      "harvestTo": "2027-08-14",
+      "clearOn": "2027-08-21"
+    },
+    {
+      "bed": "K2",
+      "variety": "Basilicum",
+      "cultivar": "Genovese",
+      "share": 1,
+      "sowOn": "2025-03-15",
+      "plantOutOn": "2025-04-26",
+      "harvestFrom": "2025-05-24",
+      "harvestTo": "2025-08-02",
+      "clearOn": "2025-08-09"
+    },
+    {
+      "bed": "K2",
+      "variety": "Pluksla",
+      "cultivar": "Lollo Rossa",
+      "share": 1,
+      "sowOn": "2025-08-15",
+      "plantOutOn": null,
+      "harvestFrom": "2025-10-04",
+      "harvestTo": "2025-11-15",
+      "clearOn": "2025-11-22"
+    },
+    {
+      "bed": "K2",
+      "variety": "Heirloom tomaat",
+      "cultivar": "Black Krim",
+      "share": 0.5,
+      "sowOn": "2026-02-25",
+      "plantOutOn": "2026-04-22",
+      "harvestFrom": "2026-07-05",
+      "harvestTo": "2026-09-13",
+      "clearOn": "2026-09-20"
+    },
+    {
+      "bed": "K2",
+      "variety": "Heirloom tomaat",
+      "cultivar": "Coeur de Boeuf",
+      "share": 0.5,
+      "sowOn": "2026-02-25",
+      "plantOutOn": "2026-04-22",
+      "harvestFrom": "2026-07-10",
+      "harvestTo": "2026-09-11",
+      "clearOn": "2026-09-18"
+    },
+    {
+      "bed": "K2",
+      "variety": "Stokboon",
+      "cultivar": "Blauhilde",
+      "share": 1,
+      "sowOn": "2027-04-20",
+      "plantOutOn": null,
+      "harvestFrom": "2027-07-04",
+      "harvestTo": "2027-08-29",
+      "clearOn": "2027-09-05"
+    },
+    {
+      "bed": "F1",
+      "variety": "Aardbei",
+      "cultivar": "Elsanta",
+      "share": 1,
+      "sowOn": "2024-08-15",
+      "plantOutOn": null,
+      "harvestFrom": null,
+      "harvestTo": null,
+      "clearOn": "2026-08-10"
+    },
+    {
+      "bed": "F1",
+      "variety": "Witte klaver",
+      "cultivar": "Trifolium repens",
+      "share": 1,
+      "sowOn": "2026-09-01",
+      "plantOutOn": null,
+      "harvestFrom": "2027-02-28",
+      "harvestTo": "2027-03-28",
+      "clearOn": "2027-04-04"
+    },
+    {
+      "bed": "F1",
+      "variety": "Ui (plantuitjes)",
+      "cultivar": "Stuttgarter Riesen",
+      "share": 1,
+      "sowOn": "2027-04-05",
+      "plantOutOn": null,
+      "harvestFrom": "2027-08-03",
+      "harvestTo": "2027-08-31",
+      "clearOn": "2027-09-07"
+    },
+    {
+      "bed": "F3",
+      "variety": "Aardbei",
+      "cultivar": "Elsanta",
+      "share": 1,
+      "sowOn": "2026-08-20",
+      "plantOutOn": null,
+      "harvestFrom": null,
+      "harvestTo": null,
+      "clearOn": null
+    },
+    {
+      "bed": "F2",
+      "variety": "Rode bes",
+      "cultivar": "Jonkheer van Tets",
+      "share": 1,
+      "sowOn": "2023-11-15",
+      "plantOutOn": null,
+      "harvestFrom": null,
+      "harvestTo": null,
+      "clearOn": null
+    },
+    {
+      "bed": "S1",
+      "variety": "Tijm",
+      "cultivar": "Thymus vulgaris",
+      "share": 1,
+      "sowOn": "2025-05-10",
+      "plantOutOn": null,
+      "harvestFrom": null,
+      "harvestTo": null,
+      "clearOn": null
+    },
+    {
+      "bed": "V1",
+      "variety": "Aardappel",
+      "cultivar": "Charlotte",
+      "share": 1,
+      "sowOn": "2026-04-15",
+      "plantOutOn": null,
+      "harvestFrom": "2026-07-24",
+      "harvestTo": "2026-09-04",
+      "clearOn": "2026-09-11"
+    },
+    {
+      "bed": "V1",
+      "variety": "Phacelia",
+      "cultivar": "Phacelia tanacetifolia",
+      "share": 1,
+      "sowOn": "2026-08-20",
+      "plantOutOn": null,
+      "harvestFrom": "2026-10-19",
+      "harvestTo": "2026-11-16",
+      "clearOn": "2026-11-23"
+    },
+    {
+      "bed": "V1",
+      "variety": "Stokboon",
+      "cultivar": "Blauhilde",
+      "share": 1,
+      "sowOn": "2027-05-10",
+      "plantOutOn": null,
+      "harvestFrom": "2027-07-24",
+      "harvestTo": "2027-09-18",
+      "clearOn": "2027-09-25"
+    },
+    {
+      "bed": "V2",
+      "variety": "Pompoen",
+      "cultivar": "Red Kuri",
+      "share": 1,
+      "sowOn": "2026-04-28",
+      "plantOutOn": "2026-05-26",
+      "harvestFrom": "2026-08-26",
+      "harvestTo": "2026-09-23",
+      "clearOn": "2026-09-30"
+    },
+    {
+      "bed": "V2",
+      "variety": "Aardappel",
+      "cultivar": "Charlotte",
+      "share": 1,
+      "sowOn": "2027-04-12",
+      "plantOutOn": null,
+      "harvestFrom": "2027-07-21",
+      "harvestTo": "2027-09-01",
+      "clearOn": "2027-09-08"
+    },
+    {
+      "bed": "V3",
+      "variety": "Pluksla",
+      "cultivar": "Lollo Rossa",
+      "share": 0.5,
+      "sowOn": "2026-04-10",
+      "plantOutOn": null,
+      "harvestFrom": "2026-05-30",
+      "harvestTo": "2026-07-11",
+      "clearOn": "2026-07-18"
+    },
+    {
+      "bed": "V3",
+      "variety": "Basilicum",
+      "cultivar": "Genovese",
+      "share": 0.5,
+      "sowOn": "2026-04-01",
+      "plantOutOn": "2026-05-13",
+      "harvestFrom": "2026-06-10",
+      "harvestTo": "2026-08-19",
+      "clearOn": "2026-08-26"
+    },
+    {
+      "bed": "V3",
+      "variety": "Spinazie",
+      "cultivar": "Matador",
+      "share": 1,
+      "sowOn": "2026-09-05",
+      "plantOutOn": null,
+      "harvestFrom": "2026-10-25",
+      "harvestTo": "2026-12-06",
+      "clearOn": "2026-12-13"
+    },
+    {
+      "bed": "V4",
+      "variety": "Stokboon",
+      "cultivar": "Blauhilde",
+      "share": 1,
+      "sowOn": "2026-05-15",
+      "plantOutOn": null,
+      "harvestFrom": "2026-07-29",
+      "harvestTo": "2026-09-23",
+      "clearOn": "2026-09-30"
+    },
+    {
+      "bed": "V4",
+      "variety": "Boerenkool",
+      "cultivar": "Westlandse Winter",
+      "share": 1,
+      "sowOn": "2027-05-01",
+      "plantOutOn": "2027-06-12",
+      "harvestFrom": "2027-09-28",
+      "harvestTo": "2028-02-01",
+      "clearOn": "2028-02-08"
+    }
+  ]
+}
