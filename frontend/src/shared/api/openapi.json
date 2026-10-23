@@ -1,0 +1,70 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "Complot.Api | v1",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/me": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "operationId": "GetMe",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AuthModeKind": {
+        "enum": [
+          "none",
+          "oidc"
+        ]
+      },
+      "MeDto": {
+        "required": [
+          "authMode",
+          "isAuthenticated",
+          "name",
+          "email"
+        ],
+        "type": "object",
+        "properties": {
+          "authMode": {
+            "$ref": "#/components/schemas/AuthModeKind"
+          },
+          "isAuthenticated": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Auth"
+    }
+  ]
+}

@@ -15,8 +15,8 @@ public sealed record MonthWindow
         To = to;
     }
 
-    public int From { get; }
-    public int To { get; }
+    public int From { get; private init; }
+    public int To { get; private init; }
 
     public bool WrapsYear => From > To;
 

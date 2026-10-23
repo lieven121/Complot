@@ -11,6 +11,6 @@ public sealed record DayRange
         Max = max;
     }
 
-    public int Min { get; }
-    public int Max { get; }
+    public int Min { get; private init; }
+    public int Max { get; private init; }
 }
