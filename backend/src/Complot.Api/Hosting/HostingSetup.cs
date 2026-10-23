@@ -31,7 +31,11 @@ public static class HostingSetup
             });
         });
         services.ConfigureHttpJsonOptions(options =>
-            options.SerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)));
+        {
+            options.SerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+            // Numbers are numbers: keeps the OpenAPI schema (and the generated TypeScript) precise.
+            options.SerializerOptions.NumberHandling = JsonNumberHandling.Strict;
+        });
 
         services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Scoped, includeInternalTypes: true);
         return services;

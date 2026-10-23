@@ -22,6 +22,7 @@
     <Exec WorkingDirectory="$(MSBuildProjectDirectory)" Command="$(NSwagExe_Net100) run nswag.json" />
   </Target>
   <ItemGroup>
+    <EmbeddedResource Include="Data\Seed\*.json" />
     <ProjectReference Include="..\Complot.Domain\Complot.Domain.csproj" />
     <InternalsVisibleTo Include="Complot.Api.Tests" />
   </ItemGroup>

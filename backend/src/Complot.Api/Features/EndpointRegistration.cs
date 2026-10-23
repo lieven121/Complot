@@ -1,5 +1,6 @@
 using Complot.Api.Auth;
 using Complot.Api.Common;
+using Complot.Api.Features.Catalog;
 
 namespace Complot.Api.Features;
 
@@ -11,6 +12,7 @@ public static class EndpointRegistration
 
         var api = app.MapGroup("/api");
         api.MapMeEndpoint();
+        api.MapCatalog();
 
         // Unknown API routes are a 404 problem, never the SPA's index.html.
         app.MapFallback("/api/{**path}", () => ApiProblems.NotFound()).ExcludeFromDescription();

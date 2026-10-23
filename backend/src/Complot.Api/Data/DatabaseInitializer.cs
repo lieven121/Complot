@@ -1,3 +1,4 @@
+using Complot.Api.Features.Catalog.Exchange;
 using Complot.Api.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -8,6 +9,7 @@ internal sealed class DatabaseInitializer(
     ComplotDbContext db,
     IOptions<StorageOptions> storage,
     IOptions<SeedOptions> seed,
+    CatalogImporter importer,
     ILogger<DatabaseInitializer> logger)
 {
     public async Task InitializeAsync(CancellationToken cancellationToken = default)
@@ -19,7 +21,7 @@ internal sealed class DatabaseInitializer(
 
         if (seed.Value.DemoData && !await db.Families.AnyAsync(cancellationToken))
         {
-            await Seed.DemoCatalog.AddToAsync(db, cancellationToken);
+            await Seed.DemoCatalog.AddToAsync(db, importer, cancellationToken);
             logger.LogInformation("Seeded the demo plant catalog");
         }
     }

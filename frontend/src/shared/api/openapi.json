@@ -24,6 +24,812 @@
           }
         }
       }
+    },
+    "/api/families": {
+      "get": {
+        "tags": [
+          "Families"
+        ],
+        "operationId": "ListFamilies",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FamilyDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Families"
+        ],
+        "operationId": "CreateFamily",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FamilyInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FamilyDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/families/{id}": {
+      "put": {
+        "tags": [
+          "Families"
+        ],
+        "operationId": "UpdateFamily",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FamilyInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FamilyDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Families"
+        ],
+        "operationId": "DeleteFamily",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/api/categories": {
+      "get": {
+        "tags": [
+          "Categories"
+        ],
+        "operationId": "ListCategories",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CategoryDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Categories"
+        ],
+        "operationId": "CreateCategory",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoryInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/categories/{id}": {
+      "put": {
+        "tags": [
+          "Categories"
+        ],
+        "operationId": "UpdateCategory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoryInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Categories"
+        ],
+        "operationId": "DeleteCategory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/api/suppliers": {
+      "get": {
+        "tags": [
+          "Suppliers"
+        ],
+        "operationId": "ListSuppliers",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SupplierDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Suppliers"
+        ],
+        "operationId": "CreateSupplier",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SupplierInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupplierDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/suppliers/{id}": {
+      "put": {
+        "tags": [
+          "Suppliers"
+        ],
+        "operationId": "UpdateSupplier",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SupplierInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupplierDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Suppliers"
+        ],
+        "operationId": "DeleteSupplier",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/api/varieties": {
+      "get": {
+        "tags": [
+          "Varieties"
+        ],
+        "operationId": "ListVarieties",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VarietyDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Varieties"
+        ],
+        "operationId": "CreateVariety",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VarietyInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VarietyDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/varieties/{id}": {
+      "get": {
+        "tags": [
+          "Varieties"
+        ],
+        "operationId": "GetVariety",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VarietyDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Varieties"
+        ],
+        "operationId": "UpdateVariety",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VarietyInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VarietyDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Varieties"
+        ],
+        "operationId": "DeleteVariety",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/api/inventory-lots": {
+      "get": {
+        "tags": [
+          "InventoryLots"
+        ],
+        "operationId": "ListInventoryLots",
+        "parameters": [
+          {
+            "name": "varietyId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InventoryLotDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "InventoryLots"
+        ],
+        "operationId": "CreateInventoryLot",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InventoryLotInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryLotDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/inventory-lots/{id}": {
+      "put": {
+        "tags": [
+          "InventoryLots"
+        ],
+        "operationId": "UpdateInventoryLot",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InventoryLotInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryLotDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "InventoryLots"
+        ],
+        "operationId": "DeleteInventoryLot",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/api/catalog/export": {
+      "get": {
+        "tags": [
+          "CatalogExchange"
+        ],
+        "operationId": "ExportCatalog",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogExchange"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/catalog/import/preview": {
+      "post": {
+        "tags": [
+          "CatalogExchange"
+        ],
+        "operationId": "PreviewCatalogImport",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CatalogExchange"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/catalog/import": {
+      "post": {
+        "tags": [
+          "CatalogExchange"
+        ],
+        "operationId": "ImportCatalog",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CatalogExchange"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportReport"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -32,6 +838,679 @@
         "enum": [
           "none",
           "oidc"
+        ]
+      },
+      "CatalogExchange": {
+        "required": [
+          "categories",
+          "varieties"
+        ],
+        "type": "object",
+        "properties": {
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExchangeCategory"
+            },
+            "nullable": true
+          },
+          "varieties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExchangeVariety"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CategoryDto": {
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "icon",
+          "color",
+          "defaultFamilyId",
+          "rotationExempt",
+          "goodNeighbourIds",
+          "badNeighbourIds",
+          "varietyCount"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          },
+          "defaultFamilyId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "rotationExempt": {
+            "type": "boolean"
+          },
+          "goodNeighbourIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "badNeighbourIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "varietyCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CategoryInput": {
+        "required": [
+          "slug",
+          "name",
+          "icon",
+          "color",
+          "defaultFamilyId",
+          "rotationExempt",
+          "goodNeighbourIds",
+          "badNeighbourIds"
+        ],
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          },
+          "defaultFamilyId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "rotationExempt": {
+            "type": "boolean"
+          },
+          "goodNeighbourIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "badNeighbourIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "DayRangeDto": {
+        "required": [
+          "min",
+          "max"
+        ],
+        "type": "object",
+        "properties": {
+          "min": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "max": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ErrorDetail": {
+        "required": [
+          "code"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "params": {
+            "type": "object",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ExchangeAction": {
+        "required": [
+          "title",
+          "month",
+          "estimatedMinutes"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "month": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "estimatedMinutes": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ExchangeCategory": {
+        "required": [
+          "id",
+          "name",
+          "family",
+          "icon",
+          "color",
+          "rotationExempt",
+          "goodNeighbours",
+          "badNeighbours"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "family": {
+            "type": "string",
+            "nullable": true
+          },
+          "icon": {
+            "type": "string",
+            "nullable": true
+          },
+          "color": {
+            "type": "string",
+            "nullable": true
+          },
+          "rotationExempt": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "goodNeighbours": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "badNeighbours": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ExchangeSupplier": {
+        "required": [
+          "name",
+          "price",
+          "unit",
+          "url"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "unit": {
+            "type": "string",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ExchangeVariety": {
+        "required": [
+          "category",
+          "name",
+          "cultivar",
+          "latin",
+          "family",
+          "life",
+          "sowDepthCm",
+          "spacingInRowCm",
+          "spacingBetweenRowsCm",
+          "heightCm",
+          "sun",
+          "sowIndoorMonths",
+          "weeksIndoorBeforePlanting",
+          "sowOutdoorMonths",
+          "plantOutMonths",
+          "germinationDays",
+          "daysToFirstHarvest",
+          "harvestWeeks",
+          "harvestMonths",
+          "maxYearsInBed",
+          "notes",
+          "actions",
+          "suppliers"
+        ],
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "cultivar": {
+            "type": "string",
+            "nullable": true
+          },
+          "latin": {
+            "type": "string",
+            "nullable": true
+          },
+          "family": {
+            "type": "string",
+            "nullable": true
+          },
+          "life": {
+            "type": "string",
+            "nullable": true
+          },
+          "sowDepthCm": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "spacingInRowCm": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "spacingBetweenRowsCm": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "heightCm": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "sun": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "sowIndoorMonths": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "weeksIndoorBeforePlanting": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "sowOutdoorMonths": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "plantOutMonths": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "germinationDays": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "daysToFirstHarvest": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "harvestWeeks": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "harvestMonths": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "maxYearsInBed": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExchangeAction"
+            },
+            "nullable": true
+          },
+          "suppliers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExchangeSupplier"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FamilyDto": {
+        "required": [
+          "id",
+          "latinName",
+          "nameNl",
+          "nameEn",
+          "rotationRestYears"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "latinName": {
+            "type": "string"
+          },
+          "nameNl": {
+            "type": "string"
+          },
+          "nameEn": {
+            "type": "string"
+          },
+          "rotationRestYears": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FamilyInput": {
+        "required": [
+          "latinName",
+          "nameNl",
+          "nameEn",
+          "rotationRestYears"
+        ],
+        "type": "object",
+        "properties": {
+          "latinName": {
+            "type": "string"
+          },
+          "nameNl": {
+            "type": "string"
+          },
+          "nameEn": {
+            "type": "string"
+          },
+          "rotationRestYears": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ImportReport": {
+        "required": [
+          "committed",
+          "categories",
+          "varieties"
+        ],
+        "type": "object",
+        "properties": {
+          "committed": {
+            "type": "boolean"
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ImportRow"
+            }
+          },
+          "varieties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ImportRow"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "ImportRow": {
+        "required": [
+          "index",
+          "name",
+          "detail",
+          "status",
+          "errors",
+          "warnings"
+        ],
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/ImportRowStatus"
+          },
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ErrorDetail"
+              }
+            },
+            "nullable": true
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ErrorDetail"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "ImportRowStatus": {
+        "enum": [
+          "new",
+          "update",
+          "error"
+        ]
+      },
+      "InventoryLotDto": {
+        "required": [
+          "id",
+          "varietyId",
+          "supplierId",
+          "quantity",
+          "unit",
+          "boughtOn",
+          "bestBefore",
+          "status",
+          "notes"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "varietyId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "supplierId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "quantity": {
+            "type": "number",
+            "format": "double"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "boughtOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "bestBefore": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/LotStatus"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "InventoryLotInput": {
+        "required": [
+          "varietyId",
+          "supplierId",
+          "quantity",
+          "unit",
+          "boughtOn",
+          "bestBefore",
+          "notes"
+        ],
+        "type": "object",
+        "properties": {
+          "varietyId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "supplierId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "quantity": {
+            "type": "number",
+            "format": "double"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "boughtOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "bestBefore": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Life": {
+        "enum": [
+          "annual",
+          "biennial",
+          "perennial"
+        ]
+      },
+      "LotStatus": {
+        "enum": [
+          "ok",
+          "useSoon",
+          "expired"
         ]
       },
       "MeDto": {
@@ -59,12 +1538,616 @@
           }
         },
         "additionalProperties": false
+      },
+      "MonthWindowDto": {
+        "required": [
+          "from",
+          "to"
+        ],
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "to": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "StockDto": {
+        "required": [
+          "lotId",
+          "quantity",
+          "unit",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "lotId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "quantity": {
+            "type": "number",
+            "format": "double"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/LotStatus"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SunExposure": {
+        "enum": [
+          "full",
+          "half",
+          "shade"
+        ]
+      },
+      "SupplierDto": {
+        "required": [
+          "id",
+          "name",
+          "url",
+          "isOwnSource",
+          "notes"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          },
+          "isOwnSource": {
+            "type": "boolean"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SupplierInput": {
+        "required": [
+          "name",
+          "url",
+          "isOwnSource",
+          "notes"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          },
+          "isOwnSource": {
+            "type": "boolean"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "VarietyActionDto": {
+        "required": [
+          "title",
+          "month",
+          "estimatedMinutes"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "month": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "estimatedMinutes": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "VarietyDto": {
+        "required": [
+          "id",
+          "categoryId",
+          "familyId",
+          "effectiveFamilyId",
+          "rotationRestYears",
+          "name",
+          "cultivar",
+          "latinName",
+          "life",
+          "sowDepthCm",
+          "spacingInRowCm",
+          "spacingBetweenRowsCm",
+          "heightCm",
+          "sun",
+          "sowIndoor",
+          "weeksIndoor",
+          "sowOutdoor",
+          "plantOut",
+          "harvest",
+          "germination",
+          "daysToFirstHarvest",
+          "harvestWeeks",
+          "maxYearsInBed",
+          "notes",
+          "actions",
+          "suppliers",
+          "stock"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "categoryId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "familyId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "effectiveFamilyId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "rotationRestYears": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "cultivar": {
+            "type": "string",
+            "nullable": true
+          },
+          "latinName": {
+            "type": "string",
+            "nullable": true
+          },
+          "life": {
+            "$ref": "#/components/schemas/Life"
+          },
+          "sowDepthCm": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "spacingInRowCm": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "spacingBetweenRowsCm": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "heightCm": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "sun": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SunExposure"
+            }
+          },
+          "sowIndoor": {
+            "oneOf": [
+              {
+                "enum": [
+                  null
+                ],
+                "nullable": true
+              },
+              {
+                "$ref": "#/components/schemas/MonthWindowDto"
+              }
+            ]
+          },
+          "weeksIndoor": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "sowOutdoor": {
+            "oneOf": [
+              {
+                "enum": [
+                  null
+                ],
+                "nullable": true
+              },
+              {
+                "$ref": "#/components/schemas/MonthWindowDto"
+              }
+            ]
+          },
+          "plantOut": {
+            "oneOf": [
+              {
+                "enum": [
+                  null
+                ],
+                "nullable": true
+              },
+              {
+                "$ref": "#/components/schemas/MonthWindowDto"
+              }
+            ]
+          },
+          "harvest": {
+            "$ref": "#/components/schemas/MonthWindowDto"
+          },
+          "germination": {
+            "oneOf": [
+              {
+                "enum": [
+                  null
+                ],
+                "nullable": true
+              },
+              {
+                "$ref": "#/components/schemas/DayRangeDto"
+              }
+            ]
+          },
+          "daysToFirstHarvest": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "harvestWeeks": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "maxYearsInBed": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VarietyActionDto"
+            }
+          },
+          "suppliers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VarietySupplierDto"
+            }
+          },
+          "stock": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StockDto"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "VarietyInput": {
+        "required": [
+          "categoryId",
+          "familyId",
+          "name",
+          "cultivar",
+          "latinName",
+          "life",
+          "sowDepthCm",
+          "spacingInRowCm",
+          "spacingBetweenRowsCm",
+          "heightCm",
+          "sun",
+          "sowIndoor",
+          "weeksIndoor",
+          "sowOutdoor",
+          "plantOut",
+          "harvest",
+          "germination",
+          "daysToFirstHarvest",
+          "harvestWeeks",
+          "maxYearsInBed",
+          "notes",
+          "actions",
+          "suppliers"
+        ],
+        "type": "object",
+        "properties": {
+          "categoryId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "familyId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "name": {
+            "type": "string"
+          },
+          "cultivar": {
+            "type": "string",
+            "nullable": true
+          },
+          "latinName": {
+            "type": "string",
+            "nullable": true
+          },
+          "life": {
+            "$ref": "#/components/schemas/Life"
+          },
+          "sowDepthCm": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "spacingInRowCm": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "spacingBetweenRowsCm": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "heightCm": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "sun": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SunExposure"
+            }
+          },
+          "sowIndoor": {
+            "oneOf": [
+              {
+                "enum": [
+                  null
+                ],
+                "nullable": true
+              },
+              {
+                "$ref": "#/components/schemas/MonthWindowDto"
+              }
+            ]
+          },
+          "weeksIndoor": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "sowOutdoor": {
+            "oneOf": [
+              {
+                "enum": [
+                  null
+                ],
+                "nullable": true
+              },
+              {
+                "$ref": "#/components/schemas/MonthWindowDto"
+              }
+            ]
+          },
+          "plantOut": {
+            "oneOf": [
+              {
+                "enum": [
+                  null
+                ],
+                "nullable": true
+              },
+              {
+                "$ref": "#/components/schemas/MonthWindowDto"
+              }
+            ]
+          },
+          "harvest": {
+            "$ref": "#/components/schemas/MonthWindowDto"
+          },
+          "germination": {
+            "oneOf": [
+              {
+                "enum": [
+                  null
+                ],
+                "nullable": true
+              },
+              {
+                "$ref": "#/components/schemas/DayRangeDto"
+              }
+            ]
+          },
+          "daysToFirstHarvest": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "harvestWeeks": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "maxYearsInBed": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VarietyActionDto"
+            }
+          },
+          "suppliers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VarietySupplierInput"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "VarietySupplierDto": {
+        "required": [
+          "supplierId",
+          "supplierName",
+          "isOwnSource",
+          "price",
+          "unit",
+          "url"
+        ],
+        "type": "object",
+        "properties": {
+          "supplierId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "supplierName": {
+            "type": "string"
+          },
+          "isOwnSource": {
+            "type": "boolean"
+          },
+          "price": {
+            "type": "number",
+            "format": "double"
+          },
+          "unit": {
+            "type": "string",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "VarietySupplierInput": {
+        "required": [
+          "supplierId",
+          "price",
+          "unit",
+          "url"
+        ],
+        "type": "object",
+        "properties": {
+          "supplierId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "price": {
+            "type": "number",
+            "format": "double"
+          },
+          "unit": {
+            "type": "string",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       }
     }
   },
   "tags": [
     {
       "name": "Auth"
+    },
+    {
+      "name": "Families"
+    },
+    {
+      "name": "Categories"
+    },
+    {
+      "name": "Suppliers"
+    },
+    {
+      "name": "Varieties"
+    },
+    {
+      "name": "InventoryLots"
+    },
+    {
+      "name": "CatalogExchange"
     }
   ]
 }

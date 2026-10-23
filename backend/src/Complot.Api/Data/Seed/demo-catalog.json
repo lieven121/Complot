@@ -1,0 +1,1680 @@
+{
+  "families": [
+    {
+      "latinName": "Apiaceae",
+      "nameNl": "schermbloemigen",
+      "nameEn": "carrot family",
+      "rotationRestYears": 3
+    },
+    {
+      "latinName": "Solanaceae",
+      "nameNl": "nachtschadefamilie",
+      "nameEn": "nightshades",
+      "rotationRestYears": 4
+    },
+    {
+      "latinName": "Fabaceae",
+      "nameNl": "vlinderbloemigen",
+      "nameEn": "legumes",
+      "rotationRestYears": 3
+    },
+    {
+      "latinName": "Brassicaceae",
+      "nameNl": "kruisbloemigen",
+      "nameEn": "brassicas",
+      "rotationRestYears": 4
+    },
+    {
+      "latinName": "Amaryllidaceae",
+      "nameNl": "lookfamilie",
+      "nameEn": "alliums",
+      "rotationRestYears": 3
+    },
+    {
+      "latinName": "Asteraceae",
+      "nameNl": "composieten",
+      "nameEn": "daisy family",
+      "rotationRestYears": 1
+    },
+    {
+      "latinName": "Amaranthaceae",
+      "nameNl": "amarantenfamilie",
+      "nameEn": "amaranth family",
+      "rotationRestYears": 2
+    },
+    {
+      "latinName": "Cucurbitaceae",
+      "nameNl": "komkommerfamilie",
+      "nameEn": "gourd family",
+      "rotationRestYears": 3
+    },
+    {
+      "latinName": "Rosaceae",
+      "nameNl": "rozenfamilie",
+      "nameEn": "rose family",
+      "rotationRestYears": 3
+    },
+    {
+      "latinName": "Lamiaceae",
+      "nameNl": "lipbloemigen",
+      "nameEn": "mint family",
+      "rotationRestYears": 0
+    },
+    {
+      "latinName": "Boraginaceae",
+      "nameNl": "ruwbladigen",
+      "nameEn": "borage family",
+      "rotationRestYears": 0
+    },
+    {
+      "latinName": "Grossulariaceae",
+      "nameNl": "ribesfamilie",
+      "nameEn": "currant family",
+      "rotationRestYears": 0
+    }
+  ],
+  "suppliers": [
+    {
+      "name": "De Bolster",
+      "isOwnSource": false
+    },
+    {
+      "name": "Eigen oogst",
+      "isOwnSource": true
+    },
+    {
+      "name": "Eigen plant",
+      "isOwnSource": true
+    },
+    {
+      "name": "Eigen zaad",
+      "isOwnSource": true
+    },
+    {
+      "name": "Kwekerij De Plantage",
+      "isOwnSource": false
+    },
+    {
+      "name": "Vreeken's Zaden",
+      "isOwnSource": false
+    },
+    {
+      "name": "Zaadgoed",
+      "isOwnSource": false
+    }
+  ],
+  "catalog": {
+    "categories": [
+      {
+        "id": "wortel",
+        "name": "Wortels",
+        "family": "Apiaceae",
+        "icon": "🥕",
+        "color": "#e07b24",
+        "rotationExempt": false,
+        "goodNeighbours": [
+          "ui",
+          "sla",
+          "tomaat"
+        ],
+        "badNeighbours": []
+      },
+      {
+        "id": "tomaat",
+        "name": "Tomaten",
+        "family": "Solanaceae",
+        "icon": "🍅",
+        "color": "#d1453b",
+        "rotationExempt": false,
+        "goodNeighbours": [
+          "kruid",
+          "wortel"
+        ],
+        "badNeighbours": [
+          "kool",
+          "aardappel"
+        ]
+      },
+      {
+        "id": "aardappel",
+        "name": "Aardappelen",
+        "family": "Solanaceae",
+        "icon": "🥔",
+        "color": "#a8834a",
+        "rotationExempt": false,
+        "goodNeighbours": [
+          "boon",
+          "kruid"
+        ],
+        "badNeighbours": [
+          "tomaat",
+          "pompoen"
+        ]
+      },
+      {
+        "id": "boon",
+        "name": "Bonen",
+        "family": "Fabaceae",
+        "icon": "🫘",
+        "color": "#7a9a3a",
+        "rotationExempt": false,
+        "goodNeighbours": [
+          "kool",
+          "wortel",
+          "pompoen"
+        ],
+        "badNeighbours": [
+          "ui"
+        ]
+      },
+      {
+        "id": "kool",
+        "name": "Kolen",
+        "family": "Brassicaceae",
+        "icon": "🥬",
+        "color": "#3f8a68",
+        "rotationExempt": false,
+        "goodNeighbours": [
+          "boon",
+          "sla",
+          "kruid"
+        ],
+        "badNeighbours": [
+          "aardbei",
+          "tomaat"
+        ]
+      },
+      {
+        "id": "ui",
+        "name": "Uien & look",
+        "family": "Amaryllidaceae",
+        "icon": "🧅",
+        "color": "#a65f9d",
+        "rotationExempt": false,
+        "goodNeighbours": [
+          "wortel",
+          "aardbei",
+          "sla"
+        ],
+        "badNeighbours": [
+          "boon"
+        ]
+      },
+      {
+        "id": "sla",
+        "name": "Bladgroenten",
+        "family": "Asteraceae",
+        "icon": "🥗",
+        "color": "#7fb446",
+        "rotationExempt": false,
+        "goodNeighbours": [
+          "wortel",
+          "ui",
+          "kool"
+        ],
+        "badNeighbours": []
+      },
+      {
+        "id": "pompoen",
+        "name": "Pompoenachtigen",
+        "family": "Cucurbitaceae",
+        "icon": "🎃",
+        "color": "#e3a032",
+        "rotationExempt": false,
+        "goodNeighbours": [
+          "boon",
+          "kruid"
+        ],
+        "badNeighbours": [
+          "aardappel"
+        ]
+      },
+      {
+        "id": "kruid",
+        "name": "Kruiden & bloemen",
+        "family": "Lamiaceae",
+        "icon": "🌼",
+        "color": "#d9b52c",
+        "rotationExempt": true,
+        "goodNeighbours": [
+          "tomaat",
+          "kool",
+          "pompoen"
+        ],
+        "badNeighbours": []
+      },
+      {
+        "id": "groen",
+        "name": "Groenbemesters",
+        "family": "Boraginaceae",
+        "icon": "🌱",
+        "color": "#93b86f",
+        "rotationExempt": true,
+        "goodNeighbours": [],
+        "badNeighbours": []
+      },
+      {
+        "id": "aardbei",
+        "name": "Aardbeien",
+        "family": "Rosaceae",
+        "icon": "🍓",
+        "color": "#df566a",
+        "rotationExempt": false,
+        "goodNeighbours": [
+          "ui",
+          "sla"
+        ],
+        "badNeighbours": [
+          "kool"
+        ]
+      },
+      {
+        "id": "struik",
+        "name": "Struikfruit",
+        "family": "Grossulariaceae",
+        "icon": "🫐",
+        "color": "#7356a3",
+        "rotationExempt": false,
+        "goodNeighbours": [
+          "kruid"
+        ],
+        "badNeighbours": []
+      }
+    ],
+    "varieties": [
+      {
+        "category": "wortel",
+        "name": "Oranje wortel",
+        "cultivar": "Nantaise 2",
+        "latin": "Daucus carota",
+        "family": null,
+        "life": "annual",
+        "sowDepthCm": 1,
+        "spacingInRowCm": 3,
+        "spacingBetweenRowsCm": 20,
+        "heightCm": 30,
+        "sun": [
+          "full",
+          "half"
+        ],
+        "sowIndoorMonths": null,
+        "weeksIndoorBeforePlanting": null,
+        "sowOutdoorMonths": [
+          3,
+          6
+        ],
+        "plantOutMonths": null,
+        "germinationDays": [
+          10,
+          21
+        ],
+        "daysToFirstHarvest": 90,
+        "harvestWeeks": 10,
+        "harvestMonths": [
+          6,
+          11
+        ],
+        "maxYearsInBed": 1,
+        "notes": "Insectengaas tegen wortelvlieg. Dun zaaien bespaart uitdunnen.",
+        "actions": [],
+        "suppliers": [
+          {
+            "name": "De Bolster",
+            "price": 2.95,
+            "unit": "zakje 4 g"
+          },
+          {
+            "name": "Vreeken's Zaden",
+            "price": 2.45,
+            "unit": "zakje 5 g"
+          }
+        ]
+      },
+      {
+        "category": "wortel",
+        "name": "Paarse wortel",
+        "cultivar": "Purple Haze",
+        "latin": "Daucus carota",
+        "family": null,
+        "life": "annual",
+        "sowDepthCm": 1,
+        "spacingInRowCm": 4,
+        "spacingBetweenRowsCm": 20,
+        "heightCm": 30,
+        "sun": [
+          "full",
+          "half"
+        ],
+        "sowIndoorMonths": null,
+        "weeksIndoorBeforePlanting": null,
+        "sowOutdoorMonths": [
+          4,
+          6
+        ],
+        "plantOutMonths": null,
+        "germinationDays": [
+          10,
+          21
+        ],
+        "daysToFirstHarvest": 80,
+        "harvestWeeks": 8,
+        "harvestMonths": [
+          7,
+          10
+        ],
+        "maxYearsInBed": 1,
+        "notes": null,
+        "actions": [],
+        "suppliers": [
+          {
+            "name": "Vreeken's Zaden",
+            "price": 3.25,
+            "unit": "zakje 2 g"
+          }
+        ]
+      },
+      {
+        "category": "wortel",
+        "name": "Pastinaak",
+        "cultivar": "Halflange Witte",
+        "latin": "Pastinaca sativa",
+        "family": null,
+        "life": "annual",
+        "sowDepthCm": 1.5,
+        "spacingInRowCm": 10,
+        "spacingBetweenRowsCm": 30,
+        "heightCm": 60,
+        "sun": [
+          "full",
+          "half"
+        ],
+        "sowIndoorMonths": null,
+        "weeksIndoorBeforePlanting": null,
+        "sowOutdoorMonths": [
+          3,
+          5
+        ],
+        "plantOutMonths": null,
+        "germinationDays": [
+          14,
+          28
+        ],
+        "daysToFirstHarvest": 200,
+        "harvestWeeks": 16,
+        "harvestMonths": [
+          10,
+          2
+        ],
+        "maxYearsInBed": 1,
+        "notes": "Zaad blijft maar 1 jaar kiemkrachtig — elk jaar vers zaad of zelf zaad winnen.",
+        "actions": [],
+        "suppliers": [
+          {
+            "name": "De Bolster",
+            "price": 2.75,
+            "unit": "zakje 3 g"
+          },
+          {
+            "name": "Zaadgoed",
+            "price": 2.6,
+            "unit": "zakje 2 g"
+          }
+        ]
+      },
+      {
+        "category": "tomaat",
+        "name": "Kerstomaat",
+        "cultivar": "Gardener's Delight",
+        "latin": "Solanum lycopersicum",
+        "family": null,
+        "life": "annual",
+        "sowDepthCm": 0.5,
+        "spacingInRowCm": 50,
+        "spacingBetweenRowsCm": 70,
+        "heightCm": 180,
+        "sun": [
+          "full"
+        ],
+        "sowIndoorMonths": [
+          2,
+          4
+        ],
+        "weeksIndoorBeforePlanting": 8,
+        "sowOutdoorMonths": null,
+        "plantOutMonths": [
+          5,
+          6
+        ],
+        "germinationDays": [
+          6,
+          12
+        ],
+        "daysToFirstHarvest": 120,
+        "harvestWeeks": 12,
+        "harvestMonths": [
+          7,
+          10
+        ],
+        "maxYearsInBed": 1,
+        "notes": "Zaadvast ras — zelf zaad winnen kan (fermenteren).",
+        "actions": [],
+        "suppliers": [
+          {
+            "name": "De Bolster",
+            "price": 3.1,
+            "unit": "zakje 25 z."
+          },
+          {
+            "name": "Eigen zaad",
+            "price": 0,
+            "unit": null
+          }
+        ]
+      },
+      {
+        "category": "tomaat",
+        "name": "Heirloom tomaat",
+        "cultivar": "Coeur de Boeuf",
+        "latin": "Solanum lycopersicum",
+        "family": null,
+        "life": "annual",
+        "sowDepthCm": 0.5,
+        "spacingInRowCm": 60,
+        "spacingBetweenRowsCm": 80,
+        "heightCm": 200,
+        "sun": [
+          "full"
+        ],
+        "sowIndoorMonths": [
+          2,
+          4
+        ],
+        "weeksIndoorBeforePlanting": 8,
+        "sowOutdoorMonths": null,
+        "plantOutMonths": [
+          5,
+          6
+        ],
+        "germinationDays": [
+          6,
+          12
+        ],
+        "daysToFirstHarvest": 135,
+        "harvestWeeks": 9,
+        "harvestMonths": [
+          8,
+          10
+        ],
+        "maxYearsInBed": 1,
+        "notes": null,
+        "actions": [],
+        "suppliers": [
+          {
+            "name": "Zaadgoed",
+            "price": 3.4,
+            "unit": "zakje 15 z."
+          }
+        ]
+      },
+      {
+        "category": "tomaat",
+        "name": "Heirloom tomaat",
+        "cultivar": "Black Krim",
+        "latin": "Solanum lycopersicum",
+        "family": null,
+        "life": "annual",
+        "sowDepthCm": 0.5,
+        "spacingInRowCm": 60,
+        "spacingBetweenRowsCm": 80,
+        "heightCm": 180,
+        "sun": [
+          "full"
+        ],
+        "sowIndoorMonths": [
+          2,
+          4
+        ],
+        "weeksIndoorBeforePlanting": 8,
+        "sowOutdoorMonths": null,
+        "plantOutMonths": [
+          5,
+          6
+        ],
+        "germinationDays": [
+          6,
+          12
+        ],
+        "daysToFirstHarvest": 130,
+        "harvestWeeks": 10,
+        "harvestMonths": [
+          8,
+          10
+        ],
+        "maxYearsInBed": 1,
+        "notes": null,
+        "actions": [],
+        "suppliers": [
+          {
+            "name": "De Bolster",
+            "price": 3.4,
+            "unit": "zakje 15 z."
+          },
+          {
+            "name": "Eigen zaad",
+            "price": 0,
+            "unit": null
+          }
+        ]
+      },
+      {
+        "category": "aardappel",
+        "name": "Aardappel",
+        "cultivar": "Charlotte",
+        "latin": "Solanum tuberosum",
+        "family": null,
+        "life": "annual",
+        "sowDepthCm": 10,
+        "spacingInRowCm": 35,
+        "spacingBetweenRowsCm": 65,
+        "heightCm": 60,
+        "sun": [
+          "full"
+        ],
+        "sowIndoorMonths": null,
+        "weeksIndoorBeforePlanting": null,
+        "sowOutdoorMonths": [
+          4,
+          5
+        ],
+        "plantOutMonths": null,
+        "germinationDays": [
+          14,
+          28
+        ],
+        "daysToFirstHarvest": 100,
+        "harvestWeeks": 6,
+        "harvestMonths": [
+          7,
+          9
+        ],
+        "maxYearsInBed": 1,
+        "notes": "Aanaarden. Pootgoed voorkiemen vanaf maart.",
+        "actions": [],
+        "suppliers": [
+          {
+            "name": "Kwekerij De Plantage",
+            "price": 4.95,
+            "unit": "1 kg pootgoed"
+          }
+        ]
+      },
+      {
+        "category": "boon",
+        "name": "Stokboon",
+        "cultivar": "Blauhilde",
+        "latin": "Phaseolus vulgaris",
+        "family": null,
+        "life": "annual",
+        "sowDepthCm": 3,
+        "spacingInRowCm": 15,
+        "spacingBetweenRowsCm": 60,
+        "heightCm": 250,
+        "sun": [
+          "full"
+        ],
+        "sowIndoorMonths": null,
+        "weeksIndoorBeforePlanting": null,
+        "sowOutdoorMonths": [
+          5,
+          6
+        ],
+        "plantOutMonths": null,
+        "germinationDays": [
+          7,
+          14
+        ],
+        "daysToFirstHarvest": 75,
+        "harvestWeeks": 8,
+        "harvestMonths": [
+          7,
+          9
+        ],
+        "maxYearsInBed": 1,
+        "notes": "Bindt stikstof. Eigen zaad oogsten van de laatste peulen.",
+        "actions": [],
+        "suppliers": [
+          {
+            "name": "De Bolster",
+            "price": 3.65,
+            "unit": "zakje 50 g"
+          },
+          {
+            "name": "Eigen zaad",
+            "price": 0,
+            "unit": null
+          }
+        ]
+      },
+      {
+        "category": "boon",
+        "name": "Stamboon",
+        "cultivar": "Saxa",
+        "latin": "Phaseolus vulgaris",
+        "family": null,
+        "life": "annual",
+        "sowDepthCm": 3,
+        "spacingInRowCm": 10,
+        "spacingBetweenRowsCm": 40,
+        "heightCm": 45,
+        "sun": [
+          "full"
+        ],
+        "sowIndoorMonths": null,
+        "weeksIndoorBeforePlanting": null,
+        "sowOutdoorMonths": [
+          5,
+          7
+        ],
+        "plantOutMonths": null,
+        "germinationDays": [
+          7,
+          14
+        ],
+        "daysToFirstHarvest": 60,
+        "harvestWeeks": 4,
+        "harvestMonths": [
+          7,
+          9
+        ],
+        "maxYearsInBed": 1,
+        "notes": null,
+        "actions": [],
+        "suppliers": [
+          {
+            "name": "De Bolster",
+            "price": 3.25,
+            "unit": "zakje 50 g"
+          }
+        ]
+      },
+      {
+        "category": "boon",
+        "name": "Tuinboon",
+        "cultivar": "Witkiem",
+        "latin": "Vicia faba",
+        "family": null,
+        "life": "annual",
+        "sowDepthCm": 5,
+        "spacingInRowCm": 15,
+        "spacingBetweenRowsCm": 40,
+        "heightCm": 100,
+        "sun": [
+          "full",
+          "half"
+        ],
+        "sowIndoorMonths": null,
+        "weeksIndoorBeforePlanting": null,
+        "sowOutdoorMonths": [
+          2,
+          4
+        ],
+        "plantOutMonths": null,
+        "germinationDays": [
+          10,
+          20
+        ],
+        "daysToFirstHarvest": 100,
+        "harvestWeeks": 4,
+        "harvestMonths": [
+          6,
+          7
+        ],
+        "maxYearsInBed": 1,
+        "notes": "Toppen bij zwarte luis.",
+        "actions": [],
+        "suppliers": [
+          {
+            "name": "Vreeken's Zaden",
+            "price": 3.95,
+            "unit": "250 g"
+          }
+        ]
+      },
+      {
+        "category": "kool",
+        "name": "Boerenkool",
+        "cultivar": "Westlandse Winter",
+        "latin": "Brassica oleracea",
+        "family": null,
+        "life": "annual",
+        "sowDepthCm": 1,
+        "spacingInRowCm": 50,
+        "spacingBetweenRowsCm": 60,
+        "heightCm": 70,
+        "sun": [
+          "full",
+          "half"
+        ],
+        "sowIndoorMonths": [
+          4,
+          5
+        ],
+        "weeksIndoorBeforePlanting": 6,
+        "sowOutdoorMonths": null,
+        "plantOutMonths": [
+          6,
+          7
+        ],
+        "germinationDays": [
+          5,
+          10
+        ],
+        "daysToFirstHarvest": 150,
+        "harvestWeeks": 18,
+        "harvestMonths": [
+          10,
+          3
+        ],
+        "maxYearsInBed": 1,
+        "notes": "Smaakt beter na vorst. Insectengaas tegen koolwitje.",
+        "actions": [],
+        "suppliers": [
+          {
+            "name": "Zaadgoed",
+            "price": 2.5,
+            "unit": "zakje 1 g"
+          },
+          {
+            "name": "De Bolster",
+            "price": 2.75,
+            "unit": "zakje 2 g"
+          }
+        ]
+      },
+      {
+        "category": "kool",
+        "name": "Spruitkool",
+        "cultivar": "Groninger",
+        "latin": "Brassica oleracea",
+        "family": null,
+        "life": "annual",
+        "sowDepthCm": 1,
+        "spacingInRowCm": 60,
+        "spacingBetweenRowsCm": 70,
+        "heightCm": 90,
+        "sun": [
+          "full",
+          "half"
+        ],
+        "sowIndoorMonths": [
+          3,
+          5
+        ],
+        "weeksIndoorBeforePlanting": 6,
+        "sowOutdoorMonths": null,
+        "plantOutMonths": [
+          5,
+          6
+        ],
+        "germinationDays": [
+          5,
+          10
+        ],
+        "daysToFirstHarvest": 180,
+        "harvestWeeks": 12,
+        "harvestMonths": [
+          11,
+          2
+        ],
+        "maxYearsInBed": 1,
+        "notes": null,
+        "actions": [],
+        "suppliers": [
+          {
+            "name": "De Bolster",
+            "price": 2.85,
+            "unit": "zakje 1 g"
+          }
+        ]
+      },
+      {
+        "category": "ui",
+        "name": "Ui (plantuitjes)",
+        "cultivar": "Stuttgarter Riesen",
+        "latin": "Allium cepa",
+        "family": null,
+        "life": "annual",
+        "sowDepthCm": 2,
+        "spacingInRowCm": 10,
+        "spacingBetweenRowsCm": 25,
+        "heightCm": 40,
+        "sun": [
+          "full"
+        ],
+        "sowIndoorMonths": null,
+        "weeksIndoorBeforePlanting": null,
+        "sowOutdoorMonths": [
+          3,
+          4
+        ],
+        "plantOutMonths": null,
+        "germinationDays": [
+          10,
+          14
+        ],
+        "daysToFirstHarvest": 120,
+        "harvestWeeks": 4,
+        "harvestMonths": [
+          7,
+          8
+        ],
+        "maxYearsInBed": 1,
+        "notes": null,
+        "actions": [],
+        "suppliers": [
+          {
+            "name": "Kwekerij De Plantage",
+            "price": 2.5,
+            "unit": "250 g"
+          }
+        ]
+      },
+      {
+        "category": "ui",
+        "name": "Knoflook",
+        "cultivar": "Thermidrome",
+        "latin": "Allium sativum",
+        "family": null,
+        "life": "annual",
+        "sowDepthCm": 4,
+        "spacingInRowCm": 12,
+        "spacingBetweenRowsCm": 25,
+        "heightCm": 50,
+        "sun": [
+          "full"
+        ],
+        "sowIndoorMonths": null,
+        "weeksIndoorBeforePlanting": null,
+        "sowOutdoorMonths": [
+          10,
+          11
+        ],
+        "plantOutMonths": null,
+        "germinationDays": [
+          20,
+          40
+        ],
+        "daysToFirstHarvest": 265,
+        "harvestWeeks": 3,
+        "harvestMonths": [
+          6,
+          7
+        ],
+        "maxYearsInBed": 1,
+        "notes": "Plant de grootste teentjes van de eigen oogst opnieuw — circulair.",
+        "actions": [],
+        "suppliers": [
+          {
+            "name": "Kwekerij De Plantage",
+            "price": 6.5,
+            "unit": "250 g"
+          },
+          {
+            "name": "Eigen zaad",
+            "price": 0,
+            "unit": null
+          }
+        ]
+      },
+      {
+        "category": "ui",
+        "name": "Prei",
+        "cultivar": "Blauwgroene Winter",
+        "latin": "Allium porrum",
+        "family": null,
+        "life": "annual",
+        "sowDepthCm": 1,
+        "spacingInRowCm": 15,
+        "spacingBetweenRowsCm": 30,
+        "heightCm": 60,
+        "sun": [
+          "full",
+          "half"
+        ],
+        "sowIndoorMonths": [
+          3,
+          4
+        ],
+        "weeksIndoorBeforePlanting": 10,
+        "sowOutdoorMonths": null,
+        "plantOutMonths": [
+          6,
+          7
+        ],
+        "germinationDays": [
+          10,
+          20
+        ],
+        "daysToFirstHarvest": 200,
+        "harvestWeeks": 16,
+        "harvestMonths": [
+          10,
+          3
+        ],
+        "maxYearsInBed": 1,
+        "notes": null,
+        "actions": [],
+        "suppliers": [
+          {
+            "name": "Vreeken's Zaden",
+            "price": 2.35,
+            "unit": "zakje 2 g"
+          }
+        ]
+      },
+      {
+        "category": "sla",
+        "name": "Pluksla",
+        "cultivar": "Lollo Rossa",
+        "latin": "Lactuca sativa",
+        "family": null,
+        "life": "annual",
+        "sowDepthCm": 0.5,
+        "spacingInRowCm": 25,
+        "spacingBetweenRowsCm": 25,
+        "heightCm": 25,
+        "sun": [
+          "full",
+          "half"
+        ],
+        "sowIndoorMonths": null,
+        "weeksIndoorBeforePlanting": null,
+        "sowOutdoorMonths": [
+          3,
+          8
+        ],
+        "plantOutMonths": null,
+        "germinationDays": [
+          4,
+          10
+        ],
+        "daysToFirstHarvest": 50,
+        "harvestWeeks": 6,
+        "harvestMonths": [
+          5,
+          10
+        ],
+        "maxYearsInBed": 1,
+        "notes": null,
+        "actions": [],
+        "suppliers": [
+          {
+            "name": "De Bolster",
+            "price": 2.45,
+            "unit": "zakje 1 g"
+          }
+        ]
+      },
+      {
+        "category": "sla",
+        "name": "Spinazie",
+        "cultivar": "Matador",
+        "latin": "Spinacia oleracea",
+        "family": "Amaranthaceae",
+        "life": "annual",
+        "sowDepthCm": 2,
+        "spacingInRowCm": 5,
+        "spacingBetweenRowsCm": 20,
+        "heightCm": 25,
+        "sun": [
+          "full",
+          "half"
+        ],
+        "sowIndoorMonths": null,
+        "weeksIndoorBeforePlanting": null,
+        "sowOutdoorMonths": [
+          3,
+          10
+        ],
+        "plantOutMonths": null,
+        "germinationDays": [
+          7,
+          14
+        ],
+        "daysToFirstHarvest": 50,
+        "harvestWeeks": 6,
+        "harvestMonths": [
+          4,
+          12
+        ],
+        "maxYearsInBed": 1,
+        "notes": "Schiet door in lange dagen: voorjaar of nazomer zaaien.",
+        "actions": [],
+        "suppliers": [
+          {
+            "name": "De Bolster",
+            "price": 2.25,
+            "unit": "zakje 25 g"
+          }
+        ]
+      },
+      {
+        "category": "pompoen",
+        "name": "Courgette",
+        "cultivar": "Black Beauty",
+        "latin": "Cucurbita pepo",
+        "family": null,
+        "life": "annual",
+        "sowDepthCm": 2,
+        "spacingInRowCm": 100,
+        "spacingBetweenRowsCm": 100,
+        "heightCm": 70,
+        "sun": [
+          "full"
+        ],
+        "sowIndoorMonths": [
+          4,
+          5
+        ],
+        "weeksIndoorBeforePlanting": 4,
+        "sowOutdoorMonths": null,
+        "plantOutMonths": [
+          5,
+          6
+        ],
+        "germinationDays": [
+          5,
+          10
+        ],
+        "daysToFirstHarvest": 65,
+        "harvestWeeks": 10,
+        "harvestMonths": [
+          7,
+          10
+        ],
+        "maxYearsInBed": 1,
+        "notes": null,
+        "actions": [],
+        "suppliers": [
+          {
+            "name": "De Bolster",
+            "price": 2.95,
+            "unit": "zakje 8 z."
+          },
+          {
+            "name": "Eigen zaad",
+            "price": 0,
+            "unit": null
+          }
+        ]
+      },
+      {
+        "category": "pompoen",
+        "name": "Pompoen",
+        "cultivar": "Red Kuri",
+        "latin": "Cucurbita maxima",
+        "family": null,
+        "life": "annual",
+        "sowDepthCm": 2,
+        "spacingInRowCm": 120,
+        "spacingBetweenRowsCm": 150,
+        "heightCm": 50,
+        "sun": [
+          "full"
+        ],
+        "sowIndoorMonths": [
+          4,
+          5
+        ],
+        "weeksIndoorBeforePlanting": 4,
+        "sowOutdoorMonths": null,
+        "plantOutMonths": [
+          5,
+          6
+        ],
+        "germinationDays": [
+          5,
+          10
+        ],
+        "daysToFirstHarvest": 120,
+        "harvestWeeks": 4,
+        "harvestMonths": [
+          9,
+          10
+        ],
+        "maxYearsInBed": 1,
+        "notes": "Mag over het pad kruipen. Bewaart tot maart.",
+        "actions": [],
+        "suppliers": [
+          {
+            "name": "Zaadgoed",
+            "price": 3.2,
+            "unit": "zakje 8 z."
+          },
+          {
+            "name": "Eigen zaad",
+            "price": 0,
+            "unit": null
+          }
+        ]
+      },
+      {
+        "category": "kruid",
+        "name": "Tijm",
+        "cultivar": "Thymus vulgaris",
+        "latin": "Thymus vulgaris",
+        "family": null,
+        "life": "perennial",
+        "sowDepthCm": 0.5,
+        "spacingInRowCm": 25,
+        "spacingBetweenRowsCm": 25,
+        "heightCm": 30,
+        "sun": [
+          "full"
+        ],
+        "sowIndoorMonths": [
+          3,
+          4
+        ],
+        "weeksIndoorBeforePlanting": 8,
+        "sowOutdoorMonths": null,
+        "plantOutMonths": [
+          5,
+          6
+        ],
+        "germinationDays": [
+          10,
+          20
+        ],
+        "daysToFirstHarvest": null,
+        "harvestWeeks": null,
+        "harvestMonths": [
+          5,
+          9
+        ],
+        "maxYearsInBed": 4,
+        "notes": "Meerjarig, houdt van droog en schraal. Na 4 jaar verjongen via stekken.",
+        "actions": [
+          {
+            "title": "Terugknippen na de bloei",
+            "month": 7,
+            "estimatedMinutes": 20
+          }
+        ],
+        "suppliers": [
+          {
+            "name": "De Bolster",
+            "price": 2.35,
+            "unit": "zakje 0,3 g"
+          }
+        ]
+      },
+      {
+        "category": "kruid",
+        "name": "Basilicum",
+        "cultivar": "Genovese",
+        "latin": "Ocimum basilicum",
+        "family": null,
+        "life": "annual",
+        "sowDepthCm": 0.5,
+        "spacingInRowCm": 25,
+        "spacingBetweenRowsCm": 25,
+        "heightCm": 40,
+        "sun": [
+          "full"
+        ],
+        "sowIndoorMonths": [
+          3,
+          5
+        ],
+        "weeksIndoorBeforePlanting": 6,
+        "sowOutdoorMonths": null,
+        "plantOutMonths": [
+          5,
+          6
+        ],
+        "germinationDays": [
+          7,
+          14
+        ],
+        "daysToFirstHarvest": 70,
+        "harvestWeeks": 10,
+        "harvestMonths": [
+          6,
+          9
+        ],
+        "maxYearsInBed": 1,
+        "notes": null,
+        "actions": [],
+        "suppliers": [
+          {
+            "name": "De Bolster",
+            "price": 2.35,
+            "unit": "zakje 1 g"
+          }
+        ]
+      },
+      {
+        "category": "kruid",
+        "name": "Goudsbloem",
+        "cultivar": "Calendula officinalis",
+        "latin": "Calendula officinalis",
+        "family": "Asteraceae",
+        "life": "annual",
+        "sowDepthCm": 1,
+        "spacingInRowCm": 25,
+        "spacingBetweenRowsCm": 30,
+        "heightCm": 50,
+        "sun": [
+          "full",
+          "half"
+        ],
+        "sowIndoorMonths": null,
+        "weeksIndoorBeforePlanting": null,
+        "sowOutdoorMonths": [
+          3,
+          6
+        ],
+        "plantOutMonths": null,
+        "germinationDays": [
+          7,
+          14
+        ],
+        "daysToFirstHarvest": 60,
+        "harvestWeeks": 14,
+        "harvestMonths": [
+          6,
+          10
+        ],
+        "maxYearsInBed": 1,
+        "notes": "Lokt bestuivers en sluipwespen, eetbare bloemen. Zaait zichzelf uit.",
+        "actions": [],
+        "suppliers": [
+          {
+            "name": "Eigen zaad",
+            "price": 0,
+            "unit": null
+          }
+        ]
+      },
+      {
+        "category": "groen",
+        "name": "Phacelia",
+        "cultivar": "Phacelia tanacetifolia",
+        "latin": "Phacelia tanacetifolia",
+        "family": null,
+        "life": "annual",
+        "sowDepthCm": 1,
+        "spacingInRowCm": null,
+        "spacingBetweenRowsCm": null,
+        "heightCm": 70,
+        "sun": [
+          "full",
+          "half"
+        ],
+        "sowIndoorMonths": null,
+        "weeksIndoorBeforePlanting": null,
+        "sowOutdoorMonths": [
+          3,
+          9
+        ],
+        "plantOutMonths": null,
+        "germinationDays": [
+          7,
+          14
+        ],
+        "daysToFirstHarvest": 60,
+        "harvestWeeks": 4,
+        "harvestMonths": [
+          5,
+          11
+        ],
+        "maxYearsInBed": 1,
+        "notes": "Groenbemester, breedwerpig zaaien. Bijenplant; maaien en laten liggen als mulch.",
+        "actions": [],
+        "suppliers": [
+          {
+            "name": "De Bolster",
+            "price": 4.5,
+            "unit": "250 g"
+          }
+        ]
+      },
+      {
+        "category": "groen",
+        "name": "Witte klaver",
+        "cultivar": "Trifolium repens",
+        "latin": "Trifolium repens",
+        "family": "Fabaceae",
+        "life": "annual",
+        "sowDepthCm": 0.5,
+        "spacingInRowCm": null,
+        "spacingBetweenRowsCm": null,
+        "heightCm": 20,
+        "sun": [
+          "full",
+          "half"
+        ],
+        "sowIndoorMonths": null,
+        "weeksIndoorBeforePlanting": null,
+        "sowOutdoorMonths": [
+          4,
+          9
+        ],
+        "plantOutMonths": null,
+        "germinationDays": [
+          7,
+          14
+        ],
+        "daysToFirstHarvest": 180,
+        "harvestWeeks": 4,
+        "harvestMonths": [
+          3,
+          5
+        ],
+        "maxYearsInBed": 1,
+        "notes": "Overwinterende groenbemester, bindt stikstof.",
+        "actions": [],
+        "suppliers": [
+          {
+            "name": "Vreeken's Zaden",
+            "price": 5.95,
+            "unit": "100 g"
+          }
+        ]
+      },
+      {
+        "category": "aardbei",
+        "name": "Aardbei",
+        "cultivar": "Elsanta",
+        "latin": "Fragaria × ananassa",
+        "family": null,
+        "life": "perennial",
+        "sowDepthCm": 0,
+        "spacingInRowCm": 30,
+        "spacingBetweenRowsCm": 50,
+        "heightCm": 25,
+        "sun": [
+          "full"
+        ],
+        "sowIndoorMonths": null,
+        "weeksIndoorBeforePlanting": null,
+        "sowOutdoorMonths": null,
+        "plantOutMonths": [
+          7,
+          9
+        ],
+        "germinationDays": null,
+        "daysToFirstHarvest": null,
+        "harvestWeeks": null,
+        "harvestMonths": [
+          6,
+          7
+        ],
+        "maxYearsInBed": 2,
+        "notes": "Vernieuwen na 2 jaar met eigen uitlopers op een nieuw bed.",
+        "actions": [
+          {
+            "title": "Stro onderleggen",
+            "month": 5,
+            "estimatedMinutes": 20
+          },
+          {
+            "title": "Uitlopers oppotten / verwijderen",
+            "month": 7,
+            "estimatedMinutes": 40
+          }
+        ],
+        "suppliers": [
+          {
+            "name": "Kwekerij De Plantage",
+            "price": 1.2,
+            "unit": "per plant"
+          },
+          {
+            "name": "Eigen zaad",
+            "price": 0,
+            "unit": "uitlopers"
+          }
+        ]
+      },
+      {
+        "category": "struik",
+        "name": "Rode bes",
+        "cultivar": "Jonkheer van Tets",
+        "latin": "Ribes rubrum",
+        "family": null,
+        "life": "perennial",
+        "sowDepthCm": 0,
+        "spacingInRowCm": 150,
+        "spacingBetweenRowsCm": 150,
+        "heightCm": 150,
+        "sun": [
+          "full",
+          "half"
+        ],
+        "sowIndoorMonths": null,
+        "weeksIndoorBeforePlanting": null,
+        "sowOutdoorMonths": null,
+        "plantOutMonths": [
+          11,
+          3
+        ],
+        "germinationDays": null,
+        "daysToFirstHarvest": null,
+        "harvestWeeks": null,
+        "harvestMonths": [
+          7,
+          7
+        ],
+        "maxYearsInBed": null,
+        "notes": "Stekken in de winter — gratis nieuwe struiken.",
+        "actions": [
+          {
+            "title": "Wintersnoei + stekken",
+            "month": 2,
+            "estimatedMinutes": 45
+          }
+        ],
+        "suppliers": [
+          {
+            "name": "Kwekerij De Plantage",
+            "price": 8.95,
+            "unit": "per struik"
+          }
+        ]
+      }
+    ]
+  },
+  "lots": [
+    {
+      "variety": "Oranje wortel",
+      "cultivar": "Nantaise 2",
+      "supplier": "De Bolster",
+      "quantity": 3,
+      "unit": "g",
+      "boughtOn": "2026-01-20",
+      "bestBefore": "2028-12-31"
+    },
+    {
+      "variety": "Paarse wortel",
+      "cultivar": "Purple Haze",
+      "supplier": "Vreeken's Zaden",
+      "quantity": 1,
+      "unit": "g",
+      "boughtOn": "2025-02-10",
+      "bestBefore": "2027-06-30"
+    },
+    {
+      "variety": "Pastinaak",
+      "cultivar": "Halflange Witte",
+      "supplier": "De Bolster",
+      "quantity": 2,
+      "unit": "g",
+      "boughtOn": "2025-01-18",
+      "bestBefore": "2026-12-31"
+    },
+    {
+      "variety": "Kerstomaat",
+      "cultivar": "Gardener's Delight",
+      "supplier": "Eigen zaad",
+      "quantity": 40,
+      "unit": "zaden",
+      "boughtOn": "2025-09-15",
+      "bestBefore": "2029-09-30"
+    },
+    {
+      "variety": "Heirloom tomaat",
+      "cultivar": "Coeur de Boeuf",
+      "supplier": "Zaadgoed",
+      "quantity": 12,
+      "unit": "zaden",
+      "boughtOn": "2026-02-02",
+      "bestBefore": "2029-12-31"
+    },
+    {
+      "variety": "Heirloom tomaat",
+      "cultivar": "Black Krim",
+      "supplier": "Eigen zaad",
+      "quantity": 25,
+      "unit": "zaden",
+      "boughtOn": "2026-09-10",
+      "bestBefore": "2030-09-30"
+    },
+    {
+      "variety": "Stokboon",
+      "cultivar": "Blauhilde",
+      "supplier": "Eigen zaad",
+      "quantity": 180,
+      "unit": "g",
+      "boughtOn": "2025-10-01",
+      "bestBefore": "2028-10-01"
+    },
+    {
+      "variety": "Stamboon",
+      "cultivar": "Saxa",
+      "supplier": "De Bolster",
+      "quantity": 60,
+      "unit": "g",
+      "boughtOn": "2026-01-20",
+      "bestBefore": "2028-12-31"
+    },
+    {
+      "variety": "Boerenkool",
+      "cultivar": "Westlandse Winter",
+      "supplier": "Zaadgoed",
+      "quantity": 2,
+      "unit": "g",
+      "boughtOn": "2026-02-02",
+      "bestBefore": "2029-12-31"
+    },
+    {
+      "variety": "Spruitkool",
+      "cultivar": "Groninger",
+      "supplier": "De Bolster",
+      "quantity": 1,
+      "unit": "g",
+      "boughtOn": "2024-12-10",
+      "bestBefore": "2026-11-30"
+    },
+    {
+      "variety": "Knoflook",
+      "cultivar": "Thermidrome",
+      "supplier": "Eigen oogst",
+      "quantity": 0.5,
+      "unit": "kg",
+      "boughtOn": "2026-07-20",
+      "bestBefore": "2027-04-30"
+    },
+    {
+      "variety": "Prei",
+      "cultivar": "Blauwgroene Winter",
+      "supplier": "Vreeken's Zaden",
+      "quantity": 1,
+      "unit": "g",
+      "boughtOn": "2025-02-10",
+      "bestBefore": "2026-06-30"
+    },
+    {
+      "variety": "Pluksla",
+      "cultivar": "Lollo Rossa",
+      "supplier": "De Bolster",
+      "quantity": 2,
+      "unit": "g",
+      "boughtOn": "2026-01-20",
+      "bestBefore": "2028-12-31"
+    },
+    {
+      "variety": "Spinazie",
+      "cultivar": "Matador",
+      "supplier": "De Bolster",
+      "quantity": 25,
+      "unit": "g",
+      "boughtOn": "2025-01-18",
+      "bestBefore": "2027-12-31"
+    },
+    {
+      "variety": "Courgette",
+      "cultivar": "Black Beauty",
+      "supplier": "Eigen zaad",
+      "quantity": 8,
+      "unit": "zaden",
+      "boughtOn": "2025-10-05",
+      "bestBefore": "2030-10-31"
+    },
+    {
+      "variety": "Pompoen",
+      "cultivar": "Red Kuri",
+      "supplier": "Eigen zaad",
+      "quantity": 15,
+      "unit": "zaden",
+      "boughtOn": "2026-10-10",
+      "bestBefore": "2031-10-31"
+    },
+    {
+      "variety": "Basilicum",
+      "cultivar": "Genovese",
+      "supplier": "De Bolster",
+      "quantity": 1,
+      "unit": "g",
+      "boughtOn": "2026-01-20",
+      "bestBefore": "2029-12-31"
+    },
+    {
+      "variety": "Goudsbloem",
+      "cultivar": "Calendula officinalis",
+      "supplier": "Eigen zaad",
+      "quantity": 20,
+      "unit": "g",
+      "boughtOn": "2025-09-20",
+      "bestBefore": "2028-09-30"
+    },
+    {
+      "variety": "Phacelia",
+      "cultivar": "Phacelia tanacetifolia",
+      "supplier": "De Bolster",
+      "quantity": 250,
+      "unit": "g",
+      "boughtOn": "2025-01-18",
+      "bestBefore": "2028-12-31"
+    },
+    {
+      "variety": "Witte klaver",
+      "cultivar": "Trifolium repens",
+      "supplier": "Vreeken's Zaden",
+      "quantity": 100,
+      "unit": "g",
+      "boughtOn": "2026-02-14",
+      "bestBefore": "2029-12-31"
+    },
+    {
+      "variety": "Aardbei",
+      "cultivar": "Elsanta",
+      "supplier": "Eigen plant",
+      "quantity": 24,
+      "unit": "uitlopers",
+      "boughtOn": "2026-08-01",
+      "bestBefore": "2026-11-15"
+    }
+  ]
+}
