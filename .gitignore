@@ -13,8 +13,8 @@ coverage/
 *.tsbuildinfo
 .vite-plus/
 
-# Runtime data (SQLite database, uploads)
-data/
+# Runtime data (SQLite database, uploads). Not "data/": that would also hide the Data/ source folders on Windows.
+app-data/
 *.db
 *.db-shm
 *.db-wal

@@ -43,7 +43,7 @@ public sealed class StorageOptions
     public const string Section = "Storage";
 
     /// <summary>Directory for the SQLite database and uploaded files. Relative paths resolve from the working directory.</summary>
-    public string DataDir { get; set; } = "data";
+    public string DataDir { get; set; } = "app-data";
 
     public string FullDataDir => Path.GetFullPath(DataDir);
     public string DatabasePath => Path.Combine(FullDataDir, "complot.db");

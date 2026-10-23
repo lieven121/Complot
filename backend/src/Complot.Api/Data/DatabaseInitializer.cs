@@ -1,0 +1,26 @@
+using Complot.Api.Hosting;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+
+namespace Complot.Api.Data;
+
+internal sealed class DatabaseInitializer(
+    ComplotDbContext db,
+    IOptions<StorageOptions> storage,
+    IOptions<SeedOptions> seed,
+    ILogger<DatabaseInitializer> logger)
+{
+    public async Task InitializeAsync(CancellationToken cancellationToken = default)
+    {
+        Directory.CreateDirectory(storage.Value.FullDataDir);
+        await db.Database.MigrateAsync(cancellationToken);
+        // WAL gives concurrent readers while writing; the setting is stored in the database file.
+        await db.Database.ExecuteSqlRawAsync("PRAGMA journal_mode=WAL;", cancellationToken);
+
+        if (seed.Value.DemoData && !await db.Families.AnyAsync(cancellationToken))
+        {
+            await Seed.DemoCatalog.AddToAsync(db, cancellationToken);
+            logger.LogInformation("Seeded the demo plant catalog");
+        }
+    }
+}
