@@ -644,6 +644,186 @@ namespace Complot.Api.Data.Migrations
                     b.ToTable("Plantings");
                 });
 
+            modelBuilder.Entity("Complot.Domain.Work.ManualTask", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("BaseMinutes")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid?>("BedId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly>("DueOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("SiteId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BedId");
+
+                    b.HasIndex("SiteId");
+
+                    b.ToTable("ManualTasks");
+                });
+
+            modelBuilder.Entity("Complot.Domain.Work.Note", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("BedId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal?>("HarvestQuantity")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("HarvestUnit")
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("PersonId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PhotoFileName")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("PlantingId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("SiteId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Tag")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("TreeId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BedId");
+
+                    b.HasIndex("PersonId");
+
+                    b.HasIndex("PlantingId");
+
+                    b.HasIndex("TreeId");
+
+                    b.HasIndex("SiteId", "Date");
+
+                    b.ToTable("Notes");
+                });
+
+            modelBuilder.Entity("Complot.Domain.Work.Person", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasMaxLength(9)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("People", (string)null);
+                });
+
+            modelBuilder.Entity("Complot.Domain.Work.TaskState", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("ActualMinutes")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid?>("AssigneeId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("BaseMinutesAtCompletion")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Done")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateOnly?>("DoneOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("EstimateOverride")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("KindAtCompletion")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("ScheduledStart")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SourceKey")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssigneeId");
+
+                    b.HasIndex("SourceKey")
+                        .IsUnique();
+
+                    b.ToTable("TaskStates");
+                });
+
             modelBuilder.Entity("Complot.Domain.Catalog.InventoryLot", b =>
                 {
                     b.HasOne("Complot.Domain.Catalog.Supplier", "Supplier")
@@ -883,6 +1063,56 @@ namespace Complot.Api.Data.Migrations
                     b.Navigation("Bed");
 
                     b.Navigation("Variety");
+                });
+
+            modelBuilder.Entity("Complot.Domain.Work.ManualTask", b =>
+                {
+                    b.HasOne("Complot.Domain.Garden.Bed", null)
+                        .WithMany()
+                        .HasForeignKey("BedId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Complot.Domain.Garden.Site", null)
+                        .WithMany()
+                        .HasForeignKey("SiteId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Complot.Domain.Work.Note", b =>
+                {
+                    b.HasOne("Complot.Domain.Garden.Bed", null)
+                        .WithMany()
+                        .HasForeignKey("BedId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Complot.Domain.Work.Person", null)
+                        .WithMany()
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Complot.Domain.Plantings.Planting", null)
+                        .WithMany()
+                        .HasForeignKey("PlantingId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Complot.Domain.Garden.Site", null)
+                        .WithMany()
+                        .HasForeignKey("SiteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Complot.Domain.Garden.Tree", null)
+                        .WithMany()
+                        .HasForeignKey("TreeId")
+                        .OnDelete(DeleteBehavior.SetNull);
+                });
+
+            modelBuilder.Entity("Complot.Domain.Work.TaskState", b =>
+                {
+                    b.HasOne("Complot.Domain.Work.Person", null)
+                        .WithMany()
+                        .HasForeignKey("AssigneeId")
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 #pragma warning restore 612, 618
         }

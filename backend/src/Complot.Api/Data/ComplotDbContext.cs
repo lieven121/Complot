@@ -1,6 +1,7 @@
 using Complot.Domain.Catalog;
 using Complot.Domain.Garden;
 using Complot.Domain.Plantings;
+using Complot.Domain.Work;
 using Microsoft.EntityFrameworkCore;
 
 namespace Complot.Api.Data;
@@ -21,6 +22,11 @@ public sealed class ComplotDbContext(DbContextOptions<ComplotDbContext> options)
     public DbSet<Tree> Trees => Set<Tree>();
 
     public DbSet<Planting> Plantings => Set<Planting>();
+
+    public DbSet<Person> People => Set<Person>();
+    public DbSet<ManualTask> ManualTasks => Set<ManualTask>();
+    public DbSet<TaskState> TaskStates => Set<TaskState>();
+    public DbSet<Note> Notes => Set<Note>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) =>
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ComplotDbContext).Assembly);

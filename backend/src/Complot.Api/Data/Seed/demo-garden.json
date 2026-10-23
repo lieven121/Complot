@@ -1235,5 +1235,241 @@
       "harvestTo": "2028-02-01",
       "clearOn": "2028-02-08"
     }
+  ],
+  "people": [
+    {
+      "key": "lien",
+      "name": "Lien",
+      "color": "#c2833a"
+    },
+    {
+      "key": "tom",
+      "name": "Tom",
+      "color": "#3a6ea5"
+    },
+    {
+      "key": "vrijw",
+      "name": "Vrijwilligers",
+      "color": "#8e6bb8"
+    }
+  ],
+  "notes": [
+    {
+      "bed": "K2",
+      "tree": null,
+      "planting": {
+        "bed": "K2",
+        "variety": "Heirloom tomaat",
+        "cultivar": "Black Krim",
+        "sowOn": "2026-02-25"
+      },
+      "person": "lien",
+      "date": "2026-07-28",
+      "tag": "disease",
+      "text": "Eerste vlekken van phytophthora (aardappelziekte) op de onderste bladeren van Black Krim. Aangetaste bladeren verwijderd, serre meer verluchten.",
+      "harvestQuantity": null,
+      "harvestUnit": null
+    },
+    {
+      "bed": "K2",
+      "tree": null,
+      "planting": {
+        "bed": "K2",
+        "variety": "Heirloom tomaat",
+        "cultivar": "Black Krim",
+        "sowOn": "2026-02-25"
+      },
+      "person": "tom",
+      "date": "2026-08-05",
+      "tag": "disease",
+      "text": "Phytophthora breidt uit; Coeur de Boeuf minder getroffen. Volgend jaar een resistenter ras overwegen.",
+      "harvestQuantity": null,
+      "harvestUnit": null
+    },
+    {
+      "bed": "A2",
+      "tree": null,
+      "planting": {
+        "bed": "A2",
+        "variety": "Boerenkool",
+        "cultivar": "Westlandse Winter",
+        "sowOn": "2026-05-01"
+      },
+      "person": "lien",
+      "date": "2026-06-12",
+      "tag": "pest",
+      "text": "Koolwitjes gezien — insectengaas strakker vastgezet.",
+      "harvestQuantity": null,
+      "harvestUnit": null
+    },
+    {
+      "bed": "B3",
+      "tree": null,
+      "planting": {
+        "bed": "B3",
+        "variety": "Pompoen",
+        "cultivar": "Red Kuri",
+        "sowOn": "2026-04-25"
+      },
+      "person": "tom",
+      "date": "2026-09-02",
+      "tag": "harvest",
+      "text": "12 Red Kuri-pompoenen geoogst, ± 14 kg. Zaad van de 2 mooiste bewaard.",
+      "harvestQuantity": 14,
+      "harvestUnit": "kg"
+    },
+    {
+      "bed": "A3",
+      "tree": null,
+      "planting": null,
+      "person": "lien",
+      "date": "2026-04-02",
+      "tag": "soil",
+      "text": "Bodem nog koud en nat; zaaien van wortels 1 week uitgesteld.",
+      "harvestQuantity": null,
+      "harvestUnit": null
+    },
+    {
+      "bed": "B2",
+      "tree": null,
+      "planting": {
+        "bed": "B2",
+        "variety": "Knoflook",
+        "cultivar": "Thermidrome",
+        "sowOn": "2026-10-18"
+      },
+      "person": "lien",
+      "date": "2026-10-20",
+      "tag": "observation",
+      "text": "Knoflook staat op, mooie rijen.",
+      "harvestQuantity": null,
+      "harvestUnit": null
+    },
+    {
+      "bed": "K1",
+      "tree": null,
+      "planting": {
+        "bed": "K1",
+        "variety": "Kerstomaat",
+        "cultivar": "Gardener's Delight",
+        "sowOn": "2026-02-20"
+      },
+      "person": "lien",
+      "date": "2026-08-20",
+      "tag": "harvest",
+      "text": "Kerstomaten, beste week tot nu toe.",
+      "harvestQuantity": 6.5,
+      "harvestUnit": "kg"
+    },
+    {
+      "bed": "K2",
+      "tree": null,
+      "planting": {
+        "bed": "K2",
+        "variety": "Heirloom tomaat",
+        "cultivar": "Coeur de Boeuf",
+        "sowOn": "2026-02-25"
+      },
+      "person": "tom",
+      "date": "2026-09-01",
+      "tag": "harvest",
+      "text": "Coeur de Boeuf — ondanks phytophthora een goede oogst.",
+      "harvestQuantity": 9,
+      "harvestUnit": "kg"
+    },
+    {
+      "bed": "A2",
+      "tree": null,
+      "planting": {
+        "bed": "A2",
+        "variety": "Boerenkool",
+        "cultivar": "Westlandse Winter",
+        "sowOn": "2026-05-01"
+      },
+      "person": "lien",
+      "date": "2026-10-15",
+      "tag": "harvest",
+      "text": "Eerste boerenkool, nog voor de vorst.",
+      "harvestQuantity": 3,
+      "harvestUnit": "kg"
+    },
+    {
+      "bed": "V1",
+      "tree": null,
+      "planting": {
+        "bed": "V1",
+        "variety": "Aardappel",
+        "cultivar": "Charlotte",
+        "sowOn": "2026-04-15"
+      },
+      "person": "vrijw",
+      "date": "2026-07-25",
+      "tag": "harvest",
+      "text": "Charlotte gerooid op de volkstuin, mooie maat.",
+      "harvestQuantity": 28,
+      "harvestUnit": "kg"
+    },
+    {
+      "bed": null,
+      "tree": "Appelboom",
+      "planting": null,
+      "person": "tom",
+      "date": "2026-09-15",
+      "tag": "harvest",
+      "text": "± 40 kg Elstar geplukt. Onderste takken zwaar beladen — in februari wat hoger snoeien.",
+      "harvestQuantity": 40,
+      "harvestUnit": "kg"
+    }
+  ],
+  "manualTasks": [
+    {
+      "title": "Compost omzetten (bak 2 → 3)",
+      "offsetDays": 1,
+      "baseMinutes": 90,
+      "bed": null,
+      "person": "tom"
+    },
+    {
+      "title": "Bladeren rapen voor bladcompost",
+      "offsetDays": -3,
+      "baseMinutes": 60,
+      "bed": null,
+      "person": "lien"
+    },
+    {
+      "title": "Regentonnen aftappen voor de winter",
+      "offsetDays": 23,
+      "baseMinutes": 30,
+      "bed": null,
+      "person": null
+    },
+    {
+      "title": "Zaadbestelling volgend seizoen plaatsen",
+      "offsetDays": 39,
+      "baseMinutes": 45,
+      "bed": null,
+      "person": "lien"
+    },
+    {
+      "title": "Vliesdoek klaarleggen bij de serre",
+      "offsetDays": 13,
+      "baseMinutes": 15,
+      "bed": null,
+      "person": null
+    },
+    {
+      "title": "Houtsnippers aanvullen op het hoofdpad",
+      "offsetDays": 16,
+      "baseMinutes": 120,
+      "bed": null,
+      "person": "vrijw"
+    },
+    {
+      "title": "Serre verluchten & watergift controleren",
+      "offsetDays": 2,
+      "baseMinutes": 15,
+      "bed": "K1",
+      "person": "lien"
+    }
   ]
 }

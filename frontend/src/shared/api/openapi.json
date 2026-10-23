@@ -1281,6 +1281,687 @@
           }
         }
       }
+    },
+    "/api/people": {
+      "get": {
+        "tags": [
+          "People"
+        ],
+        "operationId": "ListPeople",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "People"
+        ],
+        "operationId": "CreatePerson",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/people/{id}": {
+      "put": {
+        "tags": [
+          "People"
+        ],
+        "operationId": "UpdatePerson",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "People"
+        ],
+        "operationId": "DeletePerson",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/api/tasks": {
+      "get": {
+        "tags": [
+          "Tasks"
+        ],
+        "operationId": "ListTasks",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "siteId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TaskDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tasks/estimates": {
+      "get": {
+        "tags": [
+          "Tasks"
+        ],
+        "operationId": "GetTaskEstimates",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EstimateFactorDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tasks/{key}/state": {
+      "put": {
+        "tags": [
+          "Tasks"
+        ],
+        "operationId": "SetTaskState",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskStateInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tasks/{key}/complete": {
+      "post": {
+        "tags": [
+          "Tasks"
+        ],
+        "operationId": "CompleteTask",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompleteTaskInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tasks/{key}/reopen": {
+      "post": {
+        "tags": [
+          "Tasks"
+        ],
+        "operationId": "ReopenTask",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/manual-tasks": {
+      "post": {
+        "tags": [
+          "Tasks"
+        ],
+        "operationId": "CreateManualTask",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManualTaskInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/manual-tasks/{id}": {
+      "put": {
+        "tags": [
+          "Tasks"
+        ],
+        "operationId": "UpdateManualTask",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManualTaskInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Tasks"
+        ],
+        "operationId": "DeleteManualTask",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/api/notes": {
+      "get": {
+        "tags": [
+          "Notes"
+        ],
+        "operationId": "ListNotes",
+        "parameters": [
+          {
+            "name": "siteId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "bedId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "treeId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "varietyId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NoteDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Notes"
+        ],
+        "operationId": "CreateNote",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NoteInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoteDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/notes/{id}": {
+      "put": {
+        "tags": [
+          "Notes"
+        ],
+        "operationId": "UpdateNote",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NoteInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoteDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Notes"
+        ],
+        "operationId": "DeleteNote",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/api/notes/{id}/photo": {
+      "put": {
+        "tags": [
+          "Notes"
+        ],
+        "operationId": "UploadNotePhoto",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "file"
+                ],
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "$ref": "#/components/schemas/IFormFile"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Notes"
+        ],
+        "operationId": "GetNotePhoto",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1470,6 +2151,26 @@
         },
         "additionalProperties": false
       },
+      "CompleteTaskInput": {
+        "required": [
+          "actualMinutes",
+          "doneOn"
+        ],
+        "type": "object",
+        "properties": {
+          "actualMinutes": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "doneOn": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "DayRangeDto": {
         "required": [
           "min",
@@ -1500,6 +2201,37 @@
           "params": {
             "type": "object",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EstimateFactorDto": {
+        "required": [
+          "kind",
+          "factor",
+          "samples",
+          "baseMinutes",
+          "perSquareMeter"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "$ref": "#/components/schemas/TaskKind"
+          },
+          "factor": {
+            "type": "number",
+            "format": "double"
+          },
+          "samples": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "baseMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "perSquareMeter": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -1857,6 +2589,10 @@
           "shed"
         ]
       },
+      "IFormFile": {
+        "type": "string",
+        "format": "binary"
+      },
       "ImportReport": {
         "required": [
           "committed",
@@ -2043,6 +2779,46 @@
           "expired"
         ]
       },
+      "ManualTaskInput": {
+        "required": [
+          "siteId",
+          "bedId",
+          "title",
+          "dueOn",
+          "baseMinutes",
+          "assigneeId"
+        ],
+        "type": "object",
+        "properties": {
+          "siteId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "bedId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "title": {
+            "type": "string"
+          },
+          "dueOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "baseMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "assigneeId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "MeDto": {
         "required": [
           "authMode",
@@ -2087,6 +2863,153 @@
         },
         "additionalProperties": false
       },
+      "NoteDto": {
+        "required": [
+          "id",
+          "siteId",
+          "bedId",
+          "treeId",
+          "plantingId",
+          "varietyId",
+          "personId",
+          "date",
+          "tag",
+          "text",
+          "harvestQuantity",
+          "harvestUnit",
+          "hasPhoto"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "siteId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "bedId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "treeId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "plantingId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "varietyId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "personId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "tag": {
+            "$ref": "#/components/schemas/NoteTag"
+          },
+          "text": {
+            "type": "string"
+          },
+          "harvestQuantity": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "harvestUnit": {
+            "type": "string",
+            "nullable": true
+          },
+          "hasPhoto": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "NoteInput": {
+        "required": [
+          "siteId",
+          "bedId",
+          "treeId",
+          "plantingId",
+          "personId",
+          "date",
+          "tag",
+          "text",
+          "harvestQuantity",
+          "harvestUnit"
+        ],
+        "type": "object",
+        "properties": {
+          "siteId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "bedId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "treeId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "plantingId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "personId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "tag": {
+            "$ref": "#/components/schemas/NoteTag"
+          },
+          "text": {
+            "type": "string"
+          },
+          "harvestQuantity": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "harvestUnit": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NoteTag": {
+        "enum": [
+          "observation",
+          "disease",
+          "pest",
+          "harvest",
+          "soil",
+          "weather"
+        ]
+      },
       "PathDto": {
         "required": [
           "id",
@@ -2119,6 +3042,43 @@
           "pavers",
           "gravel"
         ]
+      },
+      "PersonDto": {
+        "required": [
+          "id",
+          "name",
+          "color"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PersonInput": {
+        "required": [
+          "name",
+          "color"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
       },
       "PhaseSegmentDto": {
         "required": [
@@ -2588,6 +3548,143 @@
           },
           "notes": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TaskDto": {
+        "required": [
+          "key",
+          "kind",
+          "date",
+          "siteId",
+          "bedId",
+          "treeId",
+          "plantingId",
+          "subject",
+          "title",
+          "baseMinutes",
+          "estimateMinutes",
+          "done",
+          "doneOn",
+          "actualMinutes",
+          "assigneeId",
+          "estimateOverride",
+          "scheduledStart"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/TaskKind"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "siteId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "bedId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "treeId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "plantingId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "subject": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "baseMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "estimateMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "done": {
+            "type": "boolean"
+          },
+          "doneOn": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "actualMinutes": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "assigneeId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "estimateOverride": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "scheduledStart": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TaskKind": {
+        "enum": [
+          "sowIndoor",
+          "sow",
+          "plantOut",
+          "plant",
+          "harvest",
+          "clear",
+          "care",
+          "custom"
+        ]
+      },
+      "TaskStateInput": {
+        "required": [
+          "assigneeId",
+          "estimateOverride",
+          "scheduledStart"
+        ],
+        "type": "object",
+        "properties": {
+          "assigneeId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "estimateOverride": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "scheduledStart": {
+            "type": "string",
+            "format": "date-time",
             "nullable": true
           }
         },
@@ -3186,6 +4283,15 @@
     },
     {
       "name": "Sites"
+    },
+    {
+      "name": "People"
+    },
+    {
+      "name": "Tasks"
+    },
+    {
+      "name": "Notes"
     }
   ]
 }
