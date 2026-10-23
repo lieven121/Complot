@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Complot.Domain/Complot.Domain.csproj" />
+    <Project Path="src/Complot.Api/Complot.Api.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Complot.Domain.Tests/Complot.Domain.Tests.csproj" />
+    <Project Path="tests/Complot.Api.Tests/Complot.Api.Tests.csproj" />
+  </Folder>
+</Solution>
