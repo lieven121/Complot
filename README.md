@@ -54,6 +54,15 @@ cd frontend && vp run verify       # vue-tsc (templates too), format + lint, uni
 | `Storage__DataDir` | `app-data` (`/data` in Docker) | SQLite database and uploaded photos |
 | `Seed__DemoData` | `true` in Development | Fill an empty database with the demo catalog and garden |
 | `Auth__Oidc__Authority`, `Auth__Oidc__ClientId`, `Auth__Oidc__ClientSecret` | empty | OpenID Connect sign-in; empty = open (internal use) |
+| `Auth__Admins` | empty | With sign-in: comma-separated e-mail addresses that are always admin |
+
+### Users and access
+
+Without OIDC everybody has full access. With OIDC, the addresses in `Auth__Admins` are admins. On the **Beheer** page
+admins create, archive and delete locations, invite users by e-mail and give them *view* or *edit* access per
+location (the invitation is linked at the first sign-in). Anyone else who signs in sees "waiting for access" and shows
+up on that page. Changing shared data (catalog, people) needs edit access to at least one location. An archived
+location is hidden and read-only; only an archived location can be deleted, which removes everything on it.
 
 ## Docker
 
