@@ -1,5 +1,7 @@
 {
-  "app": { "subtitle": "tuinplanner" },
+  "app": {
+    "subtitle": "tuinplanner"
+  },
   "nav": {
     "label": "Hoofdnavigatie",
     "map": "Tuinkaart",
@@ -9,7 +11,11 @@
     "tools": "Gereedschap",
     "costs": "Kosten"
   },
-  "language": { "label": "Taal", "nl-BE": "Nederlands (België)", "en": "English" },
+  "language": {
+    "label": "Taal",
+    "nl-BE": "Nederlands (België)",
+    "en": "English"
+  },
   "common": {
     "comingSoon": "Dit onderdeel komt in een volgende fase.",
     "applicable": "Van toepassing",
@@ -41,11 +47,28 @@
     "daysUnit": "dagen",
     "weeksUnit": "weken",
     "yearsUnit": "jaar",
-    "minutesUnit": "min"
+    "minutesUnit": "min",
+    "close": "Sluiten",
+    "duration": {
+      "minutes": "{m} min",
+      "hours": "{h}u{m}"
+    }
   },
-  "sun": { "full": "☀️ Volle zon", "half": "⛅ Halfschaduw", "shade": "☁️ Schaduw" },
-  "life": { "annual": "Eenjarig", "biennial": "Tweejarig", "perennial": "Meerjarig" },
-  "lotStatus": { "ok": "OK", "useSoon": "Snel gebruiken", "expired": "Vervallen" },
+  "sun": {
+    "full": "☀️ Volle zon",
+    "half": "⛅ Halfschaduw",
+    "shade": "☁️ Schaduw"
+  },
+  "life": {
+    "annual": "Eenjarig",
+    "biennial": "Tweejarig",
+    "perennial": "Meerjarig"
+  },
+  "lotStatus": {
+    "ok": "OK",
+    "useSoon": "Snel gebruiken",
+    "expired": "Vervallen"
+  },
   "validation": {
     "invalid": "Ongeldige waarde.",
     "notEmpty": "Verplicht veld.",
@@ -66,7 +89,17 @@
     "neighbourBothGoodAndBad": "Een categorie kan niet tegelijk goede en slechte buur zijn.",
     "duplicateSupplier": "Elke leverancier maar één keer.",
     "pair": "Verwacht twee getallen, zoals [3, 6].",
-    "invalidValue": "Ongeldige waarde \"{value}\"."
+    "invalidValue": "Ongeldige waarde \"{value}\".",
+    "unknownBed": "Onbekend bed.",
+    "unknownPerson": "Onbekende persoon.",
+    "unknownSite": "Onbekende locatie.",
+    "unknownTree": "Onbekende boom.",
+    "unknownPlanting": "Onbekende teelt.",
+    "unknownPlot": "Kies een perceel.",
+    "duplicateBedCode": "Elke bedcode mag maar één keer voorkomen.",
+    "duplicateId": "Dubbel element in de layout.",
+    "photoType": "Enkel JPG, PNG, WebP of HEIC.",
+    "photoTooLarge": "Foto is groter dan {maxMb} MB."
   },
   "errors": {
     "generic": "Er liep iets mis. Probeer opnieuw.",
@@ -83,7 +116,20 @@
       "duplicate": "Er bestaat al een leverancier met die naam.",
       "inUse": "Deze leverancier wordt nog gebruikt in de voorraad of bij rassen."
     },
-    "variety": { "hasInventory": "Dit ras heeft nog voorraad. Verwijder eerst de voorraad." }
+    "variety": {
+      "hasInventory": "Dit ras heeft nog voorraad. Verwijder eerst de voorraad.",
+      "inUse": "Dit ras wordt gebruikt in de planning."
+    },
+    "site": {
+      "hasBeds": "Deze locatie heeft nog bedden."
+    },
+    "layout": {
+      "foreignId": "Een element hoort bij een andere locatie."
+    },
+    "bed": {
+      "inUse": "Een bed met teelten kan niet verwijderd worden.",
+      "duplicateCode": "Die bedcode bestaat al op deze locatie."
+    }
   },
   "catalog": {
     "summary": "{categories} categorieën · {varieties} rassen",
@@ -216,7 +262,11 @@
       "status": "Status",
       "kind": "Soort",
       "remarks": "Opmerkingen",
-      "statuses": { "new": "nieuw", "update": "bijwerken", "error": "fout" },
+      "statuses": {
+        "new": "nieuw",
+        "update": "bijwerken",
+        "error": "fout"
+      },
       "loadExample": "Voorbeeld laden",
       "check": "Controleren",
       "importCount": "{n} importeren",
@@ -239,6 +289,174 @@
         "ruleCategories": "Voeg enkel categories toe als geen bestaande categorie past. Bestaande categorieën (code: naam): {list}.",
         "rulePrices": "Prijzen in euro. Laat suppliers leeg als je het niet zeker weet; verzin nooit webadressen."
       }
+    }
+  },
+  "season": {
+    "winter": "Winter",
+    "spring": "Lente",
+    "summer": "Zomer",
+    "autumn": "Herfst"
+  },
+  "phase": {
+    "indoor": "Binnen voorgezaaid",
+    "young": "Pas gezaaid / geplant",
+    "growing": "Groeit",
+    "harvest": "Oogst",
+    "clearing": "Afronden",
+    "dormant": "Winterrust"
+  },
+  "map": {
+    "label": "Tuinkaart",
+    "site": "Locatie",
+    "zoomIn": "Inzoomen",
+    "zoomOut": "Uitzoomen",
+    "fit": "Passend maken",
+    "timeline": {
+      "previousSeason": "‹ Seizoen",
+      "today": "Vandaag",
+      "nextSeason": "Seizoen ›",
+      "play": "Afspelen",
+      "pause": "Pauze",
+      "label": "Datum op de tijdlijn",
+      "todayMarker": "vandaag",
+      "mode": {
+        "today": "Vandaag",
+        "past": "Historiek",
+        "plan": "Planning"
+      }
+    },
+    "legend": {
+      "title": "Legende",
+      "show": "tonen",
+      "hide": "verbergen",
+      "phase": "Fase van de teelt",
+      "phaseHelp": "De kleur toont de gewasgroep; hoe voller de kleur, hoe verder de teelt.",
+      "empty": "Leeg bed",
+      "phases": {
+        "young": "Pas gezaaid of geplant (eerste 3 weken)",
+        "growing": "Groeit",
+        "harvest": "Oogsten (stippen)",
+        "clearing": "Afronden, bed leegmaken (arcering)"
+      },
+      "crops": "Gewasgroepen op de kaart",
+      "noCrops": "Geen teelten op deze datum",
+      "symbols": "Symbolen",
+      "planned": "Gepland: de gekozen datum ligt in de toekomst",
+      "indoor": "Binnen voorgezaaid, nog niet in het bed",
+      "warning": "Waarschuwing: vruchtwisseling, buren of zon",
+      "alert": "Ziekte of plaag gemeld (laatste 45 dagen)"
+    },
+    "bed": {
+      "title": "Bed {code}",
+      "size": "Afmeting",
+      "soil": "Bodem",
+      "on": "Op {date}",
+      "empty": "Leeg bed: een goed moment voor een groenbemester of compostmulch.",
+      "timeline": "Tijdlijn",
+      "ganttHelp": "Gestippeld = binnen voorgezaaid · licht = groeit · vol = oogst · gearceerd = afronden. Klik in de grafiek om in de tijd te springen.",
+      "tasks": "Taken",
+      "noTasks": "Geen open taken.",
+      "checks": "Controles",
+      "noChecks": "Geen problemen met vruchtwisseling, buren of zon.",
+      "plantings": "Teelten",
+      "planned": "gepland",
+      "confirmRemovePlanting": "\"{name}\" uit de planning van dit bed halen?",
+      "plantingRemoved": "Teelt verwijderd"
+    },
+    "tree": {
+      "kind": {
+        "tree": "Boom",
+        "shrub": "Struik"
+      },
+      "crown": "Kroon",
+      "planted": "Geplant",
+      "actions": "Jaarlijkse acties"
+    },
+    "plan": {
+      "open": "Teelt plannen",
+      "title": "Teelt plannen in {bed}",
+      "variety": "Gewas / ras",
+      "chooseVariety": "Kies een ras",
+      "sowOn": "Zaai- of plantdatum",
+      "share": "Deel van het bed",
+      "direct": "Rechtstreeks zaaien of jonge planten kopen (geen voorzaai)",
+      "sowIndoor": "Binnen zaaien",
+      "plantOut": "Uitplanten",
+      "plant": "Planten",
+      "sow": "Zaaien",
+      "harvest": "Oogst",
+      "free": "Bed vrij",
+      "everyYear": "elk jaar {months}",
+      "plants": "Planten",
+      "growth": "Tot eerste oogst",
+      "noConflicts": "Geen conflicten met vruchtwisseling, buren of zon.",
+      "calculating": "Berekenen…",
+      "add": "Toevoegen aan planning",
+      "added": "{name} toegevoegd aan {bed}"
+    },
+    "overview": {
+      "title": "Overzicht · {site}",
+      "subtitle": "{date} · klik op een bed of boom voor details",
+      "bedsInUse": "Bedden in gebruik",
+      "area": "Bedoppervlak",
+      "warnings": "Waarschuwingen {year}",
+      "tasks": "Taken komende 14 dagen",
+      "allTasks": "Alle taken →",
+      "noTasks": "Geen open taken.",
+      "harvestNow": "Nu te oogsten",
+      "nothingToHarvest": "Niets te oogsten op deze datum.",
+      "harvested": "Geoogst in {year}",
+      "nothingHarvested": "Nog niets geregistreerd.",
+      "checks": "Controles {year}",
+      "noIssues": "Geen problemen gevonden."
+    }
+  },
+  "checks": {
+    "level": {
+      "warning": "Waarschuwing",
+      "info": "Info"
+    },
+    "rotation": "Vruchtwisseling: {family} ({previous}) stond hier tot {until}. Rust {rest} jaar, vrij vanaf {freeFrom}.",
+    "sun": "{variety} wil meer zon; dit bed ligt in {bedSun}.",
+    "renewBy": "{variety}: vernieuwen of verplaatsen tegen {date} (max. {years} jaar op dezelfde plek).",
+    "stayTooLong": "{variety} blijft langer dan {years} jaar staan (tot {until}).",
+    "badNeighbours": "Slechte buren: {a} ({bedA}) en {b} ({bedB}).",
+    "outsideWindow": "Buiten het aanbevolen venster ({from}–{to})."
+  },
+  "tasks": {
+    "complete": "Afvinken",
+    "completed": "Taak afgevinkt",
+    "reopen": "Opnieuw openen",
+    "reopened": "Taak heropend",
+    "completeTitle": "Afgewerkt: {task}",
+    "howLong": "Hoeveel tijd kostte het? Zo worden de schattingen nauwkeuriger.",
+    "asEstimated": "Zoals geschat ({duration})",
+    "actualMinutes": "Werkelijke duur",
+    "skipDuration": "Afvinken zonder duur",
+    "assignee": "Uitvoerder",
+    "nobody": "Niemand",
+    "estimate": "Geschatte duur",
+    "estimateExplained": "Basis {base} × correctie {factor} (uit {samples} afgewerkte taken)",
+    "doneOn": "Afgewerkt op {date} ({duration})",
+    "kind": {
+      "sowIndoor": "{subject} binnen voorzaaien",
+      "sow": "{subject} zaaien",
+      "plantOut": "{subject} uitplanten",
+      "plant": "{subject} planten",
+      "harvest": "Oogst {subject}",
+      "clear": "Bed leegmaken: {subject}",
+      "care": "{title}: {subject}",
+      "custom": "{title}"
+    },
+    "kindName": {
+      "sowIndoor": "Voorzaaien",
+      "sow": "Zaaien",
+      "plantOut": "Uitplanten",
+      "plant": "Planten",
+      "harvest": "Oogsten",
+      "clear": "Bed leegmaken",
+      "care": "Onderhoud",
+      "custom": "Andere taak"
     }
   }
 }

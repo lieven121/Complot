@@ -1,5 +1,7 @@
 {
-  "app": { "subtitle": "garden planner" },
+  "app": {
+    "subtitle": "garden planner"
+  },
   "nav": {
     "label": "Main navigation",
     "map": "Garden map",
@@ -9,7 +11,11 @@
     "tools": "Tools",
     "costs": "Costs"
   },
-  "language": { "label": "Language", "nl-BE": "Nederlands (België)", "en": "English" },
+  "language": {
+    "label": "Language",
+    "nl-BE": "Nederlands (België)",
+    "en": "English"
+  },
   "common": {
     "comingSoon": "This section arrives in a later stage.",
     "applicable": "Applicable",
@@ -41,11 +47,28 @@
     "daysUnit": "days",
     "weeksUnit": "weeks",
     "yearsUnit": "yr",
-    "minutesUnit": "min"
+    "minutesUnit": "min",
+    "close": "Close",
+    "duration": {
+      "minutes": "{m} min",
+      "hours": "{h}h{m}"
+    }
   },
-  "sun": { "full": "☀️ Full sun", "half": "⛅ Half shade", "shade": "☁️ Shade" },
-  "life": { "annual": "Annual", "biennial": "Biennial", "perennial": "Perennial" },
-  "lotStatus": { "ok": "OK", "useSoon": "Use soon", "expired": "Expired" },
+  "sun": {
+    "full": "☀️ Full sun",
+    "half": "⛅ Half shade",
+    "shade": "☁️ Shade"
+  },
+  "life": {
+    "annual": "Annual",
+    "biennial": "Biennial",
+    "perennial": "Perennial"
+  },
+  "lotStatus": {
+    "ok": "OK",
+    "useSoon": "Use soon",
+    "expired": "Expired"
+  },
   "validation": {
     "invalid": "Invalid value.",
     "notEmpty": "Required.",
@@ -66,7 +89,17 @@
     "neighbourBothGoodAndBad": "A category cannot be a good and a bad neighbour at the same time.",
     "duplicateSupplier": "Each supplier only once.",
     "pair": "Expected two numbers, like [3, 6].",
-    "invalidValue": "Invalid value \"{value}\"."
+    "invalidValue": "Invalid value \"{value}\".",
+    "unknownBed": "Unknown bed.",
+    "unknownPerson": "Unknown person.",
+    "unknownSite": "Unknown site.",
+    "unknownTree": "Unknown tree.",
+    "unknownPlanting": "Unknown planting.",
+    "unknownPlot": "Choose a plot.",
+    "duplicateBedCode": "Each bed code may occur only once.",
+    "duplicateId": "Duplicate item in the layout.",
+    "photoType": "Only JPG, PNG, WebP or HEIC.",
+    "photoTooLarge": "Photo is larger than {maxMb} MB."
   },
   "errors": {
     "generic": "Something went wrong. Please try again.",
@@ -83,7 +116,20 @@
       "duplicate": "A supplier with that name already exists.",
       "inUse": "This supplier is still used in the inventory or by varieties."
     },
-    "variety": { "hasInventory": "This variety still has stock. Remove the stock first." }
+    "variety": {
+      "hasInventory": "This variety still has stock. Remove the stock first.",
+      "inUse": "This variety is used in the plan."
+    },
+    "site": {
+      "hasBeds": "This site still has beds."
+    },
+    "layout": {
+      "foreignId": "An item belongs to another site."
+    },
+    "bed": {
+      "inUse": "A bed with plantings cannot be removed.",
+      "duplicateCode": "That bed code already exists on this site."
+    }
   },
   "catalog": {
     "summary": "{categories} categories · {varieties} varieties",
@@ -216,7 +262,11 @@
       "status": "Status",
       "kind": "Kind",
       "remarks": "Remarks",
-      "statuses": { "new": "new", "update": "update", "error": "error" },
+      "statuses": {
+        "new": "new",
+        "update": "update",
+        "error": "error"
+      },
       "loadExample": "Load example",
       "check": "Check",
       "importCount": "Import {n}",
@@ -239,6 +289,174 @@
         "ruleCategories": "Only add categories when no existing category fits. Existing categories (code: name): {list}.",
         "rulePrices": "Prices in euro. Leave suppliers empty if you are not sure; never invent web addresses."
       }
+    }
+  },
+  "season": {
+    "winter": "Winter",
+    "spring": "Spring",
+    "summer": "Summer",
+    "autumn": "Autumn"
+  },
+  "phase": {
+    "indoor": "Pre-sown indoors",
+    "young": "Just sown / planted",
+    "growing": "Growing",
+    "harvest": "Harvest",
+    "clearing": "Finishing",
+    "dormant": "Dormant"
+  },
+  "map": {
+    "label": "Garden map",
+    "site": "Site",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "fit": "Fit to screen",
+    "timeline": {
+      "previousSeason": "‹ Season",
+      "today": "Today",
+      "nextSeason": "Season ›",
+      "play": "Play",
+      "pause": "Pause",
+      "label": "Date on the timeline",
+      "todayMarker": "today",
+      "mode": {
+        "today": "Today",
+        "past": "History",
+        "plan": "Plan"
+      }
+    },
+    "legend": {
+      "title": "Legend",
+      "show": "show",
+      "hide": "hide",
+      "phase": "Crop phase",
+      "phaseHelp": "Colour shows the crop group; the fuller the colour, the further along the crop.",
+      "empty": "Empty bed",
+      "phases": {
+        "young": "Just sown or planted (first 3 weeks)",
+        "growing": "Growing",
+        "harvest": "Harvesting (dots)",
+        "clearing": "Finishing, clearing the bed (hatched)"
+      },
+      "crops": "Crop groups on the map",
+      "noCrops": "No crops on this date",
+      "symbols": "Symbols",
+      "planned": "Planned: the selected date is in the future",
+      "indoor": "Pre-sown indoors, not in the bed yet",
+      "warning": "Warning: rotation, neighbours or sun",
+      "alert": "Disease or pest reported (last 45 days)"
+    },
+    "bed": {
+      "title": "Bed {code}",
+      "size": "Size",
+      "soil": "Soil",
+      "on": "On {date}",
+      "empty": "Empty bed: a good moment for a green manure or compost mulch.",
+      "timeline": "Timeline",
+      "ganttHelp": "Dashed = pre-sown indoors · light = growing · solid = harvest · hatched = finishing. Click the chart to jump in time.",
+      "tasks": "Tasks",
+      "noTasks": "No open tasks.",
+      "checks": "Checks",
+      "noChecks": "No rotation, neighbour or sun issues.",
+      "plantings": "Plantings",
+      "planned": "planned",
+      "confirmRemovePlanting": "Remove \"{name}\" from this bed's plan?",
+      "plantingRemoved": "Planting removed"
+    },
+    "tree": {
+      "kind": {
+        "tree": "Tree",
+        "shrub": "Shrub"
+      },
+      "crown": "Crown",
+      "planted": "Planted",
+      "actions": "Yearly actions"
+    },
+    "plan": {
+      "open": "Plan a planting",
+      "title": "Plan a planting in {bed}",
+      "variety": "Variety",
+      "chooseVariety": "Choose a variety",
+      "sowOn": "Sow or plant date",
+      "share": "Share of the bed",
+      "direct": "Sow directly or buy young plants (no indoor sowing)",
+      "sowIndoor": "Sow indoors",
+      "plantOut": "Plant out",
+      "plant": "Plant",
+      "sow": "Sow",
+      "harvest": "Harvest",
+      "free": "Bed free",
+      "everyYear": "every year {months}",
+      "plants": "Plants",
+      "growth": "To first harvest",
+      "noConflicts": "No conflicts with rotation, neighbours or sun.",
+      "calculating": "Calculating…",
+      "add": "Add to plan",
+      "added": "{name} added to {bed}"
+    },
+    "overview": {
+      "title": "Overview · {site}",
+      "subtitle": "{date} · click a bed or tree for details",
+      "bedsInUse": "Beds in use",
+      "area": "Bed area",
+      "warnings": "Warnings {year}",
+      "tasks": "Tasks next 14 days",
+      "allTasks": "All tasks →",
+      "noTasks": "No open tasks.",
+      "harvestNow": "Harvest now",
+      "nothingToHarvest": "Nothing to harvest on this date.",
+      "harvested": "Harvested in {year}",
+      "nothingHarvested": "Nothing recorded yet.",
+      "checks": "Checks {year}",
+      "noIssues": "No issues found."
+    }
+  },
+  "checks": {
+    "level": {
+      "warning": "Warning",
+      "info": "Info"
+    },
+    "rotation": "Rotation: {family} ({previous}) grew here until {until}. Rest {rest} yr, free from {freeFrom}.",
+    "sun": "{variety} wants more sun; this bed is in {bedSun}.",
+    "renewBy": "{variety}: renew or move by {date} (max {years} yr in one place).",
+    "stayTooLong": "{variety} stays longer than {years} yr (until {until}).",
+    "badNeighbours": "Bad neighbours: {a} ({bedA}) and {b} ({bedB}).",
+    "outsideWindow": "Outside the recommended window ({from}–{to})."
+  },
+  "tasks": {
+    "complete": "Check off",
+    "completed": "Task checked off",
+    "reopen": "Reopen",
+    "reopened": "Task reopened",
+    "completeTitle": "Done: {task}",
+    "howLong": "How long did it take? This makes the estimates more accurate.",
+    "asEstimated": "As estimated ({duration})",
+    "actualMinutes": "Actual duration",
+    "skipDuration": "Check off without duration",
+    "assignee": "Assignee",
+    "nobody": "Nobody",
+    "estimate": "Estimated duration",
+    "estimateExplained": "Base {base} × correction {factor} (from {samples} completed tasks)",
+    "doneOn": "Done on {date} ({duration})",
+    "kind": {
+      "sowIndoor": "Sow {subject} indoors",
+      "sow": "Sow {subject}",
+      "plantOut": "Plant out {subject}",
+      "plant": "Plant {subject}",
+      "harvest": "Harvest {subject}",
+      "clear": "Clear bed: {subject}",
+      "care": "{title}: {subject}",
+      "custom": "{title}"
+    },
+    "kindName": {
+      "sowIndoor": "Indoor sowing",
+      "sow": "Sowing",
+      "plantOut": "Planting out",
+      "plant": "Planting",
+      "harvest": "Harvesting",
+      "clear": "Clearing",
+      "care": "Care",
+      "custom": "Other task"
     }
   }
 }

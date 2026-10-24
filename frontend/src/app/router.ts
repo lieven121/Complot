@@ -20,11 +20,12 @@ export const navItems: NavItem[] = [
 const comingSoon = () => import('@/shared/ui/ComingSoonPage.vue')
 
 const routes: RouteRecordRaw[] = [
-  { path: '/', redirect: '/planten' },
+  { path: '/', redirect: '/kaart' },
+  { path: '/kaart', name: 'map', component: () => import('@/features/garden/MapPage.vue') },
   { path: '/planten', name: 'plants', component: () => import('@/features/catalog/PlantsPage.vue') },
   { path: '/planten/:id', name: 'variety', component: () => import('@/features/catalog/VarietyDetailPage.vue'), props: true },
   ...navItems
-    .filter((item) => item.name !== 'plants')
+    .filter((item) => !['plants', 'map'].includes(item.name))
     .map((item) => ({ path: item.path, name: item.name, component: comingSoon, meta: { navKey: item.navKey } })),
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ]

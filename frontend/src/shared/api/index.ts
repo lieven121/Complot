@@ -4,7 +4,12 @@ import {
   CategoriesClient,
   FamiliesClient,
   InventoryLotsClient,
+  NotesClient,
+  PeopleClient,
+  PlantingsClient,
+  SitesClient,
   SuppliersClient,
+  TasksClient,
   VarietiesClient,
 } from './client'
 
@@ -33,6 +38,11 @@ export const api = {
   varieties: new VarietiesClient(baseUrl, http),
   inventoryLots: new InventoryLotsClient(baseUrl, http),
   catalogExchange: new CatalogExchangeClient(baseUrl, http),
+  sites: new SitesClient(baseUrl, http),
+  plantings: new PlantingsClient(baseUrl, http),
+  people: new PeopleClient(baseUrl, http),
+  tasks: new TasksClient(baseUrl, http),
+  notes: new NotesClient(baseUrl, http),
 }
 
 export type * from './client'

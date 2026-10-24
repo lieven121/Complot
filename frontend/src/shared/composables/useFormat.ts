@@ -4,7 +4,7 @@ import type { MonthWindowDto } from '@/shared/api'
 
 /** Locale-aware formatting of the values the API sends (months, dates, money, quantities). */
 export function useFormat() {
-  const { locale, n } = useI18n()
+  const { locale, n, t } = useI18n()
 
   const monthNames = computed(() => {
     const format = new Intl.DateTimeFormat(locale.value, { month: 'short' })
@@ -30,10 +30,28 @@ export function useFormat() {
     return new Intl.DateTimeFormat(locale.value, { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(y!, m! - 1, d!))
   }
 
+  /** ISO date → "24 okt." (without the year). */
+  const dayMonth = (iso: string) => {
+    const [y, m, d] = iso.slice(0, 10).split('-').map(Number)
+    return new Intl.DateTimeFormat(locale.value, { day: 'numeric', month: 'short' }).format(new Date(y!, m! - 1, d!))
+  }
+
   const currency = (value: number) => n(value, 'currency')
   const decimal = (value: number) => n(value, 'decimal')
 
-  return { monthNames, month, monthLong, monthWindow, date, currency, decimal }
+  /** 45 → "45 min", 80 → "1u20" (nl) / "1h20" (en). */
+  const duration = (minutes: number) =>
+    minutes < 60
+      ? t('common.duration.minutes', { m: minutes })
+      : t('common.duration.hours', { h: Math.floor(minutes / 60), m: String(minutes % 60).padStart(2, '0') })
+
+  /** "za 24 okt. 10:00" for a calendar slot. */
+  const dateTime = (iso: string) =>
+    new Intl.DateTimeFormat(locale.value, { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }).format(
+      new Date(iso),
+    )
+
+  return { monthNames, month, monthLong, monthWindow, date, dayMonth, dateTime, currency, decimal, duration }
 }
 
 /** Whether a month (1–12) lies inside a window that may wrap the new year — mirrors MonthWindow.Contains (backend). */
