@@ -4,6 +4,7 @@ using Complot.Api.Features.Admin;
 using Complot.Api.Features.Catalog;
 using Complot.Api.Features.Garden;
 using Complot.Api.Features.Planner;
+using Complot.Api.Features.Tools;
 using Complot.Api.Features.Plantings;
 using Complot.Api.Features.Work;
 
@@ -20,7 +21,9 @@ public static class EndpointRegistration
 
         // Everything else needs access: a signed-in user who is still waiting gets 403 "access.pending".
         var api = root.MapGroup("").RequireActiveUser();
-        api.MapGroup("").RequireEditorForWrites().MapCatalog();
+        var shared = api.MapGroup("").RequireEditorForWrites();
+        shared.MapCatalog();
+        shared.MapTools();
         api.MapSites();
         api.MapPlantings();
         api.MapWork();

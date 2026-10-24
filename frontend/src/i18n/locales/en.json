@@ -102,7 +102,9 @@
     "photoType": "Only JPG, PNG, WebP or HEIC.",
     "photoTooLarge": "Photo is larger than {maxMb} MB.",
     "email": "Not a valid e-mail address.",
-    "duplicateSite": "Each location only once."
+    "duplicateSite": "Each location only once.",
+    "unknownTool": "Unknown tool.",
+    "duplicateTool": "Each tool only once."
   },
   "errors": {
     "generic": "Something went wrong. Please try again.",
@@ -467,7 +469,8 @@
       "harvest": "Harvest {subject}",
       "clear": "Clear bed: {subject}",
       "care": "{title}: {subject}",
-      "custom": "{title}"
+      "custom": "{title}",
+      "maintenance": "Maintenance: {subject}"
     },
     "kindName": {
       "sowIndoor": "Indoor sowing",
@@ -477,7 +480,8 @@
       "harvest": "Harvesting",
       "clear": "Clearing",
       "care": "Care",
-      "custom": "Other task"
+      "custom": "Other task",
+      "maintenance": "Tool maintenance"
     },
     "page": {
       "summary": "{n} open tasks in the next 7 days",

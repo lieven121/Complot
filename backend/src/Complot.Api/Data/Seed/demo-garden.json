@@ -1471,5 +1471,445 @@
       "bed": "K1",
       "person": "lien"
     }
+  ],
+  "tools": [
+    {
+      "key": "drip",
+      "name": "Druppelslang 16 mm",
+      "kind": "Irrigatie",
+      "icon": "💧",
+      "unit": "lijnen à 5 m",
+      "qtyGood": 7,
+      "qtyRepair": 1,
+      "qtyWorn": 0,
+      "material": "PE (recycleerbaar)",
+      "isReused": false,
+      "boughtOn": "2025-03-05",
+      "unitPrice": 6.5,
+      "supplierName": "Tuinbouwshop Agri",
+      "lifespanYears": 8,
+      "maintenanceIntervalMonths": 6,
+      "maintenanceMinutes": 45,
+      "beds": [
+        "K1",
+        "K2",
+        "B2"
+      ],
+      "notes": "Gevoed via zwaartekracht vanuit de IBC-regentonnen.",
+      "log": [
+        {
+          "date": "2026-04-10",
+          "text": "Alle lijnen doorgespoeld, 1 lek hersteld",
+          "isMaintenance": true
+        },
+        {
+          "date": "2025-10-15",
+          "text": "Leeggemaakt & opgeborgen voor de winter",
+          "isMaintenance": true
+        }
+      ]
+    },
+    {
+      "key": "main",
+      "name": "Aanvoerleiding 25 mm",
+      "kind": "Irrigatie",
+      "icon": "🧵",
+      "unit": "rol 50 m",
+      "qtyGood": 1,
+      "qtyRepair": 0,
+      "qtyWorn": 0,
+      "material": "PE",
+      "isReused": false,
+      "boughtOn": "2025-03-05",
+      "unitPrice": 42,
+      "supplierName": "Tuinbouwshop Agri",
+      "lifespanYears": 12,
+      "maintenanceIntervalMonths": 12,
+      "maintenanceMinutes": 15,
+      "beds": [],
+      "notes": null,
+      "log": [
+        {
+          "date": "2026-04-10",
+          "text": null,
+          "isMaintenance": true
+        }
+      ]
+    },
+    {
+      "key": "ibc",
+      "name": "IBC-regenton 1000 L",
+      "kind": "Water",
+      "icon": "🛢️",
+      "unit": "tonnen",
+      "qtyGood": 2,
+      "qtyRepair": 0,
+      "qtyWorn": 0,
+      "material": "Tweedehands (hergebruik)",
+      "isReused": true,
+      "boughtOn": "2025-06-10",
+      "unitPrice": 45,
+      "supplierName": "2dehands.be",
+      "lifespanYears": 15,
+      "maintenanceIntervalMonths": 12,
+      "maintenanceMinutes": 30,
+      "beds": [],
+      "notes": "Afgedekt tegen algen. Overloop naar de poel.",
+      "log": [
+        {
+          "date": "2025-11-02",
+          "text": "Filter en dakgootzeef gereinigd",
+          "isMaintenance": true
+        }
+      ]
+    },
+    {
+      "key": "bonenrek",
+      "name": "Bonenrek hazelaar 4 m",
+      "kind": "Klimsteun",
+      "icon": "🪵",
+      "unit": "rekken",
+      "qtyGood": 1,
+      "qtyRepair": 1,
+      "qtyWorn": 0,
+      "material": "Eigen hakhout (hazelaar)",
+      "isReused": true,
+      "boughtOn": "2025-03-01",
+      "unitPrice": 0,
+      "supplierName": "Eigen haag",
+      "lifespanYears": 3,
+      "maintenanceIntervalMonths": 12,
+      "maintenanceMinutes": 60,
+      "beds": [
+        "A1"
+      ],
+      "notes": null,
+      "log": [
+        {
+          "date": "2026-03-20",
+          "text": "3 palen vervangen uit eigen haag",
+          "isMaintenance": true
+        }
+      ]
+    },
+    {
+      "key": "hek",
+      "name": "Klimgaas 1,2 × 5 m",
+      "kind": "Klimsteun",
+      "icon": "🧱",
+      "unit": "panelen",
+      "qtyGood": 2,
+      "qtyRepair": 0,
+      "qtyWorn": 0,
+      "material": "Gegalvaniseerd staal",
+      "isReused": false,
+      "boughtOn": "2026-03-15",
+      "unitPrice": 24,
+      "supplierName": "Tuinbouwshop Agri",
+      "lifespanYears": 15,
+      "maintenanceIntervalMonths": null,
+      "maintenanceMinutes": 30,
+      "beds": [
+        "K2"
+      ],
+      "notes": null,
+      "log": []
+    },
+    {
+      "key": "spiraal",
+      "name": "Tomatenspiraal 180 cm",
+      "kind": "Plantsteun",
+      "icon": "🌀",
+      "unit": "stuks",
+      "qtyGood": 18,
+      "qtyRepair": 0,
+      "qtyWorn": 2,
+      "material": "Staal",
+      "isReused": false,
+      "boughtOn": "2026-06-18",
+      "unitPrice": 2.29,
+      "supplierName": "Brico",
+      "lifespanYears": 15,
+      "maintenanceIntervalMonths": null,
+      "maintenanceMinutes": 30,
+      "beds": [
+        "K1",
+        "K2"
+      ],
+      "notes": null,
+      "log": []
+    },
+    {
+      "key": "stok",
+      "name": "Bamboestok 150 cm",
+      "kind": "Plantsteun",
+      "icon": "🎋",
+      "unit": "stuks",
+      "qtyGood": 48,
+      "qtyRepair": 0,
+      "qtyWorn": 12,
+      "material": "Bamboe (composteerbaar)",
+      "isReused": false,
+      "boughtOn": "2025-03-22",
+      "unitPrice": 0.35,
+      "supplierName": "Brico",
+      "lifespanYears": 4,
+      "maintenanceIntervalMonths": null,
+      "maintenanceMinutes": 30,
+      "beds": [],
+      "notes": null,
+      "log": []
+    },
+    {
+      "key": "gaas",
+      "name": "Insectengaas 2 × 5 m",
+      "kind": "Bescherming",
+      "icon": "🕸️",
+      "unit": "netten",
+      "qtyGood": 3,
+      "qtyRepair": 0,
+      "qtyWorn": 0,
+      "material": "PE-gaas 0,8 mm",
+      "isReused": false,
+      "boughtOn": "2025-03-05",
+      "unitPrice": 11.67,
+      "supplierName": "Tuinbouwshop Agri",
+      "lifespanYears": 6,
+      "maintenanceIntervalMonths": 12,
+      "maintenanceMinutes": 20,
+      "beds": [
+        "A2"
+      ],
+      "notes": null,
+      "log": [
+        {
+          "date": "2025-11-20",
+          "text": "Gewassen, gedroogd en opgeborgen",
+          "isMaintenance": true
+        }
+      ]
+    },
+    {
+      "key": "vlies",
+      "name": "Vliesdoek 2 × 10 m",
+      "kind": "Bescherming",
+      "icon": "🧣",
+      "unit": "rollen",
+      "qtyGood": 1,
+      "qtyRepair": 1,
+      "qtyWorn": 0,
+      "material": "PP-vlies",
+      "isReused": false,
+      "boughtOn": "2025-11-05",
+      "unitPrice": 9.2,
+      "supplierName": "Brico",
+      "lifespanYears": 3,
+      "maintenanceIntervalMonths": null,
+      "maintenanceMinutes": 30,
+      "beds": [],
+      "notes": null,
+      "log": []
+    },
+    {
+      "key": "tunnel",
+      "name": "Tunnelbogen + folie (4 m)",
+      "kind": "Bescherming",
+      "icon": "⛺",
+      "unit": "set",
+      "qtyGood": 1,
+      "qtyRepair": 0,
+      "qtyWorn": 0,
+      "material": "Glasvezelbogen",
+      "isReused": false,
+      "boughtOn": "2026-03-15",
+      "unitPrice": 24,
+      "supplierName": "Tuinbouwshop Agri",
+      "lifespanYears": 6,
+      "maintenanceIntervalMonths": null,
+      "maintenanceMinutes": 30,
+      "beds": [],
+      "notes": null,
+      "log": []
+    },
+    {
+      "key": "compost",
+      "name": "Compostbak (paletten)",
+      "kind": "Bodem",
+      "icon": "♻️",
+      "unit": "bakken",
+      "qtyGood": 2,
+      "qtyRepair": 1,
+      "qtyWorn": 0,
+      "material": "Hergebruikte paletten",
+      "isReused": true,
+      "boughtOn": "2025-01-10",
+      "unitPrice": 0,
+      "supplierName": "Hergebruik",
+      "lifespanYears": 5,
+      "maintenanceIntervalMonths": 3,
+      "maintenanceMinutes": 60,
+      "beds": [],
+      "notes": "3-bakkensysteem: vullen → rijpen → gebruiken.",
+      "log": [
+        {
+          "date": "2026-06-01",
+          "text": "Bak 2 omgezet naar bak 3",
+          "isMaintenance": true
+        },
+        {
+          "date": "2026-03-01",
+          "text": "Bak 1 omgezet naar bak 2",
+          "isMaintenance": true
+        }
+      ]
+    },
+    {
+      "key": "grelinette",
+      "name": "Grelinette (spitvork)",
+      "kind": "Handgereedschap",
+      "icon": "🔱",
+      "unit": "stuk",
+      "qtyGood": 1,
+      "qtyRepair": 0,
+      "qtyWorn": 0,
+      "material": "Staal + es",
+      "isReused": false,
+      "boughtOn": "2026-02-28",
+      "unitPrice": 129,
+      "supplierName": "Gereedschapshop",
+      "lifespanYears": 25,
+      "maintenanceIntervalMonths": 12,
+      "maintenanceMinutes": 15,
+      "beds": [],
+      "notes": null,
+      "log": []
+    },
+    {
+      "key": "schoffel",
+      "name": "Trekschoffel",
+      "kind": "Handgereedschap",
+      "icon": "🪓",
+      "unit": "stuks",
+      "qtyGood": 2,
+      "qtyRepair": 0,
+      "qtyWorn": 0,
+      "material": "Staal + hout",
+      "isReused": false,
+      "boughtOn": "2025-03-22",
+      "unitPrice": 24.97,
+      "supplierName": "Brico",
+      "lifespanYears": 15,
+      "maintenanceIntervalMonths": 12,
+      "maintenanceMinutes": 20,
+      "beds": [],
+      "notes": null,
+      "log": [
+        {
+          "date": "2025-12-01",
+          "text": "Geslepen, lijnolie op de stelen",
+          "isMaintenance": true
+        }
+      ]
+    }
+  ],
+  "toolNeeds": [
+    {
+      "variety": "Oranje wortel",
+      "cultivar": "Nantaise 2",
+      "tool": "gaas",
+      "per": "bed",
+      "quantity": 1
+    },
+    {
+      "variety": "Paarse wortel",
+      "cultivar": "Purple Haze",
+      "tool": "gaas",
+      "per": "bed",
+      "quantity": 1
+    },
+    {
+      "variety": "Kerstomaat",
+      "cultivar": "Gardener's Delight",
+      "tool": "spiraal",
+      "per": "plant",
+      "quantity": 1
+    },
+    {
+      "variety": "Kerstomaat",
+      "cultivar": "Gardener's Delight",
+      "tool": "drip",
+      "per": "bed",
+      "quantity": 2
+    },
+    {
+      "variety": "Heirloom tomaat",
+      "cultivar": "Coeur de Boeuf",
+      "tool": "spiraal",
+      "per": "plant",
+      "quantity": 1
+    },
+    {
+      "variety": "Heirloom tomaat",
+      "cultivar": "Coeur de Boeuf",
+      "tool": "drip",
+      "per": "bed",
+      "quantity": 2
+    },
+    {
+      "variety": "Heirloom tomaat",
+      "cultivar": "Black Krim",
+      "tool": "spiraal",
+      "per": "plant",
+      "quantity": 1
+    },
+    {
+      "variety": "Heirloom tomaat",
+      "cultivar": "Black Krim",
+      "tool": "drip",
+      "per": "bed",
+      "quantity": 2
+    },
+    {
+      "variety": "Stokboon",
+      "cultivar": "Blauhilde",
+      "tool": "bonenrek",
+      "per": "bed",
+      "quantity": 1
+    },
+    {
+      "variety": "Boerenkool",
+      "cultivar": "Westlandse Winter",
+      "tool": "gaas",
+      "per": "bed",
+      "quantity": 1
+    },
+    {
+      "variety": "Spruitkool",
+      "cultivar": "Groninger",
+      "tool": "gaas",
+      "per": "bed",
+      "quantity": 1
+    },
+    {
+      "variety": "Courgette",
+      "cultivar": "Black Beauty",
+      "tool": "drip",
+      "per": "bed",
+      "quantity": 1
+    },
+    {
+      "variety": "Pompoen",
+      "cultivar": "Red Kuri",
+      "tool": "drip",
+      "per": "bed",
+      "quantity": 1
+    },
+    {
+      "variety": "Aardbei",
+      "cultivar": "Elsanta",
+      "tool": "drip",
+      "per": "bed",
+      "quantity": 1
+    }
   ]
 }

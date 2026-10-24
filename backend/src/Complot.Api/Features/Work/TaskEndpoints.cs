@@ -2,6 +2,7 @@ using Complot.Api.Auth;
 using Complot.Api.Common;
 using Complot.Api.Data;
 using Complot.Api.Features.Planner;
+using Complot.Api.Features.Tools;
 using Complot.Domain.Access;
 using Complot.Domain.Work;
 using FluentValidation;
@@ -128,6 +129,7 @@ public static class TaskEndpoints
         var state = await db.TaskStates.FirstOrDefaultAsync(s => s.SourceKey == key, ct);
         if (state is null) db.TaskStates.Add(state = new TaskState { SourceKey = key });
         change(task, state);
+        await ToolLog.FollowTaskAsync(db, task, state, ct);
         var factors = await tasks.FactorsAsync(ct);
         await sync.SyncAsync(task, state, TaskEstimates.Estimate(task, state, factors), ct);
         await db.SaveChangesAsync(ct);

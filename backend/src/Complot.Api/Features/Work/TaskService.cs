@@ -23,9 +23,13 @@ public sealed class TaskService(ComplotDbContext db)
             .Where(t => (t.SiteId == null ? includeSiteless : siteIds.Contains(t.SiteId.Value)) && t.DueOn >= from && t.DueOn <= to)
             .ToListAsync(ct);
 
+        // Tools belong to no site: their maintenance shows wherever site-less tasks do.
+        var tools = includeSiteless ? await db.Tools.AsNoTracking().ToListAsync(ct) : [];
+
         return plantings.SelectMany(p => TaskGenerator.ForPlanting(p, from.Year, to.Year))
             .Concat(trees.SelectMany(t => TaskGenerator.ForTree(t, from.Year, to.Year)))
             .Concat(manual.Select(TaskGenerator.ForManual))
+            .Concat(tools.SelectMany(t => TaskGenerator.ForTool(t, from, to)))
             .Where(t => t.Date >= from && t.Date <= to)
             .OrderBy(t => t.Date)
             .ToList();
@@ -42,6 +46,8 @@ public sealed class TaskService(ComplotDbContext db)
                 is { } tree ? TaskGenerator.ForTree(tree, FirstYear, LastYear) : [],
             "manual" => await db.ManualTasks.AsNoTracking().FirstOrDefaultAsync(t => t.Id == id, ct)
                 is { } manual ? [TaskGenerator.ForManual(manual)] : [],
+            "tool" => await db.Tools.AsNoTracking().FirstOrDefaultAsync(t => t.Id == id, ct)
+                is { } tool ? TaskGenerator.ForTool(tool, new DateOnly(FirstYear, 1, 1), new DateOnly(LastYear, 12, 31)) : [],
             _ => [],
         };
         return candidates.FirstOrDefault(t => t.Key == key);

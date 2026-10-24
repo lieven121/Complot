@@ -4,6 +4,7 @@ using Complot.Domain.Catalog;
 using Complot.Domain.Common;
 using Complot.Domain.Garden;
 using Complot.Domain.Plantings;
+using Complot.Domain.Tools;
 using Complot.Domain.Work;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,7 +29,15 @@ internal static class DemoGarden
     private sealed record SeedPlantingRef(string Bed, string Variety, string? Cultivar, DateOnly SowOn);
     private sealed record SeedNote(string? Bed, string? Tree, SeedPlantingRef? Planting, string? Person, DateOnly Date, NoteTag Tag, string Text, decimal? HarvestQuantity, string? HarvestUnit);
     private sealed record SeedManualTask(string Title, int OffsetDays, int BaseMinutes, string? Bed, string? Person);
-    private sealed record SeedFile(List<SeedSite> Sites, List<SeedPlanting> Plantings, List<SeedPerson> People, List<SeedNote> Notes, List<SeedManualTask> ManualTasks);
+    private sealed record SeedToolLog(DateOnly Date, string? Text, bool IsMaintenance);
+    private sealed record SeedTool(
+        string Key, string Name, string Kind, string Icon, string Unit, int QtyGood, int QtyRepair, int QtyWorn, string? Material, bool IsReused,
+        DateOnly? BoughtOn, decimal? UnitPrice, string? SupplierName, int? LifespanYears, int? MaintenanceIntervalMonths, int MaintenanceMinutes,
+        List<string> Beds, string? Notes, List<SeedToolLog> Log);
+    private sealed record SeedToolNeed(string Variety, string? Cultivar, string Tool, NeedPer Per, decimal Quantity);
+    private sealed record SeedFile(
+        List<SeedSite> Sites, List<SeedPlanting> Plantings, List<SeedPerson> People, List<SeedNote> Notes, List<SeedManualTask> ManualTasks,
+        List<SeedTool> Tools, List<SeedToolNeed> ToolNeeds);
 
     /// <summary>How much longer (or shorter) than estimated each kind of task took in the sample history.</summary>
     private static readonly Dictionary<TaskKind, double> HistoryBias = new()
@@ -86,6 +95,18 @@ internal static class DemoGarden
             plantings[new SeedPlantingRef(p.Bed, p.Variety, p.Cultivar, p.SowOn)] = planting;
             db.Plantings.Add(planting);
         }
+
+        var tools = seed.Tools.ToDictionary(t => t.Key, t => new Tool
+        {
+            Name = t.Name, Kind = t.Kind, Icon = t.Icon, Unit = t.Unit, QtyGood = t.QtyGood, QtyRepair = t.QtyRepair, QtyWorn = t.QtyWorn,
+            Material = t.Material, IsReused = t.IsReused, BoughtOn = t.BoughtOn, UnitPrice = t.UnitPrice, SupplierName = t.SupplierName,
+            LifespanYears = t.LifespanYears, MaintenanceIntervalMonths = t.MaintenanceIntervalMonths, MaintenanceMinutes = t.MaintenanceMinutes,
+            BedIds = t.Beds.Select(code => bedsByCode[code].Id).ToList(), Notes = t.Notes,
+            Log = t.Log.Select(l => new ToolLogEntry { Date = l.Date, Text = l.Text, IsMaintenance = l.IsMaintenance }).ToList(),
+        });
+        db.Tools.AddRange(tools.Values);
+        foreach (var need in seed.ToolNeeds)
+            varieties[(need.Variety, need.Cultivar)].ToolNeeds.Add(new ToolNeed { ToolId = tools[need.Tool].Id, Per = need.Per, Quantity = need.Quantity });
 
         var people = seed.People.ToDictionary(p => p.Key, p => new Person { Name = p.Name, Color = p.Color });
         db.People.AddRange(people.Values);

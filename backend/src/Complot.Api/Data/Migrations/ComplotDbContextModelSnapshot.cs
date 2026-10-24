@@ -804,6 +804,87 @@ namespace Complot.Api.Data.Migrations
                     b.ToTable("Plantings");
                 });
 
+            modelBuilder.Entity("Complot.Domain.Tools.Tool", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.PrimitiveCollection<string>("BedIds")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly?>("BoughtOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Icon")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsReused")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("LifespanYears")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("MaintenanceIntervalMonths")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("MaintenanceMinutes")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Material")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("QtyGood")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("QtyRepair")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("QtyWorn")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("SupplierName")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Unit")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal?>("UnitPrice")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tools");
+                });
+
             modelBuilder.Entity("Complot.Domain.Work.ManualTask", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1149,6 +1230,31 @@ namespace Complot.Api.Data.Migrations
                                 .HasForeignKey("PlantVarietyId");
                         });
 
+                    b.OwnsMany("Complot.Domain.Tools.ToolNeed", "ToolNeeds", b1 =>
+                        {
+                            b1.Property<Guid>("PlantVarietyId");
+
+                            b1.Property<int>("__synthesizedOrdinal")
+                                .ValueGeneratedOnAddOrUpdate();
+
+                            b1.Property<int>("Per");
+
+                            b1.Property<decimal>("Quantity");
+
+                            b1.Property<Guid>("ToolId");
+
+                            b1.HasKey("PlantVarietyId", "__synthesizedOrdinal");
+
+                            b1.ToTable("Varieties");
+
+                            b1
+                                .ToJson("ToolNeeds")
+                                .HasColumnType("TEXT");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PlantVarietyId");
+                        });
+
                     b.OwnsMany("Complot.Domain.Catalog.VarietySupplier", "Suppliers", b1 =>
                         {
                             b1.Property<Guid>("VarietyId")
@@ -1193,6 +1299,8 @@ namespace Complot.Api.Data.Migrations
                     b.Navigation("Family");
 
                     b.Navigation("Suppliers");
+
+                    b.Navigation("ToolNeeds");
                 });
 
             modelBuilder.Entity("Complot.Domain.Garden.Bed", b =>
@@ -1300,6 +1408,42 @@ namespace Complot.Api.Data.Migrations
                     b.Navigation("Bed");
 
                     b.Navigation("Variety");
+                });
+
+            modelBuilder.Entity("Complot.Domain.Tools.Tool", b =>
+                {
+                    b.OwnsMany("Complot.Domain.Tools.ToolLogEntry", "Log", b1 =>
+                        {
+                            b1.Property<Guid>("ToolId");
+
+                            b1.Property<int>("__synthesizedOrdinal")
+                                .ValueGeneratedOnAddOrUpdate();
+
+                            b1.Property<decimal?>("Cost");
+
+                            b1.Property<DateOnly>("Date");
+
+                            b1.Property<Guid>("Id");
+
+                            b1.Property<bool>("IsMaintenance");
+
+                            b1.Property<string>("TaskKey");
+
+                            b1.Property<string>("Text");
+
+                            b1.HasKey("ToolId", "__synthesizedOrdinal");
+
+                            b1.ToTable("Tools");
+
+                            b1
+                                .ToJson("Log")
+                                .HasColumnType("TEXT");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ToolId");
+                        });
+
+                    b.Navigation("Log");
                 });
 
             modelBuilder.Entity("Complot.Domain.Work.ManualTask", b =>

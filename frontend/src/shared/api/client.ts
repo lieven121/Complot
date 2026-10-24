@@ -1150,6 +1150,322 @@ export class CatalogExchangeClient {
     }
 }
 
+export class ToolsClient {
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        this.http = http ? http : window as any;
+        this.baseUrl = baseUrl ?? "";
+    }
+
+    /**
+     * @return OK
+     */
+    listTools(signal?: AbortSignal): Promise<ToolDto[]> {
+        let url_ = this.baseUrl + "/api/tools";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            signal,
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processListTools(_response);
+        });
+    }
+
+    protected processListTools(response: Response): Promise<ToolDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ToolDto[];
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<ToolDto[]>(null as any);
+    }
+
+    /**
+     * @return Created
+     */
+    createTool(body: ToolInput, signal?: AbortSignal): Promise<ToolDto> {
+        let url_ = this.baseUrl + "/api/tools";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            signal,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreateTool(_response);
+        });
+    }
+
+    protected processCreateTool(response: Response): Promise<ToolDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 201) {
+            return response.text().then((_responseText) => {
+            let result201: any = null;
+            result201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ToolDto;
+            return result201;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<ToolDto>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getToolDemand(year: number, signal?: AbortSignal): Promise<ToolDemandDto[]> {
+        let url_ = this.baseUrl + "/api/tools/demand?";
+        if (year === undefined || year === null)
+            throw new globalThis.Error("The parameter 'year' must be defined and cannot be null.");
+        else
+            url_ += "year=" + encodeURIComponent("" + year) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            signal,
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetToolDemand(_response);
+        });
+    }
+
+    protected processGetToolDemand(response: Response): Promise<ToolDemandDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ToolDemandDto[];
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<ToolDemandDto[]>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    updateTool(id: string, body: ToolInput, signal?: AbortSignal): Promise<ToolDto> {
+        let url_ = this.baseUrl + "/api/tools/{id}";
+        if (id === undefined || id === null)
+            throw new globalThis.Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "PUT",
+            signal,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processUpdateTool(_response);
+        });
+    }
+
+    protected processUpdateTool(response: Response): Promise<ToolDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ToolDto;
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<ToolDto>(null as any);
+    }
+
+    /**
+     * @return No Content
+     */
+    deleteTool(id: string, signal?: AbortSignal): Promise<void> {
+        let url_ = this.baseUrl + "/api/tools/{id}";
+        if (id === undefined || id === null)
+            throw new globalThis.Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "DELETE",
+            signal,
+            headers: {
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processDeleteTool(_response);
+        });
+    }
+
+    protected processDeleteTool(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 204) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    addToolLog(id: string, body: ToolLogInput, signal?: AbortSignal): Promise<ToolDto> {
+        let url_ = this.baseUrl + "/api/tools/{id}/log";
+        if (id === undefined || id === null)
+            throw new globalThis.Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            signal,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processAddToolLog(_response);
+        });
+    }
+
+    protected processAddToolLog(response: Response): Promise<ToolDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ToolDto;
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<ToolDto>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    deleteToolLog(id: string, entryId: string, signal?: AbortSignal): Promise<ToolDto> {
+        let url_ = this.baseUrl + "/api/tools/{id}/log/{entryId}";
+        if (id === undefined || id === null)
+            throw new globalThis.Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        if (entryId === undefined || entryId === null)
+            throw new globalThis.Error("The parameter 'entryId' must be defined.");
+        url_ = url_.replace("{entryId}", encodeURIComponent("" + entryId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "DELETE",
+            signal,
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processDeleteToolLog(_response);
+        });
+    }
+
+    protected processDeleteToolLog(response: Response): Promise<ToolDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ToolDto;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<ToolDto>(null as any);
+    }
+}
+
 export class SitesClient {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
@@ -3663,6 +3979,8 @@ export interface MonthWindowDto {
     to: number;
 }
 
+export type NeedPer = "plant" | "bed";
+
 export interface NoteDto {
     id: string;
     siteId: string;
@@ -3875,13 +4193,86 @@ export interface TaskDto {
     calendarError: string | undefined;
 }
 
-export type TaskKind = "sowIndoor" | "sow" | "plantOut" | "plant" | "harvest" | "clear" | "care" | "custom";
+export type TaskKind = "sowIndoor" | "sow" | "plantOut" | "plant" | "harvest" | "clear" | "care" | "custom" | "maintenance";
 
 export interface TaskStateInput {
     assigneeId: string | undefined;
     estimateOverride: number | undefined;
     scheduledStart: string | undefined;
     calendarTitle?: string | undefined;
+}
+
+export interface ToolDemandDto {
+    toolId: string;
+    quantity: number;
+    month: number;
+}
+
+export interface ToolDto {
+    id: string;
+    name: string;
+    kind: string;
+    icon: string;
+    unit: string;
+    qtyGood: number;
+    qtyRepair: number;
+    qtyWorn: number;
+    material: string | undefined;
+    isReused: boolean;
+    boughtOn: string | undefined;
+    unitPrice: number | undefined;
+    supplierName: string | undefined;
+    lifespanYears: number | undefined;
+    maintenanceIntervalMonths: number | undefined;
+    maintenanceMinutes: number;
+    bedIds: string[];
+    notes: string | undefined;
+    lastMaintenance: string | undefined;
+    nextMaintenance: string | undefined;
+    replaceBy: string | undefined;
+    log: ToolLogEntryDto[];
+}
+
+export interface ToolInput {
+    name: string;
+    kind: string;
+    icon: string;
+    unit: string;
+    qtyGood: number;
+    qtyRepair: number;
+    qtyWorn: number;
+    material: string | undefined;
+    isReused: boolean;
+    boughtOn: string | undefined;
+    unitPrice: number | undefined;
+    supplierName: string | undefined;
+    lifespanYears: number | undefined;
+    maintenanceIntervalMonths: number | undefined;
+    maintenanceMinutes: number;
+    bedIds: string[];
+    notes: string | undefined;
+}
+
+export interface ToolLogEntryDto {
+    id: string;
+    date: string;
+    text: string | undefined;
+    cost: number | undefined;
+    isMaintenance: boolean;
+    fromTask: boolean;
+}
+
+export interface ToolLogInput {
+    date: string;
+    text: string | undefined;
+    cost: number | undefined;
+    isMaintenance: boolean;
+}
+
+export interface ToolNeedDto {
+    toolId: string;
+    per: NeedPer;
+    quantity: number;
 }
 
 export interface TreeDto {
@@ -3957,6 +4348,7 @@ export interface VarietyDto {
     actions: YearlyActionDto[];
     suppliers: VarietySupplierDto[];
     stock: StockDto[];
+    toolNeeds: ToolNeedDto[];
 }
 
 export interface VarietyInput {
@@ -3983,6 +4375,7 @@ export interface VarietyInput {
     notes: string | undefined;
     actions: YearlyActionDto[];
     suppliers: VarietySupplierInput[];
+    toolNeeds?: ToolNeedDto[] | undefined;
 }
 
 export interface VarietySupplierDto {

@@ -41,6 +41,9 @@ public sealed class PlantVariety : Entity
     public List<YearlyAction> Actions { get; set; } = [];
     public List<VarietySupplier> Suppliers { get; set; } = [];
 
+    /// <summary>Tools or materials needed while the crop is in a bed (feeds the tool demand).</summary>
+    public List<Tools.ToolNeed> ToolNeeds { get; set; } = [];
+
     public PlantFamily? EffectiveFamily => Family ?? Category.DefaultFamily;
 
     public int RotationRestYears => Category.RotationExempt ? 0 : EffectiveFamily?.RotationRestYears ?? 0;

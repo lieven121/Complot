@@ -2,6 +2,7 @@ using Complot.Domain.Catalog;
 using Complot.Domain.Common;
 using Complot.Domain.Garden;
 using Complot.Domain.Plantings;
+using Complot.Domain.Tools;
 
 namespace Complot.Domain.Work;
 
@@ -19,6 +20,7 @@ public static class TaskGenerator
         [TaskKind.Clear] = (6, true),
         [TaskKind.Care] = (30, false),
         [TaskKind.Custom] = (30, false),
+        [TaskKind.Maintenance] = (30, false),
     };
 
     /// <summary>Plantings need Bed and Variety loaded.</summary>
@@ -60,6 +62,24 @@ public static class TaskGenerator
         foreach (var care in CareDates(tree.Actions, year, tree.PlantedOn ?? DateOnly.MinValue, DateOnly.MaxValue))
             yield return new GardenTask(TaskKeys.TreeCare(tree.Id, care.Action.Title, year), TaskKind.Care, care.Date,
                 tree.SiteId, null, tree.Id, null, tree.Name, care.Action.Title, care.Action.EstimatedMinutes);
+    }
+
+    /// <summary>
+    /// Maintenance of a tool: the next due date (also when overdue) and the following ones up to <paramref name="to"/>, plus
+    /// the maintenance done through tasks earlier (so checked-off tasks stay visible).
+    /// </summary>
+    public static IEnumerable<GardenTask> ForTool(Tool tool, DateOnly from, DateOnly to) => ToolTasks(tool, from, to).DistinctBy(t => t.Key);
+
+    private static IEnumerable<GardenTask> ToolTasks(Tool tool, DateOnly from, DateOnly to)
+    {
+        GardenTask Task(string key, DateOnly due) =>
+            new(key, TaskKind.Maintenance, due, null, null, null, null, tool.Name, null, tool.MaintenanceMinutes);
+
+        foreach (var done in tool.Log.Where(e => e is { IsMaintenance: true, TaskKey: not null } && e.Date >= from && e.Date <= to))
+            yield return Task(done.TaskKey!, done.Date);
+        if (tool is not { NextMaintenance: { } next, MaintenanceIntervalMonths: { } months }) yield break;
+        for (var due = next; due <= to; due = due.AddMonths(months))
+            if (due == next || due >= from) yield return Task(TaskKeys.ToolMaintenance(tool.Id, due), due);
     }
 
     public static GardenTask ForManual(ManualTask task) =>

@@ -54,5 +54,15 @@ public sealed class VarietyInputValidator : AbstractValidator<VarietyInput>
         });
         RuleFor(x => x.Suppliers)
             .Must(s => s.Select(x => x.SupplierId).Distinct().Count() == s.Count).WithErrorCode("duplicateSupplier");
+
+        RuleForEach(x => x.ToolNeeds).ChildRules(need =>
+        {
+            need.RuleFor(n => n.ToolId).MustAsync((id, ct) => db.Tools.ExistsAsync(id, ct)).WithErrorCode("unknownTool");
+            need.RuleFor(n => n.Per).IsInEnum();
+            need.RuleFor(n => n.Quantity).GreaterThan(0).LessThanOrEqualTo(1000);
+        });
+        RuleFor(x => x.ToolNeeds)
+            .Must(n => n!.Select(x => x.ToolId).Distinct().Count() == n!.Count).WithErrorCode("duplicateTool")
+            .When(x => x.ToolNeeds is not null);
     }
 }

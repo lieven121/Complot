@@ -831,6 +831,265 @@
         }
       }
     },
+    "/api/tools": {
+      "get": {
+        "tags": [
+          "Tools"
+        ],
+        "operationId": "ListTools",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ToolDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Tools"
+        ],
+        "operationId": "CreateTool",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ToolInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tools/demand": {
+      "get": {
+        "tags": [
+          "Tools"
+        ],
+        "operationId": "GetToolDemand",
+        "parameters": [
+          {
+            "name": "year",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ToolDemandDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tools/{id}": {
+      "put": {
+        "tags": [
+          "Tools"
+        ],
+        "operationId": "UpdateTool",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ToolInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Tools"
+        ],
+        "operationId": "DeleteTool",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/api/tools/{id}/log": {
+      "post": {
+        "tags": [
+          "Tools"
+        ],
+        "operationId": "AddToolLog",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ToolLogInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tools/{id}/log/{entryId}": {
+      "delete": {
+        "tags": [
+          "Tools"
+        ],
+        "operationId": "DeleteToolLog",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "entryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/sites": {
       "get": {
         "tags": [
@@ -3768,6 +4027,12 @@
         },
         "additionalProperties": false
       },
+      "NeedPer": {
+        "enum": [
+          "plant",
+          "bed"
+        ]
+      },
       "NoteDto": {
         "required": [
           "id",
@@ -4654,7 +4919,8 @@
           "harvest",
           "clear",
           "care",
-          "custom"
+          "custom",
+          "maintenance"
         ]
       },
       "TaskStateInput": {
@@ -4683,6 +4949,336 @@
           "calendarTitle": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ToolDemandDto": {
+        "required": [
+          "toolId",
+          "quantity",
+          "month"
+        ],
+        "type": "object",
+        "properties": {
+          "toolId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "month": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ToolDto": {
+        "required": [
+          "id",
+          "name",
+          "kind",
+          "icon",
+          "unit",
+          "qtyGood",
+          "qtyRepair",
+          "qtyWorn",
+          "material",
+          "isReused",
+          "boughtOn",
+          "unitPrice",
+          "supplierName",
+          "lifespanYears",
+          "maintenanceIntervalMonths",
+          "maintenanceMinutes",
+          "bedIds",
+          "notes",
+          "lastMaintenance",
+          "nextMaintenance",
+          "replaceBy",
+          "log"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "qtyGood": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "qtyRepair": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "qtyWorn": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "material": {
+            "type": "string",
+            "nullable": true
+          },
+          "isReused": {
+            "type": "boolean"
+          },
+          "boughtOn": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "unitPrice": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "supplierName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lifespanYears": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "maintenanceIntervalMonths": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "maintenanceMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bedIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastMaintenance": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "nextMaintenance": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "replaceBy": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "log": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ToolLogEntryDto"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "ToolInput": {
+        "required": [
+          "name",
+          "kind",
+          "icon",
+          "unit",
+          "qtyGood",
+          "qtyRepair",
+          "qtyWorn",
+          "material",
+          "isReused",
+          "boughtOn",
+          "unitPrice",
+          "supplierName",
+          "lifespanYears",
+          "maintenanceIntervalMonths",
+          "maintenanceMinutes",
+          "bedIds",
+          "notes"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "qtyGood": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "qtyRepair": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "qtyWorn": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "material": {
+            "type": "string",
+            "nullable": true
+          },
+          "isReused": {
+            "type": "boolean"
+          },
+          "boughtOn": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "unitPrice": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "supplierName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lifespanYears": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "maintenanceIntervalMonths": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "maintenanceMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bedIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ToolLogEntryDto": {
+        "required": [
+          "id",
+          "date",
+          "text",
+          "cost",
+          "isMaintenance",
+          "fromTask"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "text": {
+            "type": "string",
+            "nullable": true
+          },
+          "cost": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "isMaintenance": {
+            "type": "boolean"
+          },
+          "fromTask": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ToolLogInput": {
+        "required": [
+          "date",
+          "text",
+          "cost",
+          "isMaintenance"
+        ],
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "text": {
+            "type": "string",
+            "nullable": true
+          },
+          "cost": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "isMaintenance": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ToolNeedDto": {
+        "required": [
+          "toolId",
+          "per",
+          "quantity"
+        ],
+        "type": "object",
+        "properties": {
+          "toolId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "per": {
+            "$ref": "#/components/schemas/NeedPer"
+          },
+          "quantity": {
+            "type": "number",
+            "format": "double"
           }
         },
         "additionalProperties": false
@@ -4913,7 +5509,8 @@
           "notes",
           "actions",
           "suppliers",
-          "stock"
+          "stock",
+          "toolNeeds"
         ],
         "type": "object",
         "properties": {
@@ -5074,6 +5671,12 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/StockDto"
+            }
+          },
+          "toolNeeds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ToolNeedDto"
             }
           }
         },
@@ -5246,6 +5849,13 @@
             "items": {
               "$ref": "#/components/schemas/VarietySupplierInput"
             }
+          },
+          "toolNeeds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ToolNeedDto"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -5365,6 +5975,9 @@
     },
     {
       "name": "CatalogExchange"
+    },
+    {
+      "name": "Tools"
     },
     {
       "name": "Sites"

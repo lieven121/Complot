@@ -1,9 +1,13 @@
 using Complot.Api.Common;
 using Complot.Domain.Catalog;
+using Complot.Domain.Tools;
 
 namespace Complot.Api.Features.Catalog.Varieties;
 
 public sealed record VarietySupplierDto(Guid SupplierId, string SupplierName, bool IsOwnSource, decimal Price, string? Unit, string? Url);
+
+/// <summary>The variety needs <see cref="Quantity"/> of a tool per plant or per bed while it is in a bed.</summary>
+public sealed record ToolNeedDto(Guid ToolId, NeedPer Per, decimal Quantity);
 
 public sealed record StockDto(Guid LotId, decimal Quantity, string Unit, LotStatus Status);
 
@@ -35,7 +39,8 @@ public sealed record VarietyDto(
     string? Notes,
     IReadOnlyList<YearlyActionDto> Actions,
     IReadOnlyList<VarietySupplierDto> Suppliers,
-    IReadOnlyList<StockDto> Stock);
+    IReadOnlyList<StockDto> Stock,
+    IReadOnlyList<ToolNeedDto> ToolNeeds);
 
 public sealed record VarietySupplierInput(Guid SupplierId, decimal Price, string? Unit, string? Url);
 
@@ -62,4 +67,5 @@ public sealed record VarietyInput(
     int? MaxYearsInBed,
     string? Notes,
     List<YearlyActionDto> Actions,
-    List<VarietySupplierInput> Suppliers);
+    List<VarietySupplierInput> Suppliers,
+    List<ToolNeedDto>? ToolNeeds = null);

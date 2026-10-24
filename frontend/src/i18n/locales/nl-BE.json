@@ -102,7 +102,9 @@
     "photoType": "Enkel JPG, PNG, WebP of HEIC.",
     "photoTooLarge": "Foto is groter dan {maxMb} MB.",
     "email": "Geen geldig e-mailadres.",
-    "duplicateSite": "Elke locatie maar één keer."
+    "duplicateSite": "Elke locatie maar één keer.",
+    "unknownTool": "Onbekend gereedschap.",
+    "duplicateTool": "Elk gereedschap maar één keer."
   },
   "errors": {
     "generic": "Er liep iets mis. Probeer opnieuw.",
@@ -467,7 +469,8 @@
       "harvest": "Oogst {subject}",
       "clear": "Bed leegmaken: {subject}",
       "care": "{title}: {subject}",
-      "custom": "{title}"
+      "custom": "{title}",
+      "maintenance": "Onderhoud: {subject}"
     },
     "kindName": {
       "sowIndoor": "Voorzaaien",
@@ -477,7 +480,8 @@
       "harvest": "Oogsten",
       "clear": "Bed leegmaken",
       "care": "Onderhoud",
-      "custom": "Andere taak"
+      "custom": "Andere taak",
+      "maintenance": "Onderhoud gereedschap"
     },
     "page": {
       "summary": "{n} open taken de komende 7 dagen",

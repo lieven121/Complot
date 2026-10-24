@@ -56,6 +56,7 @@ internal sealed class PlantVarietyConfiguration : IEntityTypeConfiguration<Plant
         b.ComplexProperty(v => v.Germination);
 
         b.OwnsMany(v => v.Actions, a => a.ToJson());
+        b.OwnsMany(v => v.ToolNeeds, n => n.ToJson());
         b.OwnsMany(v => v.Suppliers, s =>
         {
             s.ToTable("VarietySuppliers");

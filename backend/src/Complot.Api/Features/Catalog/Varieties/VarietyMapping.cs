@@ -1,5 +1,6 @@
 using Complot.Api.Common;
 using Complot.Domain.Catalog;
+using Complot.Domain.Tools;
 
 namespace Complot.Api.Features.Catalog.Varieties;
 
@@ -14,7 +15,8 @@ public static class VarietyMapping
         v.Actions.ToDtos(),
         v.Suppliers.OrderBy(s => s.Price)
             .Select(s => new VarietySupplierDto(s.SupplierId, s.Supplier.Name, s.Supplier.IsOwnSource, s.Price, s.Unit, s.Url)).ToArray(),
-        lots.Select(l => new StockDto(l.Id, l.Quantity, l.Unit, l.StatusOn(today))).ToArray());
+        lots.Select(l => new StockDto(l.Id, l.Quantity, l.Unit, l.StatusOn(today))).ToArray(),
+        v.ToolNeeds.Select(n => new ToolNeedDto(n.ToolId, n.Per, n.Quantity)).ToArray());
 
     public static void Apply(this VarietyInput input, PlantVariety v)
     {
@@ -40,6 +42,8 @@ public static class VarietyMapping
         v.MaxYearsInBed = input.MaxYearsInBed;
         v.Notes = Clean(input.Notes);
         v.Actions = input.Actions.ToDomain();
+        // The AI/JSON import has no tool needs: leave them as they are there.
+        if (input.ToolNeeds is { } needs) v.ToolNeeds = needs.Select(n => new ToolNeed { ToolId = n.ToolId, Per = n.Per, Quantity = n.Quantity }).ToList();
         v.Suppliers.SyncWith(input.Suppliers, s => s.SupplierId, s => s.SupplierId,
             s => new VarietySupplier { VarietyId = v.Id, SupplierId = s.SupplierId, Price = s.Price, Unit = Clean(s.Unit), Url = Clean(s.Url) },
             (s, existing) => { existing.Price = s.Price; existing.Unit = Clean(s.Unit); existing.Url = Clean(s.Url); });

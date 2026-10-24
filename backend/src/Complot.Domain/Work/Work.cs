@@ -24,6 +24,9 @@ public enum TaskKind
     /// <summary>Yearly care of a perennial or tree (pruning, mulching…).</summary>
     Care,
     Custom,
+
+    /// <summary>Periodic maintenance of a tool (cleaning, sharpening, winterising).</summary>
+    Maintenance,
 }
 
 /// <summary>A task added by hand. Its status is kept in <see cref="TaskState"/> like generated tasks.</summary>
@@ -111,6 +114,7 @@ public static class TaskKeys
     public static string PlantingCare(Guid plantingId, string action, int year) => $"planting:{plantingId:N}:care:{Normalize(action)}:{year}";
     public static string TreeCare(Guid treeId, string action, int year) => $"tree:{treeId:N}:care:{Normalize(action)}:{year}";
     public static string Manual(Guid id) => $"manual:{id:N}";
+    public static string ToolMaintenance(Guid toolId, DateOnly due) => $"tool:{toolId:N}:maintenance:{due:yyyy-MM}";
 
     /// <summary>"planting:{id}:…" → id; used to regenerate the tasks of one source.</summary>
     public static (string Source, Guid Id)? Parse(string key)
