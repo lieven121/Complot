@@ -1,10 +1,67 @@
-# Complot
+<div align="center">
 
-Garden planner for small-scale, circular, permaculture growing: sites and beds on a map, crop planning with
-rotation per botanical family and companion checks, tasks with learning time estimates, a garden log, a plant
-catalog with inventory, tools and costs. The UI is Dutch (Belgium) by default, with English as a second language.
+# 🌱 Complot
 
-See [PLAN.md](PLAN.md) for scope and decisions and `demo/index.html` for the clickable prototype.
+**A garden planner for small-scale, circular, permaculture growing.**
+
+Draw your garden, plan crops with rotation per botanical family, and let the tasks, calendar, tools and costs follow from the plan.
+
+![.NET 10](https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet&logoColor=white)
+![Vue 3](https://img.shields.io/badge/Vue-3-4FC08D?logo=vuedotjs&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white)
+![PrimeVue](https://img.shields.io/badge/PrimeVue-4-41B883)
+![SQLite](https://img.shields.io/badge/SQLite-EF%20Core-003B57?logo=sqlite&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-single%20image-2496ED?logo=docker&logoColor=white)
+
+<img src="docs/screenshots/map.png" alt="Garden map with beds, the season timeline and the overview panel" width="900">
+
+</div>
+
+The UI is Dutch (Belgium) by default, with English as a second language. See [PLAN.md](PLAN.md) for scope and
+decisions and `demo/index.html` for the clickable prototype.
+
+## Features
+
+### 🗺️ Garden map and season timeline
+
+Sites, beds, paths, trees and water drawn to scale. Scrub the timeline (or press *Afspelen*) to watch the
+season unfold: each bed shows its crop and phase, from sown to harvest to cleared. Click a bed for its history,
+rotation and companion checks, open tasks and log.
+
+<img src="docs/screenshots/bed.png" alt="Bed detail with crop timeline, tasks and garden log" width="900">
+
+### ✅ Tasks that learn and 🗓️ a planner
+
+Tasks come from the crop plan (sow, plant out, harvest, clear) and from tools that need maintenance, plus your own.
+Time estimates correct themselves from the actual time you enter when ticking them off. Drag tasks onto a person's
+week in the planner, and they show up in Google Calendar or any calendar app.
+
+| Tasks | Planner |
+|---|---|
+| <img src="docs/screenshots/tasks.png" alt="Task list with workload and learning time estimates"> | <img src="docs/screenshots/planner.png" alt="Weekly planner with scheduled tasks per person"> |
+
+### 🌿 Plants, 🧰 tools and 💶 costs
+
+A plant catalog with spacing, sowing and harvest windows, rotation rules and seed inventory (with import/export and
+an AI prompt template to fill it). Tools with condition, maintenance and the demand that follows from the plan.
+Invoices split per category, with a cost report per year and per m² of bed.
+
+| Plants | Tools | Costs |
+|---|---|---|
+| <img src="docs/screenshots/plants.png" alt="Plant catalog"> | <img src="docs/screenshots/tools.png" alt="Tools with condition and maintenance"> | <img src="docs/screenshots/costs.png" alt="Cost report"> |
+
+### 📱 On your phone, in the garden
+
+<p>
+  <img src="docs/screenshots/map-mobile.png" alt="Garden map on a phone" width="260">
+  &nbsp;
+  <img src="docs/screenshots/tasks-mobile.png" alt="Tasks on a phone" width="260">
+</p>
+
+### 🔐 Access per location
+
+Optional OpenID Connect sign-in, *view* or *edit* access per location, invitations by e-mail and time-limited
+access links for volunteers (see [Users and access](#users-and-access)).
 
 ## Structure
 
