@@ -1,5 +1,6 @@
 using Complot.Domain.Access;
 using Complot.Domain.Catalog;
+using Complot.Domain.Costs;
 using Complot.Domain.Garden;
 using Complot.Domain.Planner;
 using Complot.Domain.Plantings;
@@ -38,6 +39,10 @@ public sealed class ComplotDbContext(DbContextOptions<ComplotDbContext> options)
     public DbSet<CalendarLink> CalendarLinks => Set<CalendarLink>();
 
     public DbSet<Tool> Tools => Set<Tool>();
+
+    public DbSet<CostCategory> CostCategories => Set<CostCategory>();
+    public DbSet<Invoice> Invoices => Set<Invoice>();
+    public DbSet<InvoiceLine> InvoiceLines => Set<InvoiceLine>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) =>
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ComplotDbContext).Assembly);

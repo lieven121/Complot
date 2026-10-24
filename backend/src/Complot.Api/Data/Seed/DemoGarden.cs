@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Complot.Domain.Catalog;
 using Complot.Domain.Common;
+using Complot.Domain.Costs;
 using Complot.Domain.Garden;
 using Complot.Domain.Plantings;
 using Complot.Domain.Tools;
@@ -35,9 +36,12 @@ internal static class DemoGarden
         DateOnly? BoughtOn, decimal? UnitPrice, string? SupplierName, int? LifespanYears, int? MaintenanceIntervalMonths, int MaintenanceMinutes,
         List<string> Beds, string? Notes, List<SeedToolLog> Log);
     private sealed record SeedToolNeed(string Variety, string? Cultivar, string Tool, NeedPer Per, decimal Quantity);
+    private sealed record SeedCostCategory(string Key, string Name, string Color);
+    private sealed record SeedInvoiceLine(string Description, string Category, decimal Amount);
+    private sealed record SeedInvoice(DateOnly Date, string Supplier, string? Number, List<SeedInvoiceLine> Lines);
     private sealed record SeedFile(
         List<SeedSite> Sites, List<SeedPlanting> Plantings, List<SeedPerson> People, List<SeedNote> Notes, List<SeedManualTask> ManualTasks,
-        List<SeedTool> Tools, List<SeedToolNeed> ToolNeeds);
+        List<SeedTool> Tools, List<SeedToolNeed> ToolNeeds, List<SeedCostCategory> CostCategories, List<SeedInvoice> Invoices);
 
     /// <summary>How much longer (or shorter) than estimated each kind of task took in the sample history.</summary>
     private static readonly Dictionary<TaskKind, double> HistoryBias = new()
@@ -107,6 +111,14 @@ internal static class DemoGarden
         db.Tools.AddRange(tools.Values);
         foreach (var need in seed.ToolNeeds)
             varieties[(need.Variety, need.Cultivar)].ToolNeeds.Add(new ToolNeed { ToolId = tools[need.Tool].Id, Per = need.Per, Quantity = need.Quantity });
+
+        var costCategories = seed.CostCategories.ToDictionary(c => c.Key, c => new CostCategory { Name = c.Name, Color = c.Color });
+        db.CostCategories.AddRange(costCategories.Values);
+        db.Invoices.AddRange(seed.Invoices.Select(i => new Invoice
+        {
+            Date = i.Date, Supplier = i.Supplier, Number = i.Number, Total = i.Lines.Sum(l => l.Amount),
+            Lines = i.Lines.Select(l => new InvoiceLine { Description = l.Description, CategoryId = costCategories[l.Category].Id, Amount = l.Amount }).ToList(),
+        }));
 
         var people = seed.People.ToDictionary(p => p.Key, p => new Person { Name = p.Name, Color = p.Color });
         db.People.AddRange(people.Values);

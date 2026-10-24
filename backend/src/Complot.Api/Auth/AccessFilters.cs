@@ -79,6 +79,11 @@ public static class AccessFilters
         builder.AddEndpointFilter(async (context, next) =>
             (await ResolveAsync(context)).Access.IsAdmin ? await next(context) : ApiProblems.Forbidden("access.adminOnly"));
 
+    /// <summary>Only for editors (anyone who can change at least one site), reading included.</summary>
+    public static TBuilder RequireEditor<TBuilder>(this TBuilder builder) where TBuilder : IEndpointConventionBuilder =>
+        builder.AddEndpointFilter(async (context, next) =>
+            (await ResolveAsync(context)).Access.IsEditor ? await next(context) : ApiProblems.Forbidden("access.readOnly"));
+
     /// <summary>Shared data (catalog, people): everyone may read; changing it needs edit rights on at least one site.</summary>
     public static TBuilder RequireEditorForWrites<TBuilder>(this TBuilder builder) where TBuilder : IEndpointConventionBuilder =>
         builder.AddEndpointFilter(async (context, next) =>

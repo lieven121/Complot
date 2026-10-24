@@ -1911,5 +1911,310 @@
       "per": "bed",
       "quantity": 1
     }
+  ],
+  "costCategories": [
+    {
+      "key": "seed",
+      "name": "Zaden & plantgoed",
+      "color": "#3f7d4e"
+    },
+    {
+      "key": "tools",
+      "name": "Gereedschap",
+      "color": "#c2833a"
+    },
+    {
+      "key": "infra",
+      "name": "Infrastructuur & irrigatie",
+      "color": "#3a6ea5"
+    },
+    {
+      "key": "soil",
+      "name": "Bodem & compost",
+      "color": "#8a5a3b"
+    },
+    {
+      "key": "protect",
+      "name": "Bescherming",
+      "color": "#8e6bb8"
+    },
+    {
+      "key": "other",
+      "name": "Overig / verzending",
+      "color": "#9a958a"
+    }
+  ],
+  "invoices": [
+    {
+      "date": "2025-01-18",
+      "supplier": "De Bolster",
+      "number": "DB-25-0412",
+      "lines": [
+        {
+          "description": "Zaden (12 zakjes)",
+          "category": "seed",
+          "amount": 32.4
+        },
+        {
+          "description": "Verzending",
+          "category": "other",
+          "amount": 6.0
+        }
+      ]
+    },
+    {
+      "date": "2025-02-10",
+      "supplier": "Vreeken's Zaden",
+      "number": "V-88123",
+      "lines": [
+        {
+          "description": "Zaden wortel, prei, tuinboon",
+          "category": "seed",
+          "amount": 19.8
+        },
+        {
+          "description": "Verzending",
+          "category": "other",
+          "amount": 4.95
+        }
+      ]
+    },
+    {
+      "date": "2025-03-05",
+      "supplier": "Tuinbouwshop Agri",
+      "number": "AG2025-311",
+      "lines": [
+        {
+          "description": "Druppelslang 8×5 m + koppelstukken",
+          "category": "infra",
+          "amount": 94.0
+        },
+        {
+          "description": "Aanvoerleiding 50 m",
+          "category": "infra",
+          "amount": 42.0
+        },
+        {
+          "description": "Insectengaas 3 st.",
+          "category": "protect",
+          "amount": 35.0
+        },
+        {
+          "description": "Verzending",
+          "category": "other",
+          "amount": 8.5
+        }
+      ]
+    },
+    {
+      "date": "2025-03-22",
+      "supplier": "Brico",
+      "number": "BR-7781",
+      "lines": [
+        {
+          "description": "Trekschoffel 2 st.",
+          "category": "tools",
+          "amount": 49.95
+        },
+        {
+          "description": "Bamboestokken 60 st.",
+          "category": "infra",
+          "amount": 21.0
+        }
+      ]
+    },
+    {
+      "date": "2025-04-02",
+      "supplier": "Kwekerij De Plantage",
+      "number": "KP-0331",
+      "lines": [
+        {
+          "description": "Pootaardappelen Charlotte 2 kg",
+          "category": "seed",
+          "amount": 9.9
+        },
+        {
+          "description": "Plantuitjes",
+          "category": "seed",
+          "amount": 2.5
+        },
+        {
+          "description": "Knoflook 250 g",
+          "category": "seed",
+          "amount": 6.5
+        }
+      ]
+    },
+    {
+      "date": "2025-05-14",
+      "supplier": "Containerpark compost",
+      "number": "CP-25-118",
+      "lines": [
+        {
+          "description": "Compost 1 m³",
+          "category": "soil",
+          "amount": 15.0
+        }
+      ]
+    },
+    {
+      "date": "2025-06-10",
+      "supplier": "2dehands.be",
+      "number": null,
+      "lines": [
+        {
+          "description": "2× IBC-ton tweedehands",
+          "category": "infra",
+          "amount": 90.0
+        }
+      ]
+    },
+    {
+      "date": "2025-09-20",
+      "supplier": "Hoeve Het Hof",
+      "number": "H-2025-77",
+      "lines": [
+        {
+          "description": "Stalmest 1 aanhangwagen",
+          "category": "soil",
+          "amount": 27.5
+        }
+      ]
+    },
+    {
+      "date": "2025-11-05",
+      "supplier": "Brico",
+      "number": "BR-9120",
+      "lines": [
+        {
+          "description": "Vliesdoek 2 rollen",
+          "category": "protect",
+          "amount": 18.4
+        }
+      ]
+    },
+    {
+      "date": "2026-01-20",
+      "supplier": "De Bolster",
+      "number": "DB-26-0198",
+      "lines": [
+        {
+          "description": "Zaden (14 zakjes)",
+          "category": "seed",
+          "amount": 40.85
+        },
+        {
+          "description": "Verzending",
+          "category": "other",
+          "amount": 6.0
+        }
+      ]
+    },
+    {
+      "date": "2026-02-02",
+      "supplier": "Zaadgoed",
+      "number": "ZG-4471",
+      "lines": [
+        {
+          "description": "Zaden tomaat, kool, pompoen",
+          "category": "seed",
+          "amount": 19.6
+        }
+      ]
+    },
+    {
+      "date": "2026-02-28",
+      "supplier": "Gereedschapshop",
+      "number": "GS-1002",
+      "lines": [
+        {
+          "description": "Grelinette 5 tanden",
+          "category": "tools",
+          "amount": 129.0
+        }
+      ]
+    },
+    {
+      "date": "2026-03-15",
+      "supplier": "Tuinbouwshop Agri",
+      "number": "AG2026-201",
+      "lines": [
+        {
+          "description": "Tunnelbogen + folie",
+          "category": "protect",
+          "amount": 24.0
+        },
+        {
+          "description": "Klimgaas 2 panelen",
+          "category": "infra",
+          "amount": 48.0
+        },
+        {
+          "description": "Koppelstukken",
+          "category": "infra",
+          "amount": 10.2
+        }
+      ]
+    },
+    {
+      "date": "2026-04-08",
+      "supplier": "Kwekerij De Plantage",
+      "number": "KP-0412",
+      "lines": [
+        {
+          "description": "Plantgoed & pootgoed",
+          "category": "seed",
+          "amount": 31.5
+        }
+      ]
+    },
+    {
+      "date": "2026-05-02",
+      "supplier": "Containerpark compost",
+      "number": "CP-26-090",
+      "lines": [
+        {
+          "description": "Compost 2 m³",
+          "category": "soil",
+          "amount": 30.0
+        }
+      ]
+    },
+    {
+      "date": "2026-06-18",
+      "supplier": "Brico",
+      "number": "BR-1432",
+      "lines": [
+        {
+          "description": "Tomatenspiralen 20 st.",
+          "category": "infra",
+          "amount": 45.8
+        }
+      ]
+    },
+    {
+      "date": "2026-09-12",
+      "supplier": "Zadenruilbeurs",
+      "number": null,
+      "lines": [
+        {
+          "description": "Bijdrage ruilbeurs",
+          "category": "other",
+          "amount": 5.0
+        }
+      ]
+    },
+    {
+      "date": "2026-10-05",
+      "supplier": "Hoeve Het Hof",
+      "number": "H-2026-61",
+      "lines": [
+        {
+          "description": "Bladcompost & stalmest",
+          "category": "soil",
+          "amount": 32.0
+        }
+      ]
+    }
   ]
 }

@@ -43,11 +43,6 @@ public sealed class NoteInputValidator : AbstractValidator<NoteInput>
 
 public static class NoteEndpoints
 {
-    private const long MaxPhotoBytes = 10 * 1024 * 1024;
-    private static readonly Dictionary<string, string> PhotoTypes = new(StringComparer.OrdinalIgnoreCase)
-    {
-        ["image/jpeg"] = ".jpg", ["image/png"] = ".png", ["image/webp"] = ".webp", ["image/heic"] = ".heic",
-    };
 
     public static void MapNotes(this IEndpointRouteBuilder api)
     {
@@ -103,7 +98,7 @@ public static class NoteEndpoints
     private static async Task<Results<NoContent, ProblemHttpResult>> Delete(Guid id, ComplotDbContext db, IOptions<StorageOptions> storage, CancellationToken ct)
     {
         if (await db.Notes.FindAsync([id], ct) is not { } note) return ApiProblems.NotFound();
-        if (note.PhotoFileName is { } file) File.Delete(Path.Combine(storage.Value.PhotoDir, file));
+        StoredFiles.Delete(storage.Value.PhotoDir, note.PhotoFileName);
         db.Notes.Remove(note);
         await db.SaveChangesAsync(ct);
         return TypedResults.NoContent();
@@ -113,17 +108,8 @@ public static class NoteEndpoints
         Guid id, IFormFile file, ComplotDbContext db, IOptions<StorageOptions> storage, CancellationToken ct)
     {
         if (await db.Notes.FindAsync([id], ct) is not { } note) return ApiProblems.NotFound();
-        if (!PhotoTypes.TryGetValue(file.ContentType, out var extension))
-            return ApiProblems.Validation(new Dictionary<string, ErrorDetail[]> { ["file"] = [new ErrorDetail("photoType")] });
-        if (file.Length > MaxPhotoBytes)
-            return ApiProblems.Validation(new Dictionary<string, ErrorDetail[]> { ["file"] = [new ErrorDetail("photoTooLarge", new Dictionary<string, object?> { ["maxMb"] = MaxPhotoBytes / 1024 / 1024 })] });
-
-        var directory = storage.Value.PhotoDir;
-        Directory.CreateDirectory(directory);
-        if (note.PhotoFileName is { } old) File.Delete(Path.Combine(directory, old));
-        note.PhotoFileName = $"{note.Id:N}{extension}";
-        await using (var target = File.Create(Path.Combine(directory, note.PhotoFileName)))
-            await file.CopyToAsync(target, ct);
+        if (StoredFiles.Check(file, FileKind.Photo) is { } invalid) return invalid;
+        note.PhotoFileName = await StoredFiles.SaveAsync(file, FileKind.Photo, storage.Value.PhotoDir, note.Id, note.PhotoFileName, ct);
         await db.SaveChangesAsync(ct);
         return TypedResults.NoContent();
     }
@@ -131,8 +117,7 @@ public static class NoteEndpoints
     private static async Task<Results<PhysicalFileHttpResult, ProblemHttpResult>> GetPhoto(Guid id, ComplotDbContext db, IOptions<StorageOptions> storage, CancellationToken ct)
     {
         if (await db.Notes.AsNoTracking().FirstOrDefaultAsync(n => n.Id == id, ct) is not { PhotoFileName: { } file }) return ApiProblems.NotFound();
-        var contentType = PhotoTypes.First(t => t.Value == Path.GetExtension(file)).Key;
-        return TypedResults.PhysicalFile(Path.Combine(storage.Value.PhotoDir, file), contentType);
+        return StoredFiles.Serve(FileKind.Photo, storage.Value.PhotoDir, file);
     }
 
     private static async Task<Guid?> VarietyOf(Note note, ComplotDbContext db, CancellationToken ct) =>

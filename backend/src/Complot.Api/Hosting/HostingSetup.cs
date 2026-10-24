@@ -59,6 +59,7 @@ public sealed class StorageOptions
     public string FullDataDir => Path.GetFullPath(DataDir);
     public string DatabasePath => Path.Combine(FullDataDir, "complot.db");
     public string PhotoDir => Path.Combine(FullDataDir, "photos");
+    public string InvoiceDir => Path.Combine(FullDataDir, "invoices");
 }
 
 public sealed class SeedOptions
