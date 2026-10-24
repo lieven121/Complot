@@ -26,6 +26,7 @@ export function newVarietyInput(categoryId = ''): VarietyInput {
     notes: undefined,
     actions: [],
     suppliers: [],
+    toolNeeds: [],
   }
 }
 
@@ -55,5 +56,6 @@ export function varietyInputFrom(v: VarietyDto): VarietyInput {
     notes: v.notes,
     actions: v.actions.map((a) => ({ ...a })),
     suppliers: v.suppliers.map((s) => ({ supplierId: s.supplierId, price: s.price, unit: s.unit, url: s.url })),
+    toolNeeds: v.toolNeeds.map((n) => ({ ...n })),
   }
 }

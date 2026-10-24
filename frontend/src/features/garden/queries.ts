@@ -1,5 +1,5 @@
 import { computed, type MaybeRefOrGetter, toValue } from 'vue'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
+import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/vue-query'
 import { api, type NoteInput, type PlanPlantingInput, type SiteInput, type SiteLayoutDto, type UpdatePlantingInput } from '@/shared/api'
 import { toIsoDate } from '@/shared/dates'
 
@@ -29,6 +29,24 @@ export const useLayout = (siteId: MaybeRefOrGetter<string | undefined>) =>
     queryFn: ({ signal }) => api.sites.getSiteLayout(toValue(siteId)!, signal),
     enabled: computed(() => !!toValue(siteId)),
   })
+
+/** Every bed the user can see, labelled "Thuis · K1" (for things shared across sites, such as tools). */
+export function useAllBeds() {
+  const sites = useSites()
+  const layouts = useQueries({
+    queries: computed(() =>
+      (sites.data.value ?? []).map((site) => ({
+        queryKey: [...GARDEN, 'layout', site.id],
+        queryFn: ({ signal }: { signal: AbortSignal }) => api.sites.getSiteLayout(site.id, signal),
+      })),
+    ),
+  })
+  return computed(() =>
+    (sites.data.value ?? []).flatMap((site, i) =>
+      (layouts.value[i]?.data?.beds ?? []).map((bed) => ({ id: bed.id, code: bed.code, label: `${site.name} · ${bed.code}` })),
+    ),
+  )
+}
 
 export const usePlantings = (siteId: MaybeRefOrGetter<string | undefined>, period = mapPeriod()) =>
   useQuery({

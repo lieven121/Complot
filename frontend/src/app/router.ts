@@ -26,12 +26,13 @@ const routes: RouteRecordRaw[] = [
   { path: '/', redirect: '/kaart' },
   { path: '/kaart', name: 'map', component: () => import('@/features/garden/MapPage.vue') },
   { path: '/beheer', name: 'admin', component: () => import('@/features/admin/AdminPage.vue') },
+  { path: '/gereedschap', name: 'tools', component: () => import('@/features/tools/ToolsPage.vue') },
   { path: '/planner', name: 'planner', component: () => import('@/features/planner/PlannerPage.vue') },
   { path: '/taken', name: 'tasks', component: () => import('@/features/tasks/TasksPage.vue') },
   { path: '/planten', name: 'plants', component: () => import('@/features/catalog/PlantsPage.vue') },
   { path: '/planten/:id', name: 'variety', component: () => import('@/features/catalog/VarietyDetailPage.vue'), props: true },
   ...navItems
-    .filter((item) => !['plants', 'map', 'tasks', 'admin', 'planner'].includes(item.name))
+    .filter((item) => !['plants', 'map', 'tasks', 'admin', 'planner', 'tools'].includes(item.name))
     .map((item) => ({ path: item.path, name: item.name, component: comingSoon, meta: { navKey: item.navKey } })),
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ]

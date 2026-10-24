@@ -3,6 +3,7 @@ import {
   AuthClient,
   CatalogExchangeClient,
   CategoriesClient,
+  CostsClient,
   FamiliesClient,
   InventoryLotsClient,
   NotesClient,
@@ -11,6 +12,7 @@ import {
   PlantingsClient,
   SitesClient,
   SuppliersClient,
+  ToolsClient,
   TasksClient,
   VarietiesClient,
 } from './client'
@@ -47,6 +49,8 @@ export const api = {
   notes: new NotesClient(baseUrl, http),
   admin: new AdminClient(baseUrl, http),
   planner: new PlannerClient(baseUrl, http),
+  tools: new ToolsClient(baseUrl, http),
+  costs: new CostsClient(baseUrl, http),
 }
 
 export type * from './client'

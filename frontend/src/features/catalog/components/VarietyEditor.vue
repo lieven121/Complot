@@ -13,12 +13,14 @@ import { useFormat } from '@/shared/composables/useFormat'
 import EditDialog from '@/shared/ui/EditDialog.vue'
 import FormField from '@/shared/ui/FormField.vue'
 import MonthWindowInput from '@/shared/ui/MonthWindowInput.vue'
+import { useTools } from '@/features/tools/queries'
 import { useCatalogLookups, useDeleteVariety, useSaveVariety } from '../queries'
 import { newVarietyInput, varietyInputFrom } from '../varietyForm'
 
 const { t } = useI18n()
 const { monthLong } = useFormat()
 const { categories, families, suppliers, familyById, categoryById } = useCatalogLookups()
+const tools = useTools()
 
 const editor = useEditor({
   toInput: (v?: VarietyDto) => (v ? varietyInputFrom(v) : newVarietyInput()),
@@ -53,6 +55,9 @@ const unlimitedStay = computed({
 
 const addAction = () => form.value.actions.push({ title: '', month: 2, estimatedMinutes: 30 })
 const addSupplier = () => form.value.suppliers.push({ supplierId: '', price: 0, unit: undefined, url: undefined })
+const toolNeeds = computed(() => (form.value.toolNeeds ??= []))
+const addToolNeed = () => toolNeeds.value.push({ toolId: '', per: 'bed', quantity: 1 })
+const perOptions = computed(() => (['plant', 'bed'] as const).map((value) => ({ value, label: t(`tools.per.${value}`) })))
 </script>
 
 <template>
@@ -219,6 +224,34 @@ const addSupplier = () => form.value.suppliers.push({ supplierId: '', price: 0, 
         <Button icon="pi pi-times" text severity="secondary" :aria-label="t('common.remove')" @click="form.suppliers.splice(i, 1)" />
       </div>
       <div><Button :label="t('catalog.supplier.add')" icon="pi pi-plus" text size="small" @click="addSupplier" /></div>
+    </div>
+
+    <h3 class="full">{{ t('tools.needs') }}</h3>
+    <div class="full stack">
+      <small class="muted">{{ t('tools.needsHelp') }}</small>
+      <small v-if="errors.field('toolNeeds')" class="error">{{ errors.field('toolNeeds') }}</small>
+      <div v-for="(need, i) in toolNeeds" :key="i" class="line">
+        <Select
+          v-model="need.toolId"
+          :options="tools.data.value ?? []"
+          option-label="name"
+          option-value="id"
+          filter
+          :placeholder="t('tools.choose')"
+          :invalid="!!errors.field(`toolNeeds[${i}].toolId`)"
+        />
+        <InputNumber v-model="need.quantity" :min="0" :max-fraction-digits="2" :aria-label="t('tools.quantity')" />
+        <SelectButton
+          v-model="need.per"
+          :options="perOptions"
+          option-label="label"
+          option-value="value"
+          :allow-empty="false"
+          size="small"
+        />
+        <Button icon="pi pi-times" text severity="secondary" :aria-label="t('common.remove')" @click="toolNeeds.splice(i, 1)" />
+      </div>
+      <div><Button :label="t('tools.addNeed')" icon="pi pi-plus" text size="small" @click="addToolNeed" /></div>
     </div>
 
     <FormField :label="t('catalog.variety.notes')" for="v-notes" :error="errors.field('notes')" full>
