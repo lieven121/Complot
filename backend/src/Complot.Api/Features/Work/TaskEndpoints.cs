@@ -92,9 +92,23 @@ public static class TaskEndpoints
         DateOnly? from, DateOnly? to, Guid? siteId, TaskService tasks, ComplotDbContext db, CurrentUser user, TimeProvider time, CancellationToken ct)
     {
         var today = time.Today();
+        var (start, end) = (from ?? today.AddDays(-60), to ?? today.AddDays(60));
         var visible = await db.VisibleSiteIdsAsync(await user.GetAsync(ct), ct);
         var sites = siteId is { } id ? visible.Where(v => v == id).ToList() : visible;
-        var generated = await tasks.GenerateAsync(from ?? today.AddDays(-60), to ?? today.AddDays(60), sites, includeSiteless: siteId is null, ct);
+        var generated = await tasks.GenerateAsync(start, end, sites, includeSiteless: siteId is null, ct);
+
+        // Also tasks planned in the period although they are due outside it (e.g. sowing done a week early).
+        var known = generated.Select(t => t.Key).ToHashSet();
+        var (startTime, endTime) = (start.ToDateTime(TimeOnly.MinValue), end.AddDays(1).ToDateTime(TimeOnly.MinValue));
+        var scheduledKeys = await db.TaskStates.AsNoTracking()
+            .Where(s => s.ScheduledStart >= startTime && s.ScheduledStart < endTime)
+            .Select(s => s.SourceKey)
+            .ToListAsync(ct);
+        foreach (var key in scheduledKeys.Where(k => !known.Contains(k)))
+        {
+            if (await tasks.FindAsync(key, ct) is { } task && (task.SiteId is { } site ? sites.Contains(site) : siteId is null)) generated.Add(task);
+        }
+
         var keys = generated.Select(t => t.Key).ToList();
         var states = await db.TaskStates.AsNoTracking().Where(s => keys.Contains(s.SourceKey)).ToDictionaryAsync(s => s.SourceKey, ct);
         var factors = await tasks.FactorsAsync(ct);
