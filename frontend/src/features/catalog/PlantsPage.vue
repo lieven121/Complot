@@ -10,6 +10,7 @@ import Tabs from 'primevue/tabs'
 import { useI18n } from 'vue-i18n'
 import { api } from '@/shared/api'
 import { useNotify } from '@/shared/composables/useNotify'
+import { useSession } from '@/shared/session'
 import AiPromptDialog from './components/AiPromptDialog.vue'
 import CatalogTab from './components/CatalogTab.vue'
 import CategoriesTab from './components/CategoriesTab.vue'
@@ -22,6 +23,7 @@ const TABS = ['catalog', 'inventory', 'categories', 'suppliers'] as const
 type TabName = (typeof TABS)[number]
 
 const { t } = useI18n()
+const { isEditor } = useSession()
 const route = useRoute()
 const router = useRouter()
 const notify = useNotify()
@@ -59,13 +61,21 @@ async function exportCatalog() {
       }}</span>
       <div class="actions">
         <Button
+          v-if="isEditor"
           :label="t('catalog.exchange.aiPrompt')"
           icon="pi pi-sparkles"
           severity="secondary"
           outlined
           @click="aiPromptVisible = true"
         />
-        <Button :label="t('catalog.exchange.import')" icon="pi pi-upload" severity="secondary" outlined @click="importVisible = true" />
+        <Button
+          v-if="isEditor"
+          :label="t('catalog.exchange.import')"
+          icon="pi pi-upload"
+          severity="secondary"
+          outlined
+          @click="importVisible = true"
+        />
         <Button :label="t('catalog.exchange.export')" icon="pi pi-download" severity="secondary" outlined @click="exportCatalog" />
       </div>
     </div>

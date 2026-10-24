@@ -4,12 +4,14 @@ import Button from 'primevue/button'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import { useI18n } from 'vue-i18n'
+import { useSession } from '@/shared/session'
 import type { SupplierDto } from '@/shared/api'
 import StatusTag from '@/shared/ui/StatusTag.vue'
 import { useSuppliers } from '../queries'
 import SupplierEditor from './SupplierEditor.vue'
 
 const { t } = useI18n()
+const { isEditor } = useSession()
 const suppliers = useSuppliers()
 const editor = ref<InstanceType<typeof SupplierEditor>>()
 </script>
@@ -17,7 +19,7 @@ const editor = ref<InstanceType<typeof SupplierEditor>>()
 <template>
   <div class="stack">
     <div class="row end">
-      <Button :label="t('catalog.supplier.new')" icon="pi pi-plus" @click="editor?.open()" />
+      <Button v-if="isEditor" :label="t('catalog.supplier.new')" icon="pi pi-plus" @click="editor?.open()" />
     </div>
     <DataTable
       :value="suppliers.data.value ?? []"

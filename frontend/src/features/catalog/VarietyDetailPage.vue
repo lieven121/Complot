@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import Button from 'primevue/button'
 import { useI18n } from 'vue-i18n'
+import { useSession } from '@/shared/session'
 import { useFormat } from '@/shared/composables/useFormat'
 import CategoryChip from '@/shared/ui/CategoryChip.vue'
 import MonthCalendarStrip from '@/shared/ui/MonthCalendarStrip.vue'
@@ -13,6 +14,7 @@ import { useCatalogLookups, useInventoryLots, useVariety } from './queries'
 const props = defineProps<{ id: string }>()
 
 const { t, locale } = useI18n()
+const { isEditor } = useSession()
 const { month, currency, decimal, date } = useFormat()
 const variety = useVariety(() => props.id)
 const lots = useInventoryLots()
@@ -78,8 +80,15 @@ const calendar = computed(() => [
           </div>
         </div>
         <div class="actions">
-          <Button :label="t('catalog.lot.new')" icon="pi pi-plus" severity="secondary" outlined @click="lotEditor?.open(undefined, v.id)" />
-          <Button :label="t('common.edit')" icon="pi pi-pencil" @click="editor?.open(v)" />
+          <Button
+            v-if="isEditor"
+            :label="t('catalog.lot.new')"
+            icon="pi pi-plus"
+            severity="secondary"
+            outlined
+            @click="lotEditor?.open(undefined, v.id)"
+          />
+          <Button v-if="isEditor" :label="t('common.edit')" icon="pi pi-pencil" @click="editor?.open(v)" />
         </div>
       </div>
 

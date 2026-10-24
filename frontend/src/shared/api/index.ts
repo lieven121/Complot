@@ -1,4 +1,5 @@
 import {
+  AdminClient,
   AuthClient,
   CatalogExchangeClient,
   CategoriesClient,
@@ -43,6 +44,7 @@ export const api = {
   people: new PeopleClient(baseUrl, http),
   tasks: new TasksClient(baseUrl, http),
   notes: new NotesClient(baseUrl, http),
+  admin: new AdminClient(baseUrl, http),
 }
 
 export type * from './client'

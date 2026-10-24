@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import Select from 'primevue/select'
 import { useI18n } from 'vue-i18n'
+import { computed } from 'vue'
 import { useLocale } from '@/i18n/useLocale'
+import { useSession } from '@/shared/session'
+import NoAccessPage from './NoAccessPage.vue'
 import { navItems } from './router'
 
 const { t } = useI18n()
 const { locale, locales } = useLocale()
+const { isAdmin, isPending } = useSession()
+const visibleNav = computed(() => (isPending.value ? [] : navItems.filter((item) => !item.adminOnly || isAdmin.value)))
 </script>
 
 <template>
@@ -14,7 +19,7 @@ const { locale, locales } = useLocale()
       <div class="brand">
         🌱 Complot<small>{{ t('app.subtitle') }}</small>
       </div>
-      <RouterLink v-for="item in navItems" :key="item.name" :to="item.path" class="nav-link" active-class="active">
+      <RouterLink v-for="item in visibleNav" :key="item.name" :to="item.path" class="nav-link" active-class="active">
         <span class="icon" aria-hidden="true">{{ item.icon }}</span>
         <span class="label">{{ t(`nav.${item.navKey}`) }}</span>
       </RouterLink>
@@ -31,7 +36,8 @@ const { locale, locales } = useLocale()
       </div>
     </nav>
     <main class="main">
-      <RouterView />
+      <NoAccessPage v-if="isPending" />
+      <RouterView v-else />
     </main>
   </div>
 </template>

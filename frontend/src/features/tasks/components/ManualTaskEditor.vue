@@ -38,6 +38,7 @@ defineExpose({ open: () => editor.open() })
     v-model:visible="editor.visible.value"
     :title="t('tasks.manual.new')"
     :saving="editor.saving.value"
+    :readonly="false"
     width="520px"
     @save="editor.submit"
   >

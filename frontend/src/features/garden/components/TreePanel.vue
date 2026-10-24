@@ -6,7 +6,13 @@ import type { TaskDto, TreeDto } from '@/shared/api'
 import { useFormat } from '@/shared/composables/useFormat'
 import TaskList from '@/features/tasks/components/TaskList.vue'
 
-const props = defineProps<{ tree: TreeDto; tasks: TaskDto[]; today: string; whereOf: (task: TaskDto) => string | undefined }>()
+const props = defineProps<{
+  tree: TreeDto
+  tasks: TaskDto[]
+  today: string
+  whereOf: (task: TaskDto) => string | undefined
+  readonly?: boolean
+}>()
 const emit = defineEmits<{ close: [] }>()
 
 const { t } = useI18n()
@@ -45,7 +51,7 @@ const openTasks = computed(() => props.tasks.filter((task) => !task.done).slice(
     </div>
 
     <h3>{{ t('map.bed.tasks') }}</h3>
-    <TaskList :tasks="openTasks" :today="today" :where-of="whereOf" :empty-text="t('map.bed.noTasks')" />
+    <TaskList :tasks="openTasks" :today="today" :where-of="whereOf" :empty-text="t('map.bed.noTasks')" :readonly="readonly" />
 
     <slot name="log" />
   </section>

@@ -16,6 +16,7 @@ const props = defineProps<{
   treeId?: string
   plantings?: { id: string; name: string }[]
   date: string
+  readonly?: boolean
 }>()
 
 const { t } = useI18n()
@@ -38,7 +39,7 @@ const cropName = (n: NoteDto) => props.plantings?.find((p) => p.id === n.plantin
 
 <template>
   <h3>{{ t('notes.title') }}</h3>
-  <div class="actions">
+  <div v-if="!readonly" class="actions">
     <Button :label="t('notes.add')" icon="pi pi-plus" size="small" severity="secondary" @click="editor?.open()" />
     <Button size="small" severity="secondary" outlined @click="editor?.open(undefined, 'harvest')">
       {{ TAG_ICON.harvest }} {{ t('notes.addHarvest') }}
@@ -71,7 +72,7 @@ const cropName = (n: NoteDto) => props.plantings?.find((p) => p.id === n.plantin
       @click="showAll = true"
     />
   </div>
-  <NoteEditor ref="editor" :site-id="siteId" :bed-id="bedId" :tree-id="treeId" :plantings="plantings" :date="date" />
+  <NoteEditor ref="editor" :site-id="siteId" :bed-id="bedId" :tree-id="treeId" :plantings="plantings" :date="date" :readonly="readonly" />
 </template>
 
 <style scoped>

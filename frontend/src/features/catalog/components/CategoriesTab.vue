@@ -4,6 +4,7 @@ import Button from 'primevue/button'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import { useI18n } from 'vue-i18n'
+import { useSession } from '@/shared/session'
 import type { CategoryDto, FamilyDto } from '@/shared/api'
 import CategoryChip from '@/shared/ui/CategoryChip.vue'
 import StatusTag from '@/shared/ui/StatusTag.vue'
@@ -12,6 +13,7 @@ import CategoryEditor from './CategoryEditor.vue'
 import FamilyEditor from './FamilyEditor.vue'
 
 const { t, locale } = useI18n()
+const { isEditor } = useSession()
 const { categories, families, familyById, categoryById } = useCatalogLookups()
 const categoryEditor = ref<InstanceType<typeof CategoryEditor>>()
 const familyEditor = ref<InstanceType<typeof FamilyEditor>>()
@@ -24,7 +26,7 @@ const familyName = (f: FamilyDto) => (locale.value === 'en' ? f.nameEn : f.nameN
     <section class="card">
       <div class="row head">
         <h2>{{ t('catalog.tabs.categoriesOnly') }}</h2>
-        <Button :label="t('catalog.category.new')" icon="pi pi-plus" size="small" @click="categoryEditor?.open()" />
+        <Button v-if="isEditor" :label="t('catalog.category.new')" icon="pi pi-plus" size="small" @click="categoryEditor?.open()" />
       </div>
       <DataTable
         :value="categories.data.value ?? []"
@@ -61,7 +63,7 @@ const familyName = (f: FamilyDto) => (locale.value === 'en' ? f.nameEn : f.nameN
     <section class="card">
       <div class="row head">
         <h2>{{ t('catalog.family.title') }}</h2>
-        <Button :label="t('catalog.family.new')" icon="pi pi-plus" size="small" @click="familyEditor?.open()" />
+        <Button v-if="isEditor" :label="t('catalog.family.new')" icon="pi pi-plus" size="small" @click="familyEditor?.open()" />
       </div>
       <p class="muted small">{{ t('catalog.family.explain') }}</p>
       <DataTable

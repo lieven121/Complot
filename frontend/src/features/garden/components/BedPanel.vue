@@ -24,6 +24,7 @@ const props = defineProps<{
   date: string
   cropOf: (varietyId: string) => Crop | undefined
   whereOf: (task: TaskDto) => string | undefined
+  readonly?: boolean
 }>()
 const emit = defineEmits<{ close: []; date: [iso: string] }>()
 
@@ -106,10 +107,10 @@ function deletePlanting(p: PlantingDto) {
     <p class="muted small">{{ t('map.bed.ganttHelp') }}</p>
 
     <PlantingForm v-if="planning" :bed-id="bed.id" :bed-code="bed.code" :date="date" @done="planning = false" />
-    <Button v-else :label="t('map.plan.open')" icon="pi pi-plus" @click="planning = true" />
+    <Button v-else-if="!readonly" :label="t('map.plan.open')" icon="pi pi-plus" @click="planning = true" />
 
     <h3>{{ t('map.bed.tasks') }}</h3>
-    <TaskList :tasks="openTasks" :today="period.today" :where-of="whereOf" :empty-text="t('map.bed.noTasks')" />
+    <TaskList :tasks="openTasks" :today="period.today" :where-of="whereOf" :empty-text="t('map.bed.noTasks')" :readonly="readonly" />
 
     <slot name="log" />
 
@@ -122,7 +123,7 @@ function deletePlanting(p: PlantingDto) {
         {{ cropOf(p.varietyId)?.icon }} {{ cropOf(p.varietyId)?.name }}
         <span class="muted small">{{ formatDate(p.sowOn) }} → {{ p.clearOn ? formatDate(p.clearOn) : '∞' }}</span>
         <span class="end">
-          <template v-if="p.sowOn > period.today">
+          <template v-if="p.sowOn > period.today && !readonly">
             <span class="planned">{{ t('map.bed.planned') }}</span>
             <Button
               icon="pi pi-trash"

@@ -5,6 +5,7 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import InputText from 'primevue/inputtext'
 import { useI18n } from 'vue-i18n'
+import { useSession } from '@/shared/session'
 import type { InventoryLotDto } from '@/shared/api'
 import { useFormat } from '@/shared/composables/useFormat'
 import { useCatalogLookups, useInventoryLots } from '../queries'
@@ -12,6 +13,7 @@ import LotEditor from './LotEditor.vue'
 import LotStatusTag from './LotStatusTag.vue'
 
 const { t } = useI18n()
+const { isEditor } = useSession()
 const { date, decimal } = useFormat()
 const lots = useInventoryLots()
 const { varietyById, supplierById, categoryById } = useCatalogLookups()
@@ -30,7 +32,7 @@ const rows = computed(() => {
   <div class="stack">
     <div class="row">
       <InputText v-model="search" :placeholder="t('catalog.searchPlaceholder')" :aria-label="t('common.search')" class="grow" />
-      <Button :label="t('catalog.lot.new')" icon="pi pi-plus" @click="editor?.open()" />
+      <Button v-if="isEditor" :label="t('catalog.lot.new')" icon="pi pi-plus" @click="editor?.open()" />
     </div>
     <DataTable
       :value="rows"

@@ -7,6 +7,7 @@ import { useI18n } from 'vue-i18n'
 import type { TaskDto } from '@/shared/api'
 import { useFormat } from '@/shared/composables/useFormat'
 import { flag, useQueryParam } from '@/shared/composables/useQueryParam'
+import { canEditSite, useSession } from '@/shared/session'
 import { addDays, todayIso } from '@/shared/dates'
 import { useLayout, useSites } from '@/features/garden/queries'
 import ManualTaskEditor from './components/ManualTaskEditor.vue'
@@ -30,6 +31,9 @@ const siteParam = useQueryParam('site')
 const siteId = computed({ get: () => siteParam.value ?? sites.data.value?.[0]?.id, set: (id) => (siteParam.value = id) })
 const person = useQueryParam('person')
 const showDone = useQueryParam('done', flag)
+
+const { isEditor } = useSession()
+const readonly = computed(() => !canEditSite(sites.data.value?.find((s) => s.id === siteId.value)))
 
 const tasks = useTasks(computed(() => ({ siteId: siteId.value })))
 const layout = useLayout(siteId)
@@ -64,7 +68,7 @@ const personEditor = ref<InstanceType<typeof PersonEditor>>()
       <h1>{{ t('nav.tasks') }}</h1>
       <span class="muted">{{ t('tasks.page.summary', { n: openCount }) }}</span>
       <div class="actions">
-        <Button :label="t('tasks.manual.new')" icon="pi pi-plus" @click="taskEditor?.open()" />
+        <Button v-if="!readonly" :label="t('tasks.manual.new')" icon="pi pi-plus" @click="taskEditor?.open()" />
       </div>
     </div>
 
@@ -98,7 +102,7 @@ const personEditor = ref<InstanceType<typeof PersonEditor>>()
           <h3>
             {{ t(`tasks.group.${g.group}`) }} <span class="count">{{ g.tasks.length }}</span>
           </h3>
-          <TaskList :tasks="g.tasks" :today="today" :where-of="whereOf" />
+          <TaskList :tasks="g.tasks" :today="today" :where-of="whereOf" :readonly="readonly" />
         </section>
         <p v-if="tasks.isSuccess.value && !groups.length" class="card muted">{{ t('tasks.page.empty') }}</p>
       </div>
@@ -120,7 +124,7 @@ const personEditor = ref<InstanceType<typeof PersonEditor>>()
               <span class="num small">{{ duration(load.get(undefined)!) }}</span>
             </div>
           </div>
-          <Button :label="t('tasks.people.new')" icon="pi pi-user-plus" text size="small" @click="personEditor?.open()" />
+          <Button v-if="isEditor" :label="t('tasks.people.new')" icon="pi pi-user-plus" text size="small" @click="personEditor?.open()" />
         </section>
 
         <section class="card">

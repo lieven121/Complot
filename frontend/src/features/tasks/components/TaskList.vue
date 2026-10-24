@@ -13,7 +13,14 @@ import TaskDialog from './TaskDialog.vue'
  * Tasks as large, touch-friendly rows. The round button checks a task off (asking for the actual time) or reopens
  * it; tapping the text opens the details. `whereOf` names the bed or tree.
  */
-const props = defineProps<{ tasks: TaskDto[]; today: string; whereOf: (task: TaskDto) => string | undefined; emptyText?: string }>()
+const props = defineProps<{
+  tasks: TaskDto[]
+  today: string
+  whereOf: (task: TaskDto) => string | undefined
+  emptyText?: string
+  /** View-only access: no check-off, details without save. */
+  readonly?: boolean
+}>()
 
 const { t } = useI18n()
 const { date, dayMonth, duration, dateTime } = useFormat()
@@ -49,6 +56,7 @@ const sameYear = (iso: string) => iso.slice(0, 4) === props.today.slice(0, 4)
         :class="{ on: task.done }"
         :aria-pressed="task.done"
         :aria-label="task.done ? t('tasks.reopen') : t('tasks.complete')"
+        :disabled="readonly"
         @click="toggle(task)"
       >
         <i v-if="task.done" class="pi pi-check" />
@@ -76,7 +84,7 @@ const sameYear = (iso: string) => iso.slice(0, 4) === props.today.slice(0, 4)
     <li v-if="!tasks.length && emptyText" class="muted small">{{ emptyText }}</li>
   </ul>
   <CompleteTaskDialog v-if="completing" :task="completing" @close="completing = undefined" />
-  <TaskDialog v-if="details" :task="details" :where="whereOf(details)" @close="details = undefined" />
+  <TaskDialog v-if="details" :task="details" :where="whereOf(details)" :readonly="readonly" @close="details = undefined" />
 </template>
 
 <style scoped>
@@ -113,6 +121,10 @@ const sameYear = (iso: string) => iso.slice(0, 4) === props.today.slice(0, 4)
 .check:hover,
 .check:focus-visible {
   border-color: var(--c-accent);
+}
+.check:disabled {
+  cursor: default;
+  opacity: 0.5;
 }
 .check.on {
   background: var(--c-accent);

@@ -8,6 +8,7 @@ import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import InputText from 'primevue/inputtext'
 import { useI18n } from 'vue-i18n'
+import { useSession } from '@/shared/session'
 import type { VarietyDto } from '@/shared/api'
 import { useFormat } from '@/shared/composables/useFormat'
 import CategoryChip from '@/shared/ui/CategoryChip.vue'
@@ -15,6 +16,7 @@ import { useCatalogLookups } from '../queries'
 import VarietyEditor from './VarietyEditor.vue'
 
 const { t } = useI18n()
+const { isEditor } = useSession()
 const { monthWindow, decimal } = useFormat()
 const router = useRouter()
 const { categories, varieties, categoryById } = useCatalogLookups()
@@ -61,7 +63,7 @@ const stock = (v: VarietyDto) => v.stock.map((s) => `${decimal(s.quantity)} ${s.
           <InputIcon class="pi pi-search" />
           <InputText v-model="search" :placeholder="t('catalog.searchPlaceholder')" :aria-label="t('common.search')" fluid />
         </IconField>
-        <Button :label="t('catalog.variety.new')" icon="pi pi-plus" @click="editor?.open(undefined, categoryFilter)" />
+        <Button v-if="isEditor" :label="t('catalog.variety.new')" icon="pi pi-plus" @click="editor?.open(undefined, categoryFilter)" />
       </div>
 
       <DataTable

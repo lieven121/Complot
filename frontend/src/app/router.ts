@@ -6,6 +6,8 @@ export interface NavItem {
   path: string
   icon: string
   navKey: string
+  /** Only shown to admins. */
+  adminOnly?: boolean
 }
 
 export const navItems: NavItem[] = [
@@ -15,6 +17,7 @@ export const navItems: NavItem[] = [
   { name: 'plants', path: '/planten', icon: '🌿', navKey: 'plants' },
   { name: 'tools', path: '/gereedschap', icon: '🧰', navKey: 'tools' },
   { name: 'costs', path: '/kosten', icon: '💶', navKey: 'costs' },
+  { name: 'admin', path: '/beheer', icon: '⚙️', navKey: 'admin', adminOnly: true },
 ]
 
 const comingSoon = () => import('@/shared/ui/ComingSoonPage.vue')
@@ -22,11 +25,12 @@ const comingSoon = () => import('@/shared/ui/ComingSoonPage.vue')
 const routes: RouteRecordRaw[] = [
   { path: '/', redirect: '/kaart' },
   { path: '/kaart', name: 'map', component: () => import('@/features/garden/MapPage.vue') },
+  { path: '/beheer', name: 'admin', component: () => import('@/features/admin/AdminPage.vue') },
   { path: '/taken', name: 'tasks', component: () => import('@/features/tasks/TasksPage.vue') },
   { path: '/planten', name: 'plants', component: () => import('@/features/catalog/PlantsPage.vue') },
   { path: '/planten/:id', name: 'variety', component: () => import('@/features/catalog/VarietyDetailPage.vue'), props: true },
   ...navItems
-    .filter((item) => !['plants', 'map', 'tasks'].includes(item.name))
+    .filter((item) => !['plants', 'map', 'tasks', 'admin'].includes(item.name))
     .map((item) => ({ path: item.path, name: item.name, component: comingSoon, meta: { navKey: item.navKey } })),
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ]

@@ -22,6 +22,7 @@ import { harvestSummary } from './notes'
 import { addDays } from '@/shared/dates'
 import { IN_BED, phaseAt } from './map'
 import { mapPeriod, useLayout, useNotes, usePlantings, useSiteChecks, useSites } from './queries'
+import { canEditSite } from '@/shared/session'
 import { useDesigner } from './useDesigner'
 
 const { t } = useI18n()
@@ -52,6 +53,7 @@ const tasks = useTasks(computed(() => ({ siteId: siteId.value })))
 const { varietyById, categoryById } = useCatalogLookups()
 
 const site = computed(() => sites.data.value?.find((s) => s.id === siteId.value))
+const readonly = computed(() => !canEditSite(site.value))
 const selectedBed = computed(() => layout.data.value?.beds.find((b) => b.id === selectedId.value))
 const selectedTree = computed(() => layout.data.value?.trees.find((x) => x.id === selectedId.value))
 
@@ -184,7 +186,7 @@ const center = () => map.value?.center() ?? { x: 0, y: 0 }
             :disabled="designing"
           />
           <Button
-            v-if="!designing"
+            v-if="!designing && !readonly"
             :label="t('design.start')"
             icon="pi pi-pencil"
             size="small"
@@ -192,7 +194,7 @@ const center = () => map.value?.center() ?? { x: 0, y: 0 }
             :disabled="!layout.data.value"
             @click="startDesign"
           />
-          <span v-else class="designing">✏️ {{ t('design.active') }}</span>
+          <span v-else-if="designing" class="designing">✏️ {{ t('design.active') }}</span>
         </div>
         <div class="zoom">
           <Button icon="pi pi-plus" severity="secondary" :aria-label="t('map.zoomIn')" @click="map?.zoom(1.3)" />
@@ -223,11 +225,12 @@ const center = () => map.value?.center() ?? { x: 0, y: 0 }
           :date="date"
           :crop-of="cropOf"
           :where-of="whereOf"
+          :readonly="readonly"
           @close="selectedId = undefined"
           @date="date = $event"
         >
           <template #log>
-            <NoteLog :site-id="siteId!" :bed-id="selectedBed.id" :plantings="bedCrops" :date="date" />
+            <NoteLog :site-id="siteId!" :bed-id="selectedBed.id" :plantings="bedCrops" :date="date" :readonly="readonly" />
           </template>
         </BedPanel>
         <TreePanel
@@ -237,10 +240,11 @@ const center = () => map.value?.center() ?? { x: 0, y: 0 }
           :tasks="(tasks.data.value ?? []).filter((x) => x.treeId === selectedTree!.id)"
           :today="period.today"
           :where-of="whereOf"
+          :readonly="readonly"
           @close="selectedId = undefined"
         >
           <template #log>
-            <NoteLog :site-id="siteId!" :tree-id="selectedTree.id" :date="date" />
+            <NoteLog :site-id="siteId!" :tree-id="selectedTree.id" :date="date" :readonly="readonly" />
           </template>
         </TreePanel>
         <OverviewPanel
@@ -255,6 +259,7 @@ const center = () => map.value?.center() ?? { x: 0, y: 0 }
           :crop-of="cropOf"
           :where-of="whereOf"
           :harvested="harvested"
+          :readonly="readonly"
           @select="selectedId = $event"
         />
       </aside>

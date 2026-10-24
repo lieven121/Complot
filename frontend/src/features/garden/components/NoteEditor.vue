@@ -25,6 +25,7 @@ const props = defineProps<{
   plantings?: { id: string; name: string }[]
   /** Date of new notes: the date selected on the timeline. */
   date: string
+  readonly?: boolean
 }>()
 
 const { t } = useI18n()
@@ -80,6 +81,7 @@ defineExpose({ open })
     :title="editor.isNew.value ? t('notes.new') : t('notes.edit')"
     :saving="editor.saving.value"
     :can-delete="!editor.isNew.value"
+    :readonly="readonly"
     width="560px"
     @save="submit"
     @delete="editor.remove"

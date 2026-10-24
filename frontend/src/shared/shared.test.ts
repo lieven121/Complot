@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vite-plus/test'
 import { inMonthWindow } from './composables/useFormat'
 import { fromIsoDate, toIsoDate } from './dates'
+import { canEditSite } from './session'
 
 describe('inMonthWindow', () => {
   it.each([
@@ -26,4 +27,13 @@ describe('ISO dates', () => {
     expect(fromIsoDate(undefined)).toBeNull()
     expect(toIsoDate(null)).toBeUndefined()
   })
+})
+
+describe('canEditSite', () => {
+  it.each([
+    [{ myRole: 'edit', archived: false }, true],
+    [{ myRole: 'view', archived: false }, false],
+    [{ myRole: 'edit', archived: true }, false],
+    [undefined, false],
+  ] as const)('%o → %s', (site, expected) => expect(canEditSite(site)).toBe(expected))
 })

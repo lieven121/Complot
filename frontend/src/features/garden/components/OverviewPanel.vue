@@ -21,6 +21,7 @@ const props = defineProps<{
   cropOf: (varietyId: string) => Crop | undefined
   whereOf: (task: TaskDto) => string | undefined
   harvested: string
+  readonly?: boolean
 }>()
 const emit = defineEmits<{ select: [id: string] }>()
 
@@ -65,7 +66,7 @@ const upcoming = computed(() => props.tasks.filter((task) => !task.done && task.
     <h3 class="with-link">
       {{ t('map.overview.tasks') }} <RouterLink :to="{ name: 'tasks' }">{{ t('map.overview.allTasks') }}</RouterLink>
     </h3>
-    <TaskList :tasks="upcoming" :today="today" :where-of="whereOf" :empty-text="t('map.overview.noTasks')" />
+    <TaskList :tasks="upcoming" :today="today" :where-of="whereOf" :empty-text="t('map.overview.noTasks')" :readonly="readonly" />
 
     <h3>{{ t('map.overview.harvestNow') }}</h3>
     <div class="stack">

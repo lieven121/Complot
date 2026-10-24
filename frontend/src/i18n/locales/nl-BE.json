@@ -9,7 +9,8 @@
     "planner": "Planner",
     "plants": "Planten",
     "tools": "Gereedschap",
-    "costs": "Kosten"
+    "costs": "Kosten",
+    "admin": "Beheer"
   },
   "language": {
     "label": "Taal",
@@ -99,7 +100,9 @@
     "duplicateBedCode": "Elke bedcode mag maar één keer voorkomen.",
     "duplicateId": "Dubbel element in de layout.",
     "photoType": "Enkel JPG, PNG, WebP of HEIC.",
-    "photoTooLarge": "Foto is groter dan {maxMb} MB."
+    "photoTooLarge": "Foto is groter dan {maxMb} MB.",
+    "email": "Geen geldig e-mailadres.",
+    "duplicateSite": "Elke locatie maar één keer."
   },
   "errors": {
     "generic": "Er liep iets mis. Probeer opnieuw.",
@@ -121,7 +124,9 @@
       "inUse": "Dit ras wordt gebruikt in de planning."
     },
     "site": {
-      "hasBeds": "Deze locatie heeft nog bedden."
+      "archived": "Deze locatie is gearchiveerd. Herstel ze eerst.",
+      "notArchived": "Archiveer de locatie eerst.",
+      "confirmName": "De naam komt niet overeen."
     },
     "layout": {
       "foreignId": "Een element hoort bij een andere locatie."
@@ -129,6 +134,16 @@
     "bed": {
       "inUse": "Een bed met teelten kan niet verwijderd worden.",
       "duplicateCode": "Die bedcode bestaat al op deze locatie."
+    },
+    "access": {
+      "pending": "Je hebt nog geen toegang.",
+      "readOnly": "Je mag dit alleen bekijken.",
+      "adminOnly": "Enkel een beheerder mag dit doen."
+    },
+    "user": {
+      "self": "Je kan je eigen beheerdersrechten niet afnemen of jezelf verwijderen.",
+      "lastAdmin": "Er moet minstens één beheerder overblijven.",
+      "duplicateEmail": "Er bestaat al een gebruiker met dat e-mailadres."
     }
   },
   "catalog": {
@@ -586,6 +601,71 @@
       "pest": "Plaag",
       "soil": "Bodem",
       "weather": "Weer"
+    }
+  },
+  "access": {
+    "waitingTitle": "Wacht op toegang",
+    "waiting": "Je bent aangemeld als {email}. Een beheerder moet je nog toegang geven tot een locatie.",
+    "logout": "Afmelden",
+    "adminOnly": "Enkel beheerders hebben toegang tot deze pagina.",
+    "readOnlyHint": "Alleen lezen",
+    "viewOnly": "Je kan deze locatie alleen bekijken."
+  },
+  "admin": {
+    "status": "Status",
+    "tabs": {
+      "sites": "Locaties",
+      "users": "Gebruikers"
+    },
+    "site": {
+      "new": "Nieuwe locatie",
+      "edit": "Locatie bewerken",
+      "notes": "Notities",
+      "beds": "Bedden",
+      "members": "Gebruikers",
+      "active": "Actief",
+      "isArchived": "Gearchiveerd",
+      "archive": "Archiveren",
+      "restore": "Herstellen",
+      "archivedToast": "{name} gearchiveerd",
+      "restored": "{name} hersteld",
+      "archiveHelp": "Een gearchiveerde locatie verdwijnt van de kaart en uit de taken en kan niet meer gewijzigd worden. Herstellen kan altijd; pas dan kan je ze definitief verwijderen.",
+      "deleteTitle": "{name} definitief verwijderen",
+      "deleteWarning": "Dit wist de locatie met alles erop: {beds} bedden, de teelten, het logboek met foto's en de taken. Dit kan niet ongedaan gemaakt worden.",
+      "typeName": "Typ \"{name}\" om te bevestigen",
+      "deleteForever": "Definitief verwijderen",
+      "deleted": "{name} verwijderd"
+    },
+    "user": {
+      "invite": "Gebruiker uitnodigen",
+      "edit": "Gebruiker bewerken",
+      "who": "Gebruiker",
+      "email": "E-mailadres",
+      "emailHint": "Het adres waarmee de persoon zich aanmeldt; bij de eerste aanmelding wordt de uitnodiging gekoppeld.",
+      "person": "Is persoon",
+      "personHint": "Koppel aan een persoon uit de takenlijst.",
+      "admin": "Beheerder",
+      "adminHint": "Mag alle locaties en gebruikers beheren.",
+      "configAdminHint": "Beheerder via de configuratie (Auth__Admins).",
+      "adminSeesAll": "Een beheerder kan alle locaties bewerken.",
+      "sites": "Locaties",
+      "allSites": "Alle locaties",
+      "lastSeen": "Laatst gezien",
+      "waiting": "{n} wacht(en) op toegang",
+      "access": {
+        "none": "Geen",
+        "view": "Bekijken",
+        "edit": "Bewerken"
+      },
+      "status": {
+        "pending": "Wacht op toegang",
+        "invited": "Uitgenodigd",
+        "admin": "Beheerder",
+        "configAdmin": "Beheerder (config)",
+        "active": "Actief"
+      },
+      "openModeTitle": "Aanmelden staat uit",
+      "openMode": "Zonder OpenID Connect heeft iedereen volledige toegang. Stel Auth__Oidc__Authority en Auth__Oidc__ClientId in om gebruikers en hun toegang per locatie te beheren."
     }
   }
 }

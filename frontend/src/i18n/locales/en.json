@@ -9,7 +9,8 @@
     "planner": "Planner",
     "plants": "Plants",
     "tools": "Tools",
-    "costs": "Costs"
+    "costs": "Costs",
+    "admin": "Admin"
   },
   "language": {
     "label": "Language",
@@ -99,7 +100,9 @@
     "duplicateBedCode": "Each bed code may occur only once.",
     "duplicateId": "Duplicate item in the layout.",
     "photoType": "Only JPG, PNG, WebP or HEIC.",
-    "photoTooLarge": "Photo is larger than {maxMb} MB."
+    "photoTooLarge": "Photo is larger than {maxMb} MB.",
+    "email": "Not a valid e-mail address.",
+    "duplicateSite": "Each location only once."
   },
   "errors": {
     "generic": "Something went wrong. Please try again.",
@@ -121,7 +124,9 @@
       "inUse": "This variety is used in the plan."
     },
     "site": {
-      "hasBeds": "This site still has beds."
+      "archived": "This location is archived. Restore it first.",
+      "notArchived": "Archive the location first.",
+      "confirmName": "The name does not match."
     },
     "layout": {
       "foreignId": "An item belongs to another site."
@@ -129,6 +134,16 @@
     "bed": {
       "inUse": "A bed with plantings cannot be removed.",
       "duplicateCode": "That bed code already exists on this site."
+    },
+    "access": {
+      "pending": "You do not have access yet.",
+      "readOnly": "You can only view this.",
+      "adminOnly": "Only an admin can do this."
+    },
+    "user": {
+      "self": "You cannot remove your own admin rights or delete yourself.",
+      "lastAdmin": "At least one admin has to remain.",
+      "duplicateEmail": "A user with that e-mail address already exists."
     }
   },
   "catalog": {
@@ -586,6 +601,71 @@
       "pest": "Pest",
       "soil": "Soil",
       "weather": "Weather"
+    }
+  },
+  "access": {
+    "waitingTitle": "Waiting for access",
+    "waiting": "You are signed in as {email}. An admin still has to give you access to a location.",
+    "logout": "Sign out",
+    "adminOnly": "Only admins can open this page.",
+    "readOnlyHint": "Read only",
+    "viewOnly": "You can only view this location."
+  },
+  "admin": {
+    "status": "Status",
+    "tabs": {
+      "sites": "Locations",
+      "users": "Users"
+    },
+    "site": {
+      "new": "New location",
+      "edit": "Edit location",
+      "notes": "Notes",
+      "beds": "Beds",
+      "members": "Users",
+      "active": "Active",
+      "isArchived": "Archived",
+      "archive": "Archive",
+      "restore": "Restore",
+      "archivedToast": "{name} archived",
+      "restored": "{name} restored",
+      "archiveHelp": "An archived location disappears from the map and the tasks and can no longer be changed. You can always restore it; only then can it be deleted for good.",
+      "deleteTitle": "Delete {name} for good",
+      "deleteWarning": "This wipes the location with everything on it: {beds} beds, the plantings, the log with photos and the tasks. This cannot be undone.",
+      "typeName": "Type \"{name}\" to confirm",
+      "deleteForever": "Delete for good",
+      "deleted": "{name} deleted"
+    },
+    "user": {
+      "invite": "Invite user",
+      "edit": "Edit user",
+      "who": "User",
+      "email": "E-mail address",
+      "emailHint": "The address the person signs in with; the invitation is linked at the first sign-in.",
+      "person": "Is person",
+      "personHint": "Link to a person from the task list.",
+      "admin": "Admin",
+      "adminHint": "May manage all locations and users.",
+      "configAdminHint": "Admin through configuration (Auth__Admins).",
+      "adminSeesAll": "An admin can edit every location.",
+      "sites": "Locations",
+      "allSites": "All locations",
+      "lastSeen": "Last seen",
+      "waiting": "{n} waiting for access",
+      "access": {
+        "none": "None",
+        "view": "View",
+        "edit": "Edit"
+      },
+      "status": {
+        "pending": "Waiting for access",
+        "invited": "Invited",
+        "admin": "Admin",
+        "configAdmin": "Admin (config)",
+        "active": "Active"
+      },
+      "openModeTitle": "Sign-in is off",
+      "openMode": "Without OpenID Connect everybody has full access. Set Auth__Oidc__Authority and Auth__Oidc__ClientId to manage users and their access per location."
     }
   }
 }
