@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import InputNumber from 'primevue/inputnumber'
+import InputNumber from '@/shared/ui/NumberInput.vue'
 import InputText from 'primevue/inputtext'
 import { useI18n } from 'vue-i18n'
 import type { FamilyDto, FamilyInput } from '@/shared/api'

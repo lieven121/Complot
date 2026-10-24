@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
-import InputNumber from 'primevue/inputnumber'
+import InputNumber from '@/shared/ui/NumberInput.vue'
 import Select from 'primevue/select'
 import { useI18n } from 'vue-i18n'
 import type { TaskDto } from '@/shared/api'

@@ -7,8 +7,7 @@
     "dev": "vp dev",
     "build": "vue-tsc -b && vp build",
     "preview": "vp preview",
-    "check": "vp check",
-    "test": "vp test",
+    "verify": "vue-tsc -b && vp check && vp test run && node scripts/check-licenses.mjs",
     "licenses": "node scripts/check-licenses.mjs"
   },
   "dependencies": {

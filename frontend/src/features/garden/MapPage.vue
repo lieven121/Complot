@@ -3,12 +3,15 @@ import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Button from 'primevue/button'
 import Select from 'primevue/select'
+import { useConfirm } from 'primevue/useconfirm'
 import { useI18n } from 'vue-i18n'
 import type { TaskDto } from '@/shared/api'
 import { useFormat } from '@/shared/composables/useFormat'
 import { useCatalogLookups } from '@/features/catalog/queries'
 import { useTasks } from '@/features/tasks/queries'
 import BedPanel from './components/BedPanel.vue'
+import DesignerPanel from './components/DesignerPanel.vue'
+import DimensionOverlay from './components/DimensionOverlay.vue'
 import GardenMap, { type Crop } from './components/GardenMap.vue'
 import MapLegend from './components/MapLegend.vue'
 import OverviewPanel from './components/OverviewPanel.vue'
@@ -17,6 +20,7 @@ import TreePanel from './components/TreePanel.vue'
 import { harvestSummary } from './harvest'
 import { addDays, IN_BED, phaseAt } from './map'
 import { mapPeriod, useLayout, useNotes, usePlantings, useSiteChecks, useSites } from './queries'
+import { useDesigner } from './useDesigner'
 
 const { t } = useI18n()
 const { decimal } = useFormat()
@@ -105,6 +109,31 @@ const select = (id: string | undefined) => {
 }
 
 const map = ref<InstanceType<typeof GardenMap>>()
+
+// Design mode: the map shows the designer's working copy; nothing is saved until "Save".
+const confirm = useConfirm()
+const designer = useDesigner()
+const designing = ref(false)
+const shownLayout = computed(() => (designing.value ? designer.draft.value : layout.data.value))
+function startDesign() {
+  if (!layout.data.value) return
+  designer.start(layout.data.value)
+  designing.value = true
+}
+function stopDesign() {
+  if (!designer.dirty.value) {
+    designing.value = false
+    return
+  }
+  confirm.require({
+    header: t('design.discardTitle'),
+    message: t('design.discard'),
+    acceptProps: { label: t('design.discardConfirm'), severity: 'danger' },
+    rejectProps: { label: t('common.cancel'), severity: 'secondary', outlined: true },
+    accept: () => (designing.value = false),
+  })
+}
+const center = () => map.value?.center() ?? { x: 0, y: 0 }
 </script>
 
 <template>
@@ -113,18 +142,26 @@ const map = ref<InstanceType<typeof GardenMap>>()
     <div class="content">
       <div class="canvas">
         <GardenMap
-          v-if="layout.data.value"
+          v-if="shownLayout"
           ref="map"
-          :layout="layout.data.value"
+          :layout="shownLayout"
           :plantings="plantings.data.value ?? []"
           :date="date"
           :today="period.today"
           :crop-of="cropOf"
-          :selected-id="selectedId"
+          :selected-id="designing ? designer.selection.value?.id : selectedId"
           :warning-bed-ids="warningBedIds"
           :alert-ids="alertIds"
-          @select="select"
-        />
+          :design-mode="designing"
+          @select="designing ? designer.select($event) : select($event)"
+          @move-start="designer.moveStart"
+          @move="designer.move"
+          @move-end="designer.moveEnd"
+        >
+          <template #overlay>
+            <DimensionOverlay v-if="designing && designer.selected.value" :item="designer.selected.value" />
+          </template>
+        </GardenMap>
         <div class="toolbar">
           <span class="compass" aria-hidden="true">N ↑</span>
           <Select
@@ -134,7 +171,18 @@ const map = ref<InstanceType<typeof GardenMap>>()
             option-value="id"
             size="small"
             :aria-label="t('map.site')"
+            :disabled="designing"
           />
+          <Button
+            v-if="!designing"
+            :label="t('design.start')"
+            icon="pi pi-pencil"
+            size="small"
+            severity="secondary"
+            :disabled="!layout.data.value"
+            @click="startDesign"
+          />
+          <span v-else class="designing">✏️ {{ t('design.active') }}</span>
         </div>
         <div class="zoom">
           <Button icon="pi pi-plus" severity="secondary" :aria-label="t('map.zoomIn')" @click="map?.zoom(1.3)" />
@@ -145,8 +193,16 @@ const map = ref<InstanceType<typeof GardenMap>>()
       </div>
 
       <aside class="panel">
+        <DesignerPanel
+          v-if="designing && siteId"
+          :designer="designer"
+          :site-id="siteId"
+          :center="center"
+          @cancel="stopDesign"
+          @saved="designing = false"
+        />
         <BedPanel
-          v-if="selectedBed"
+          v-else-if="selectedBed"
           :key="selectedBed.id"
           :bed="selectedBed"
           :plot-name="layout.data.value?.plots.find((p) => p.id === selectedBed!.plotId)?.name"
@@ -211,6 +267,14 @@ const map = ref<InstanceType<typeof GardenMap>>()
   display: flex;
   gap: 6px;
   align-items: center;
+}
+.designing {
+  background: var(--c-ink);
+  color: #fff;
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 700;
 }
 .compass {
   background: var(--c-panel);

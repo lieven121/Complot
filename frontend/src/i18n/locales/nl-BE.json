@@ -458,5 +458,73 @@
       "care": "Onderhoud",
       "custom": "Andere taak"
     }
+  },
+  "design": {
+    "start": "Ontwerpen",
+    "active": "Ontwerpmodus",
+    "title": "Ontwerp",
+    "help": "Sleep elementen om ze te verplaatsen (raster 10 cm) of geef de maten exact in. Ctrl+Z maakt ongedaan, Ctrl+Y doet opnieuw.",
+    "undo": "Ongedaan maken",
+    "redo": "Opnieuw",
+    "save": "Bewaren",
+    "saved": "Ontwerp bewaard",
+    "add": "Toevoegen",
+    "kind": {
+      "bed": "Bed",
+      "path": "Pad",
+      "tree": "Boom / struik",
+      "feature": "Element",
+      "plot": "Perceel"
+    },
+    "code": "Code",
+    "x": "X (oost)",
+    "y": "Y (zuid)",
+    "width": "Breedte",
+    "length": "Lengte",
+    "area": "Oppervlakte",
+    "shapeLabel": "Vorm",
+    "shape": {
+      "rect": "Rechthoek",
+      "ellipse": "Rond / ovaal",
+      "keyhole": "Sleutelgatbed"
+    },
+    "plot": "Perceel",
+    "sun": "Zon",
+    "soil": "Bodem",
+    "type": "Type",
+    "plotType": {
+      "open": "Open grond",
+      "greenhouse": "Serre",
+      "orchard": "Boomgaard / fruit"
+    },
+    "materialLabel": "Materiaal",
+    "material": {
+      "woodChips": "Houtsnippers",
+      "grass": "Gras",
+      "pavers": "Klinkers",
+      "gravel": "Grind"
+    },
+    "featureType": {
+      "compost": "Compost",
+      "water": "Regenwater",
+      "pond": "Poel",
+      "hedge": "Haag",
+      "shed": "Tuinhuis / berging"
+    },
+    "crown": "Kroondiameter",
+    "cultivar": "Ras / soort",
+    "actions": "Jaarlijkse acties (worden taken)",
+    "action": "Actie",
+    "minutes": "Duur",
+    "addAction": "Actie toevoegen",
+    "pruning": "Snoeien",
+    "newPath": "Nieuw pad",
+    "newTree": "Nieuwe boom",
+    "newPlot": "Nieuw perceel",
+    "newFeature": "Nieuw element",
+    "all": "Alle elementen",
+    "discardTitle": "Wijzigingen weggooien?",
+    "discard": "Je ontwerp heeft niet-bewaarde wijzigingen. Wil je ze weggooien?",
+    "discardConfirm": "Weggooien"
   }
 }

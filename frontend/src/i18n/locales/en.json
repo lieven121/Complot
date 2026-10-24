@@ -458,5 +458,73 @@
       "care": "Care",
       "custom": "Other task"
     }
+  },
+  "design": {
+    "start": "Design",
+    "active": "Design mode",
+    "title": "Design",
+    "help": "Drag items to move them (10 cm grid) or type exact dimensions. Ctrl+Z undoes, Ctrl+Y redoes.",
+    "undo": "Undo",
+    "redo": "Redo",
+    "save": "Save",
+    "saved": "Design saved",
+    "add": "Add",
+    "kind": {
+      "bed": "Bed",
+      "path": "Path",
+      "tree": "Tree / shrub",
+      "feature": "Feature",
+      "plot": "Plot"
+    },
+    "code": "Code",
+    "x": "X (east)",
+    "y": "Y (south)",
+    "width": "Width",
+    "length": "Length",
+    "area": "Area",
+    "shapeLabel": "Shape",
+    "shape": {
+      "rect": "Rectangle",
+      "ellipse": "Round / oval",
+      "keyhole": "Keyhole bed"
+    },
+    "plot": "Plot",
+    "sun": "Sun",
+    "soil": "Soil",
+    "type": "Type",
+    "plotType": {
+      "open": "Open ground",
+      "greenhouse": "Greenhouse",
+      "orchard": "Orchard / fruit"
+    },
+    "materialLabel": "Material",
+    "material": {
+      "woodChips": "Wood chips",
+      "grass": "Grass",
+      "pavers": "Pavers",
+      "gravel": "Gravel"
+    },
+    "featureType": {
+      "compost": "Compost",
+      "water": "Rain water",
+      "pond": "Pond",
+      "hedge": "Hedge",
+      "shed": "Shed"
+    },
+    "crown": "Crown diameter",
+    "cultivar": "Cultivar / species",
+    "actions": "Yearly actions (become tasks)",
+    "action": "Action",
+    "minutes": "Duration",
+    "addAction": "Add action",
+    "pruning": "Pruning",
+    "newPath": "New path",
+    "newTree": "New tree",
+    "newPlot": "New plot",
+    "newFeature": "New feature",
+    "all": "All items",
+    "discardTitle": "Discard changes?",
+    "discard": "Your design has unsaved changes. Do you want to discard them?",
+    "discardConfirm": "Discard"
   }
 }

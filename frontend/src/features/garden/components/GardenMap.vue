@@ -57,7 +57,12 @@ const zoom = (factor: number, mx?: number, my?: number) => {
   view.ty = y - (y - view.ty) * f
   view.k = k
 }
-defineExpose({ fit, zoom })
+/** World coordinates (meters) of the middle of the visible map: where new items are placed. */
+const center = () => {
+  const rect = svg.value!.getBoundingClientRect()
+  return { x: (rect.width / 2 - view.tx) / view.k, y: (rect.height / 2 - view.ty) / view.k }
+}
+defineExpose({ fit, zoom, center })
 
 const observer = new ResizeObserver(() => fit())
 onMounted(() => svg.value && observer.observe(svg.value))

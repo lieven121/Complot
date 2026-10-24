@@ -44,9 +44,7 @@ API reference (Development only): http://localhost:5180/scalar
 
 ```bash
 cd backend && dotnet test          # domain rules + API integration tests
-cd frontend && vp check            # format, lint, type check
-cd frontend && vp test run         # unit tests (incl. translation key parity)
-cd frontend && vp run licenses     # all npm packages must have an allowed open-source license
+cd frontend && vp run verify       # vue-tsc (templates too), format + lint, unit tests, license check
 ```
 
 ## Configuration

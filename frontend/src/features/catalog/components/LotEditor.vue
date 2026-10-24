@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import DatePicker from 'primevue/datepicker'
-import InputNumber from 'primevue/inputnumber'
+import InputNumber from '@/shared/ui/NumberInput.vue'
 import InputText from 'primevue/inputtext'
 import Select from 'primevue/select'
 import { useI18n } from 'vue-i18n'
