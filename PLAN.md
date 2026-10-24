@@ -4,8 +4,8 @@
 > time scrubber, crop planning with rotation and companion checks, tasks and a planner linked to people's calendars,
 > a plant catalog with inventory, tools and materials, harvest logging, and cost tracking.
 
-Status: **Stage 0 — plan + clickable demo** (`demo/index.html`, Dutch (BE) by default, switch to English in the sidebar).
-After approval → Stage 1 (real application).
+Status: **stages 1–5 built** (foundation, catalog, sites & designer, plantings, tasks & log). Next: stage 6 (planner).
+The clickable prototype from stage 0 is still in `demo/index.html`.
 
 ---
 
@@ -20,7 +20,7 @@ After approval → Stage 1 (real application).
 | D5 | Invoices | Split **by hand**, plus an **AI prompt + JSON import** (same pattern as the plant catalog): copy the prompt, give the AI the PDF/photo, paste the JSON back, check, save. |
 | D6 | Crop rotation | Checked per **botanical family** (Solanaceae, Brassicaceae, …), rest years per family. The category gives a default family, and a variety can override it. Green manures and herbs can be exempt per category. |
 | D7 | Tools | Tracked as **quantities** with a condition split (good / repair / worn). |
-| D8 | Tech | Node/TS or .NET are both fine; **priority: readable, maintainable, DRY, best practices**. → Recommendation in §4: **TypeScript end-to-end** (shared domain package). |
+| D8 | Tech | **.NET 10 backend + Vue/Vite+ frontend**, client generated with **NSwag**; priority: readable, maintainable, DRY, best practices (§4). |
 | D9 | Tasks | Check-off **todo list that works on mobile**; tasks are generated from plantings, trees/perennials and tool maintenance, plus manual tasks. |
 | D10 | Notes | **Log per bed / tree / crop** (observation, disease, pest, harvest, soil, weather), optional photo, author, date. Disease/pest shows on the map. |
 | D11 | Designer | Map editor with **exact dimensions**, plus **paths, trees/shrubs, features** (compost, water, pond, hedge, shed). Trees and shrubs have **yearly actions** that become tasks. |
@@ -90,44 +90,35 @@ After approval → Stage 1 (real application).
 
 ## 4. Architecture
 
-### 4.1 Recommendation: TypeScript end-to-end
-Both stacks are fine. TypeScript wins on **DRY**: the domain rules (date calculation, phases, rotation/companion checks, task generation, estimates, tool demand) and the validation schemas are needed **in the browser** (live checks while planning, offline-ish UX) **and on the server** (authoritative validation, task generation, calendar sync). One shared package avoids implementing them twice.
-
 ```
 ┌──────────────────────── Docker image (single container) ─────────────────────────┐
-│  Node 22 · Fastify (TypeScript)                                                   │
-│   ├─ /api/*        REST + OpenAPI (generated from zod schemas)                     │
-│   ├─ /files/*      attachments & photos  (volume /data/files)                      │
-│   ├─ /auth/*       OIDC (only when OIDC_* env is set, otherwise open)              │
-│   ├─ /ical/:token  per-person .ics feed                                            │
-│   ├─ jobs          Google Calendar sync, nightly backup (in-process scheduler)     │
-│   └─ /*            built Vue SPA                                                   │
-│  SQLite (better-sqlite3, WAL) + Drizzle ORM + versioned migrations  (/data/db)     │
+│  ASP.NET Core 10 (minimal APIs)                                                   │
+│   ├─ /api/*        REST + OpenAPI 3.0 (→ NSwag TypeScript client)                  │
+│   ├─ /auth/*       OIDC (only when Auth__Oidc__* is set, otherwise open)           │
+│   └─ /*            built Vue SPA (deep links fall back to index.html)              │
+│  EF Core 10 + SQLite (WAL), migrations applied on startup     (/data volume)       │
 └───────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 | Layer | Choice |
 |---|---|
-| Monorepo | pnpm workspaces: `packages/core`, `apps/api`, `apps/web` |
-| Shared domain | `@complot/core`: types, **zod schemas** (single source for API validation, forms, AI import), pure rule functions, i18n message keys for rule output |
-| Frontend | Vue 3 + TypeScript + Vite, Pinia, Vue Router, **vue-i18n** (nl-BE default, en), TanStack Query for server state |
-| UI | PrimeVue (unstyled/pass-through) + own design tokens; mobile-first layouts for Tasks |
-| Map / designer | SVG + d3-zoom; shapes as a discriminated union (`rect` / `ellipse` / `keyhole` / later `polygon`) with shared geometry helpers (area, bounds, adjacency) |
-| Planner | Own week grid (or FullCalendar) with pointer-event DnD (works for touch and mouse) |
-| Backend | Fastify + `fastify-type-provider-zod`; feature modules (`sites`, `layout`, `catalog`, `plantings`, `tasks`, `planner`, `notes`, `tools`, `costs`, `auth`) |
-| DB | SQLite via Drizzle; migrations in git; `PRAGMA foreign_keys=ON`, WAL |
-| Calendar | Google Calendar API (OAuth per person, scopes `calendar.events` + `calendar.freebusy`); `.ics` feed fallback |
-| Auth | OIDC auth-code + PKCE (openid-client), session cookie; `AUTH_MODE=none` when unconfigured |
-| Quality | ESLint + Prettier, strict TS, Vitest (core rules: high coverage), API tests (inject), Playwright smoke tests (incl. mobile viewport), CI on push |
-| Ops | Multi-stage Dockerfile, `docker-compose.yml`, healthcheck, `/data` volume, nightly `sqlite .backup` + files |
+| Backend | .NET 10 minimal APIs, feature folders (`Catalog`, `Garden`, `Plantings`, `Work`); `Complot.Domain` holds entities and all rules, without framework dependencies |
+| Validation | FluentValidation; errors go out as **codes + params** (`inclusiveBetween {from, to}`) and are translated in the frontend |
+| DB | EF Core 10 + SQLite (WAL), Guid v7 keys, complex types for value objects, JSON columns for owned lists |
+| API contract | OpenAPI document generated at build → `frontend/src/shared/api/openapi.json` → **NSwag** `client.ts`. A contract change shows up as a TypeScript error |
+| Frontend | Vue 3 + TypeScript with **Vite+** (`vp`: dev, build, fmt, lint, test), Pinia, Vue Router, **vue-i18n** (nl-BE default, en), TanStack Query |
+| UI | **PrimeVue 4.5.5, pinned** (v5 needs a commercial licence), own design tokens; mobile-first task list |
+| Map / designer | Own SVG with pan/zoom; shapes `rect` / `ellipse` / `keyhole` (later `polygon`); designer works on a draft with undo/redo |
+| Auth | Optional OIDC (cookie + OpenIdConnect); open mode when unconfigured |
+| Quality | xUnit v3 (domain rules + API integration tests on a temp SQLite file), Vitest via Vite+, `vue-tsc`, licence check on npm packages (`vp run verify`) |
+| Ops | Multi-stage Dockerfile (Node 24 + Vite+ → .NET SDK → aspnet alpine), docker-compose, healthcheck, `/data` volume |
 
-### 4.2 Code principles
-- **Domain logic is pure and lives only in `core`.** No rules in Vue components or route handlers; those call core functions.
-- **Schema-first**: one zod schema per entity → TS types, API validation, OpenAPI, form validation and the AI import format.
-- **Generated rather than stored** where possible: tasks from plantings, trees and tools are derived and *materialised* with a stable key (`planting:42:harvest:2026`), so status, assignee and actual time survive re-generation.
-- Feature-sliced folders (frontend and backend mirror each other); small composables/services; no god files.
-- i18n: no hard-coded UI strings; rule output returns `{ key, params }`, and the UI translates.
-- Every list endpoint is paginated and filterable; every write is validated and audited (`audit` table).
+### 4.1 Code principles
+- **Rules live once, in `Complot.Domain`** (schedule, phases, rotation/neighbour/sun checks, task generation, estimates). The frontend only displays their results.
+- **Generated rather than stored**: tasks are derived from plantings, trees and manual tasks and have a stable key (`planting:{id}:harvest:2026`), so status, assignee and actual time survive re-generation.
+- One importer for the AI/JSON catalog exchange; preview = the real import inside a rolled-back transaction. The demo seed uses the same path.
+- Feature-sliced folders on both sides; small composables and shared UI (`EditDialog` + `useEditor`, `FormField`, `NumberInput`, …).
+- i18n: no hard-coded UI strings; rule output is `{ code, params }`.
 
 ---
 
@@ -183,7 +174,7 @@ invoice_line(id, invoice_id, description, cost_category_id, amount, inventory_lo
 user(id, oidc_sub, name, email)       audit(id, user_id, entity, entity_id, action, at, diff_json)
 ```
 
-**Rules in `core`**: planting dates from metadata · phase at a date · rotation per family (rest years, exemptions) · companions (same bed and adjacent beds) · sun mismatch · max stay for perennials · sowing window check · plant count from area and spacing · tool demand (peak per month) · task generation · estimate = base × learned factor.
+**Rules in `Complot.Domain`**: planting dates from metadata · phase at a date · rotation per family (rest years, exemptions) · companions (same bed and adjacent beds) · sun mismatch · max stay for perennials · sowing window check · plant count from area and spacing · tool demand (peak per month) · task generation · estimate = base × learned factor.
 
 ---
 
@@ -199,18 +190,18 @@ user(id, oidc_sub, name, email)       audit(id, user_id, entity, entity_id, acti
 
 ## 7. Roadmap
 
-| Stage | Content |
-|---|---|
-| **0** | Plan + demo (this) — approve UX & scope |
-| **1 Foundation** | Monorepo, Docker, SQLite + migrations, `core` package skeleton, i18n setup (nl-BE/en), auth switch (OIDC/none), app shell (desktop sidebar / mobile bottom bar), seed data, CI |
-| **2 Catalog** | Families, categories, varieties (all metadata + actions), suppliers, inventory, shopping list, AI prompt/import, JSON export/import |
-| **3 Sites & designer** | Sites, plots, beds (rect/oval/keyhole), paths, trees + actions, features; designer with exact dimensions; map + timeline |
-| **4 Plantings** | Plan plantings, date calculation, Gantt, phases on the map, rotation/companion/sun/stay checks, actual dates |
-| **5 Tasks & log** | Task generation + manual tasks, mobile todo with check-off & actual time, learning estimates, notes with photos & harvest quantities |
-| **6 Planner** | Week planner (DnD + tap), people, Google OAuth, free/busy, event sync, iCal feed |
-| **7 Tools & costs** | Tools + maintenance tasks + demand; invoices with attachments, manual split + AI import, reports |
-| **8 Polish** | Polygons, backups UI, full export/import, accessibility, Playwright e2e (mobile), PWA option |
-| Later | Weather/frost alerts, per-person/variety estimate learning, tree shade on beds, yield statistics, seed-saving tracking, budgets |
+| Stage | Content | Status |
+|---|---|---|
+| **0** | Plan + demo (this) — approve UX & scope | done |
+| **1 Foundation** | Solution layout, Docker, SQLite + migrations, domain project, i18n setup (nl-BE/en), auth switch (OIDC/none), app shell (desktop sidebar / mobile bottom bar), seed data, CI | done, except CI |
+| **2 Catalog** | Families, categories, varieties (all metadata + actions), suppliers, inventory, shopping list, AI prompt/import, JSON export/import | done, except the shopping list |
+| **3 Sites & designer** | Sites, plots, beds (rect/oval/keyhole), paths, trees + actions, features; designer with exact dimensions; map + timeline | done |
+| **4 Plantings** | Plan plantings, date calculation, Gantt, phases on the map, rotation/companion/sun/stay checks, actual dates | done |
+| **5 Tasks & log** | Task generation + manual tasks, mobile todo with check-off & actual time, learning estimates, notes with photos & harvest quantities | done |
+| **6 Planner** | Week planner (DnD + tap), people, Google OAuth, free/busy, event sync, iCal feed | next |
+| **7 Tools & costs** | Tools + maintenance tasks + demand; invoices with attachments, manual split + AI import, reports |  |
+| **8 Polish** | Polygons, backups UI, full export/import, accessibility, Playwright e2e (mobile), PWA option |  |
+| Later | Weather/frost alerts, per-person/variety estimate learning, tree shade on beds, yield statistics, seed-saving tracking, budgets |  |
 
 ---
 
