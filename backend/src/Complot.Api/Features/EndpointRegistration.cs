@@ -3,6 +3,7 @@ using Complot.Api.Common;
 using Complot.Api.Features.Admin;
 using Complot.Api.Features.Catalog;
 using Complot.Api.Features.Garden;
+using Complot.Api.Features.Planner;
 using Complot.Api.Features.Plantings;
 using Complot.Api.Features.Work;
 
@@ -24,6 +25,8 @@ public static class EndpointRegistration
         api.MapPlantings();
         api.MapWork();
         api.MapAdmin();
+        api.MapPlanner();
+        app.MapCalendarFeed();
 
         // Unknown API routes are a 404 problem, never the SPA's index.html.
         app.MapFallback("/api/{**path}", () => ApiProblems.NotFound()).ExcludeFromDescription();

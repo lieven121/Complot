@@ -2526,6 +2526,209 @@
           }
         }
       }
+    },
+    "/api/planner/settings": {
+      "get": {
+        "tags": [
+          "Planner"
+        ],
+        "operationId": "GetPlannerSettings",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlannerSettingsDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/planner/calendars": {
+      "get": {
+        "tags": [
+          "Planner"
+        ],
+        "operationId": "ListPersonCalendars",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonCalendarDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/planner/busy": {
+      "get": {
+        "tags": [
+          "Planner"
+        ],
+        "operationId": "GetBusyTimes",
+        "parameters": [
+          {
+            "name": "personId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BusyDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/planner/google/connect": {
+      "get": {
+        "tags": [
+          "Planner"
+        ],
+        "operationId": "ConnectGoogleCalendar",
+        "parameters": [
+          {
+            "name": "personId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "returnUrl",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/planner/people/{personId}/google": {
+      "delete": {
+        "tags": [
+          "Planner"
+        ],
+        "operationId": "DisconnectGoogleCalendar",
+        "parameters": [
+          {
+            "name": "personId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/api/planner/people/{personId}/feed": {
+      "post": {
+        "tags": [
+          "Planner"
+        ],
+        "operationId": "RenewCalendarFeed",
+        "parameters": [
+          {
+            "name": "personId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Planner"
+        ],
+        "operationId": "DeleteCalendarFeed",
+        "parameters": [
+          {
+            "name": "personId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2668,6 +2871,24 @@
           "area": {
             "type": "number",
             "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "BusyDto": {
+        "required": [
+          "start",
+          "end"
+        ],
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "additionalProperties": false
@@ -3244,6 +3465,18 @@
           "shed"
         ]
       },
+      "FeedDto": {
+        "required": [
+          "token"
+        ],
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
       "IFormFile": {
         "type": "string",
         "format": "binary"
@@ -3508,6 +3741,11 @@
           },
           "isEditor": {
             "type": "boolean"
+          },
+          "personId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -3710,6 +3948,33 @@
           "gravel"
         ]
       },
+      "PersonCalendarDto": {
+        "required": [
+          "personId",
+          "googleAccount",
+          "feedToken",
+          "canManage"
+        ],
+        "type": "object",
+        "properties": {
+          "personId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "googleAccount": {
+            "type": "string",
+            "nullable": true
+          },
+          "feedToken": {
+            "type": "string",
+            "nullable": true
+          },
+          "canManage": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "PersonDto": {
         "required": [
           "id",
@@ -3765,6 +4030,22 @@
           "to": {
             "type": "string",
             "format": "date"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PlannerSettingsDto": {
+        "required": [
+          "googleEnabled",
+          "timeZone"
+        ],
+        "type": "object",
+        "properties": {
+          "googleEnabled": {
+            "type": "boolean"
+          },
+          "timeZone": {
+            "type": "string"
           }
         },
         "additionalProperties": false
@@ -4274,7 +4555,9 @@
           "actualMinutes",
           "assigneeId",
           "estimateOverride",
-          "scheduledStart"
+          "scheduledStart",
+          "calendarSynced",
+          "calendarError"
         ],
         "type": "object",
         "properties": {
@@ -4351,6 +4634,13 @@
             "type": "string",
             "format": "date-time",
             "nullable": true
+          },
+          "calendarSynced": {
+            "type": "boolean"
+          },
+          "calendarError": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -4388,6 +4678,10 @@
           "scheduledStart": {
             "type": "string",
             "format": "date-time",
+            "nullable": true
+          },
+          "calendarTitle": {
+            "type": "string",
             "nullable": true
           }
         },
@@ -5089,6 +5383,9 @@
     },
     {
       "name": "Admin"
+    },
+    {
+      "name": "Planner"
     }
   ]
 }

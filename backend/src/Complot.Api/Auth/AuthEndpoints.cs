@@ -19,7 +19,8 @@ public enum AuthModeKind
 /// The caller. <see cref="IsPending"/>: signed in but not given access yet. <see cref="IsEditor"/>: may change shared data
 /// such as the catalog. Rights per site are on each site (<c>SiteDto.MyRole</c>).
 /// </summary>
-public sealed record MeDto(AuthModeKind AuthMode, bool IsAuthenticated, string? Name, string? Email, bool IsAdmin, bool IsPending, bool IsEditor);
+public sealed record MeDto(
+    AuthModeKind AuthMode, bool IsAuthenticated, string? Name, string? Email, bool IsAdmin, bool IsPending, bool IsEditor, Guid? PersonId = null);
 
 public static class AuthEndpoints
 {
@@ -29,7 +30,7 @@ public static class AuthEndpoints
             {
                 var user = await current.GetAsync(ct);
                 return new MeDto(mode.OidcEnabled ? AuthModeKind.Oidc : AuthModeKind.None, user.IsAuthenticated, user.Name, user.Email,
-                    user.IsAdmin, user.IsAuthenticated && user.IsPending, user.IsEditor);
+                    user.IsAdmin, user.IsAuthenticated && user.IsPending, user.IsEditor, user.PersonId);
             })
             .WithName("GetMe")
             .WithTags("Auth")

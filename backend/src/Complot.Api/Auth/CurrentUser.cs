@@ -9,7 +9,8 @@ namespace Complot.Api.Auth;
 /// What the caller may do: a signed-in user (<see cref="UserId"/>) or someone who opened an access link
 /// (<see cref="LinkId"/>). In open mode (no OIDC) everybody is an admin.
 /// </summary>
-public sealed record UserAccess(Guid? UserId, string? Email, string? Name, bool IsAdmin, IReadOnlyDictionary<Guid, SiteRole> Roles, Guid? LinkId = null)
+public sealed record UserAccess(
+    Guid? UserId, string? Email, string? Name, bool IsAdmin, IReadOnlyDictionary<Guid, SiteRole> Roles, Guid? LinkId = null, Guid? PersonId = null)
 {
     public static readonly UserAccess OpenMode = new(null, null, null, true, new Dictionary<Guid, SiteRole>());
     public static readonly UserAccess Anonymous = new(null, null, null, false, new Dictionary<Guid, SiteRole>());
@@ -19,6 +20,9 @@ public sealed record UserAccess(Guid? UserId, string? Email, string? Name, bool 
 
     /// <summary>May change shared data (catalog, people): admins and whoever can edit at least one site.</summary>
     public bool IsEditor => IsAdmin || Roles.Values.Contains(SiteRole.Edit);
+
+    /// <summary>Link or unlink a person's own calendar: admins, and the person themselves (user or link for that person).</summary>
+    public bool ManagesCalendarOf(Guid personId) => IsAdmin || PersonId == personId;
 
     public SiteRole? RoleOn(Guid siteId) => Roles.TryGetValue(siteId, out var role) ? role : null;
     public bool CanView(Guid siteId, bool archived) => AccessPolicy.CanView(IsAdmin, RoleOn(siteId), archived);
@@ -58,7 +62,7 @@ public sealed class CurrentUser(IHttpContextAccessor http, ComplotDbContext db, 
 
         var user = await FindOrCreateAsync(subject, principal, ct);
         var isAdmin = user.IsAdmin || options.IsConfigAdmin(user.Email);
-        return _access = new UserAccess(user.Id, user.Email, user.Name, isAdmin, user.Sites.ToDictionary(a => a.SiteId, a => a.Role));
+        return _access = new UserAccess(user.Id, user.Email, user.Name, isAdmin, user.Sites.ToDictionary(a => a.SiteId, a => a.Role), PersonId: user.PersonId);
     }
 
     /// <summary>A link session only lasts while the link exists and has not expired.</summary>
@@ -72,7 +76,7 @@ public sealed class CurrentUser(IHttpContextAccessor http, ComplotDbContext db, 
             link.LastUsedAt = now;
             await db.SaveChangesAsync(ct);
         }
-        return new UserAccess(null, null, link.Label, false, link.Sites.ToDictionary(s => s.SiteId, s => s.Role), link.Id);
+        return new UserAccess(null, null, link.Label, false, link.Sites.ToDictionary(s => s.SiteId, s => s.Role), link.Id, link.PersonId);
     }
 
     private async Task<AppUser> FindOrCreateAsync(string subject, ClaimsPrincipal principal, CancellationToken ct)

@@ -3,6 +3,7 @@ using Complot.Api.Data;
 using Complot.Api.Features;
 using Complot.Api.Features.Catalog;
 using Complot.Api.Features.Garden;
+using Complot.Api.Features.Planner;
 using Complot.Api.Features.Work;
 using Complot.Api.Hosting;
 using Scalar.AspNetCore;
@@ -15,6 +16,7 @@ builder.Services
     .AddComplotAuth(builder.Configuration)
     .AddCatalog()
     .AddGarden()
+    .AddPlanner(builder.Configuration)
     .AddWork();
 
 var app = builder.Build();

@@ -1,6 +1,7 @@
 using Complot.Domain.Access;
 using Complot.Domain.Catalog;
 using Complot.Domain.Garden;
+using Complot.Domain.Planner;
 using Complot.Domain.Plantings;
 using Complot.Domain.Work;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,8 @@ public sealed class ComplotDbContext(DbContextOptions<ComplotDbContext> options)
     public DbSet<AppUser> Users => Set<AppUser>();
     public DbSet<SiteAccess> SiteAccess => Set<SiteAccess>();
     public DbSet<AccessLink> AccessLinks => Set<AccessLink>();
+
+    public DbSet<CalendarLink> CalendarLinks => Set<CalendarLink>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) =>
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ComplotDbContext).Assembly);

@@ -7,6 +7,9 @@ public sealed class Person : Entity
 {
     public required string Name { get; set; }
     public string Color { get; set; } = "#3f7d4e";
+
+    /// <summary>Secret part of the person's iCal feed URL (read-only subscription to their scheduled tasks).</summary>
+    public string? CalendarFeedToken { get; set; }
 }
 
 public enum TaskKind
@@ -52,7 +55,18 @@ public sealed class TaskState : Entity
 
     public Guid? AssigneeId { get; set; }
     public int? EstimateOverride { get; set; }
+    /// <summary>Planned start, local wall-clock time of the garden.</summary>
     public DateTime? ScheduledStart { get; set; }
+
+    /// <summary>Title for calendars, in the language of whoever scheduled it (the API itself has no UI text).</summary>
+    public string? CalendarTitle { get; set; }
+
+    /// <summary>The Google Calendar event that mirrors this task, and in whose calendar it is.</summary>
+    public string? CalendarEventId { get; set; }
+    public Guid? CalendarPersonId { get; set; }
+
+    /// <summary>Code of the last calendar sync failure (e.g. "calendar.failed"); null when in sync.</summary>
+    public string? CalendarError { get; set; }
 
     public void Complete(GardenTask task, DateOnly doneOn, int? actualMinutes)
     {

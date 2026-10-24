@@ -3134,6 +3134,297 @@ export class AdminClient {
     }
 }
 
+export class PlannerClient {
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        this.http = http ? http : window as any;
+        this.baseUrl = baseUrl ?? "";
+    }
+
+    /**
+     * @return OK
+     */
+    getPlannerSettings(signal?: AbortSignal): Promise<PlannerSettingsDto> {
+        let url_ = this.baseUrl + "/api/planner/settings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            signal,
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetPlannerSettings(_response);
+        });
+    }
+
+    protected processGetPlannerSettings(response: Response): Promise<PlannerSettingsDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as PlannerSettingsDto;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<PlannerSettingsDto>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    listPersonCalendars(signal?: AbortSignal): Promise<PersonCalendarDto[]> {
+        let url_ = this.baseUrl + "/api/planner/calendars";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            signal,
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processListPersonCalendars(_response);
+        });
+    }
+
+    protected processListPersonCalendars(response: Response): Promise<PersonCalendarDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as PersonCalendarDto[];
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<PersonCalendarDto[]>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getBusyTimes(personId: string, from: string, to: string, signal?: AbortSignal): Promise<BusyDto[]> {
+        let url_ = this.baseUrl + "/api/planner/busy?";
+        if (personId === undefined || personId === null)
+            throw new globalThis.Error("The parameter 'personId' must be defined and cannot be null.");
+        else
+            url_ += "personId=" + encodeURIComponent("" + personId) + "&";
+        if (from === undefined || from === null)
+            throw new globalThis.Error("The parameter 'from' must be defined and cannot be null.");
+        else
+            url_ += "from=" + encodeURIComponent("" + from) + "&";
+        if (to === undefined || to === null)
+            throw new globalThis.Error("The parameter 'to' must be defined and cannot be null.");
+        else
+            url_ += "to=" + encodeURIComponent("" + to) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            signal,
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetBusyTimes(_response);
+        });
+    }
+
+    protected processGetBusyTimes(response: Response): Promise<BusyDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as BusyDto[];
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<BusyDto[]>(null as any);
+    }
+
+    /**
+     * @param returnUrl (optional) 
+     * @return OK
+     */
+    connectGoogleCalendar(personId: string, returnUrl?: string | undefined, signal?: AbortSignal): Promise<void> {
+        let url_ = this.baseUrl + "/api/planner/google/connect?";
+        if (personId === undefined || personId === null)
+            throw new globalThis.Error("The parameter 'personId' must be defined and cannot be null.");
+        else
+            url_ += "personId=" + encodeURIComponent("" + personId) + "&";
+        if (returnUrl === null)
+            throw new globalThis.Error("The parameter 'returnUrl' cannot be null.");
+        else if (returnUrl !== undefined)
+            url_ += "returnUrl=" + encodeURIComponent("" + returnUrl) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            signal,
+            headers: {
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processConnectGoogleCalendar(_response);
+        });
+    }
+
+    protected processConnectGoogleCalendar(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * @return No Content
+     */
+    disconnectGoogleCalendar(personId: string, signal?: AbortSignal): Promise<void> {
+        let url_ = this.baseUrl + "/api/planner/people/{personId}/google";
+        if (personId === undefined || personId === null)
+            throw new globalThis.Error("The parameter 'personId' must be defined.");
+        url_ = url_.replace("{personId}", encodeURIComponent("" + personId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "DELETE",
+            signal,
+            headers: {
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processDisconnectGoogleCalendar(_response);
+        });
+    }
+
+    protected processDisconnectGoogleCalendar(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 204) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    renewCalendarFeed(personId: string, signal?: AbortSignal): Promise<FeedDto> {
+        let url_ = this.baseUrl + "/api/planner/people/{personId}/feed";
+        if (personId === undefined || personId === null)
+            throw new globalThis.Error("The parameter 'personId' must be defined.");
+        url_ = url_.replace("{personId}", encodeURIComponent("" + personId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "POST",
+            signal,
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processRenewCalendarFeed(_response);
+        });
+    }
+
+    protected processRenewCalendarFeed(response: Response): Promise<FeedDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as FeedDto;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<FeedDto>(null as any);
+    }
+
+    /**
+     * @return No Content
+     */
+    deleteCalendarFeed(personId: string, signal?: AbortSignal): Promise<void> {
+        let url_ = this.baseUrl + "/api/planner/people/{personId}/feed";
+        if (personId === undefined || personId === null)
+            throw new globalThis.Error("The parameter 'personId' must be defined.");
+        url_ = url_.replace("{personId}", encodeURIComponent("" + personId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "DELETE",
+            signal,
+            headers: {
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processDeleteCalendarFeed(_response);
+        });
+    }
+
+    protected processDeleteCalendarFeed(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 204) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
+}
+
 export interface AccessLinkCreatedDto {
     link: AccessLinkDto;
     token: string;
@@ -3167,6 +3458,11 @@ export interface BedDto {
     soil: string | undefined;
     notes: string | undefined;
     area: number;
+}
+
+export interface BusyDto {
+    start: string;
+    end: string;
 }
 
 export interface CatalogExchange {
@@ -3295,6 +3591,10 @@ export interface FeatureDto {
 
 export type FeatureType = "compost" | "water" | "pond" | "hedge" | "shed";
 
+export interface FeedDto {
+    token: string;
+}
+
 export interface ImportReport {
     committed: boolean;
     categories: ImportRow[];
@@ -3355,6 +3655,7 @@ export interface MeDto {
     isAdmin: boolean;
     isPending: boolean;
     isEditor: boolean;
+    personId?: string | undefined;
 }
 
 export interface MonthWindowDto {
@@ -3402,6 +3703,13 @@ export interface PathDto {
 
 export type PathMaterial = "woodChips" | "grass" | "pavers" | "gravel";
 
+export interface PersonCalendarDto {
+    personId: string;
+    googleAccount: string | undefined;
+    feedToken: string | undefined;
+    canManage: boolean;
+}
+
 export interface PersonDto {
     id: string;
     name: string;
@@ -3417,6 +3725,11 @@ export interface PhaseSegmentDto {
     phase: PlantingPhase;
     from: string;
     to: string;
+}
+
+export interface PlannerSettingsDto {
+    googleEnabled: boolean;
+    timeZone: string;
 }
 
 export interface PlanPlantingInput {
@@ -3558,6 +3871,8 @@ export interface TaskDto {
     assigneeId: string | undefined;
     estimateOverride: number | undefined;
     scheduledStart: string | undefined;
+    calendarSynced: boolean;
+    calendarError: string | undefined;
 }
 
 export type TaskKind = "sowIndoor" | "sow" | "plantOut" | "plant" | "harvest" | "clear" | "care" | "custom";
@@ -3566,6 +3881,7 @@ export interface TaskStateInput {
     assigneeId: string | undefined;
     estimateOverride: number | undefined;
     scheduledStart: string | undefined;
+    calendarTitle?: string | undefined;
 }
 
 export interface TreeDto {

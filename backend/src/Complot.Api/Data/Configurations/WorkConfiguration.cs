@@ -13,6 +13,8 @@ internal sealed class PersonConfiguration : IEntityTypeConfiguration<Person>
         b.ToTable("People");
         b.Property(p => p.Name).HasMaxLength(100);
         b.Property(p => p.Color).HasMaxLength(9);
+        b.Property(p => p.CalendarFeedToken).HasMaxLength(64);
+        b.HasIndex(p => p.CalendarFeedToken).IsUnique();
     }
 }
 
@@ -33,6 +35,10 @@ internal sealed class TaskStateConfiguration : IEntityTypeConfiguration<TaskStat
     {
         b.Property(s => s.SourceKey).HasMaxLength(200);
         b.HasIndex(s => s.SourceKey).IsUnique();
+        b.Property(s => s.CalendarTitle).HasMaxLength(200);
+        b.Property(s => s.CalendarEventId).HasMaxLength(1024);
+        b.Property(s => s.CalendarError).HasMaxLength(40);
+        b.HasIndex(s => new { s.AssigneeId, s.ScheduledStart });
         b.HasOne<Person>().WithMany().HasForeignKey(s => s.AssigneeId).OnDelete(DeleteBehavior.SetNull);
     }
 }

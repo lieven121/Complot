@@ -29,6 +29,11 @@ public static class ApiProblems
         TypedResults.Problem(statusCode: StatusCodes.Status403Forbidden, title: "Forbidden",
             extensions: new Dictionary<string, object?> { ["code"] = code });
 
+    /// <summary>502 with a <c>code</c>: an outside service (Google) failed, e.g. "calendar.reconnect".</summary>
+    public static ProblemHttpResult BadGateway(string code) =>
+        TypedResults.Problem(statusCode: StatusCodes.Status502BadGateway, title: "Bad gateway",
+            extensions: new Dictionary<string, object?> { ["code"] = code });
+
     public static ProblemHttpResult NotFound() => TypedResults.Problem(statusCode: StatusCodes.Status404NotFound);
 }
 

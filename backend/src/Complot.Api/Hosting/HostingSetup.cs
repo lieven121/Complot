@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using FluentValidation;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.OpenApi;
 
 namespace Complot.Api.Hosting;
@@ -16,6 +17,12 @@ public static class HostingSetup
         services.AddOptions<StorageOptions>().Bind(configuration.GetSection(StorageOptions.Section));
         services.AddOptions<SeedOptions>().Bind(configuration.GetSection(SeedOptions.Section));
         services.AddSingleton(TimeProvider.System);
+
+        // Keys for sign-in cookies and the encrypted Google tokens survive restarts (and container rebuilds).
+        var storage = configuration.GetSection(StorageOptions.Section).Get<StorageOptions>() ?? new StorageOptions();
+        services.AddDataProtection()
+            .SetApplicationName("Complot")
+            .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(storage.FullDataDir, "keys")));
 
         services.AddProblemDetails();
         services.AddHealthChecks();

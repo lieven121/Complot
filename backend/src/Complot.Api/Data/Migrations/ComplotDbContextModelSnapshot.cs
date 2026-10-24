@@ -722,6 +722,39 @@ namespace Complot.Api.Data.Migrations
                     b.ToTable("Trees");
                 });
 
+            modelBuilder.Entity("Complot.Domain.Planner.CalendarLink", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("AccountEmail")
+                        .IsRequired()
+                        .HasMaxLength(254)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("PersonId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ProtectedRefreshToken")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PersonId")
+                        .IsUnique();
+
+                    b.ToTable("CalendarLinks");
+                });
+
             modelBuilder.Entity("Complot.Domain.Plantings.Planting", b =>
                 {
                     b.Property<Guid>("Id")
@@ -879,6 +912,10 @@ namespace Complot.Api.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("CalendarFeedToken")
+                        .HasMaxLength(64)
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Color")
                         .IsRequired()
                         .HasMaxLength(9)
@@ -897,6 +934,9 @@ namespace Complot.Api.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CalendarFeedToken")
+                        .IsUnique();
+
                     b.ToTable("People", (string)null);
                 });
 
@@ -914,6 +954,21 @@ namespace Complot.Api.Data.Migrations
 
                     b.Property<int?>("BaseMinutesAtCompletion")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("CalendarError")
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CalendarEventId")
+                        .HasMaxLength(1024)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("CalendarPersonId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CalendarTitle")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
@@ -943,10 +998,10 @@ namespace Complot.Api.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AssigneeId");
-
                     b.HasIndex("SourceKey")
                         .IsUnique();
+
+                    b.HasIndex("AssigneeId", "ScheduledStart");
 
                     b.ToTable("TaskStates");
                 });
@@ -1217,6 +1272,15 @@ namespace Complot.Api.Data.Migrations
                         });
 
                     b.Navigation("Actions");
+                });
+
+            modelBuilder.Entity("Complot.Domain.Planner.CalendarLink", b =>
+                {
+                    b.HasOne("Complot.Domain.Work.Person", null)
+                        .WithMany()
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Complot.Domain.Plantings.Planting", b =>
