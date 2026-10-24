@@ -102,7 +102,7 @@ public static class CostEndpoints
         i.Lines.OrderByDescending(l => l.Amount).Select(l => new InvoiceLineDto(l.Description, l.CategoryId, l.Amount)).ToList());
 
     private static async Task<CostCategoryDto[]> ListCategories(ComplotDbContext db, CancellationToken ct) =>
-        (await db.CostCategories.AsNoTracking().OrderBy(c => c.CreatedAt).ToListAsync(ct)).Select(ToDto).ToArray();
+        (await db.CostCategories.AsNoTracking().ToListAsync(ct)).OrderBy(c => c.Name, StringComparer.CurrentCultureIgnoreCase).Select(ToDto).ToArray();
 
     private static async Task<Results<Created<CostCategoryDto>, ProblemHttpResult>> CreateCategory(CostCategoryInput input, ComplotDbContext db, CancellationToken ct)
     {

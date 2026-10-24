@@ -18,7 +18,6 @@
     "en": "English"
   },
   "common": {
-    "comingSoon": "Dit onderdeel komt in een volgende fase.",
     "applicable": "Van toepassing",
     "notApplicable": "Niet van toepassing",
     "from": "Van",
@@ -104,7 +103,11 @@
     "email": "Geen geldig e-mailadres.",
     "duplicateSite": "Elke locatie maar één keer.",
     "unknownTool": "Onbekend gereedschap.",
-    "duplicateTool": "Elk gereedschap maar één keer."
+    "duplicateTool": "Elk gereedschap maar één keer.",
+    "linesTotal": "De lijnen tellen op tot {lines}, het totaal is {total}.",
+    "unknownCostCategory": "Kies een categorie.",
+    "attachmentType": "Enkel PDF, JPG, PNG, WebP of HEIC.",
+    "attachmentTooLarge": "Bestand is groter dan {maxMb} MB."
   },
   "errors": {
     "generic": "Er liep iets mis. Probeer opnieuw.",
@@ -152,6 +155,10 @@
       "reconnect": "De Google Agenda-koppeling werkt niet meer. Koppel de agenda opnieuw.",
       "notConfigured": "De Google-koppeling is niet ingesteld.",
       "notYours": "Je kan alleen je eigen agenda koppelen."
+    },
+    "costCategory": {
+      "inUse": "Deze categorie wordt nog gebruikt op facturen.",
+      "duplicate": "Er bestaat al een categorie met die naam."
     }
   },
   "catalog": {
@@ -809,6 +816,73 @@
     "per": {
       "plant": "per plant",
       "bed": "per bed"
+    }
+  },
+  "costs": {
+    "allYears": "Alle jaren",
+    "allYearsLower": "alle jaren",
+    "total": "Totaal {period}",
+    "invoices": "{n} facturen",
+    "yearToDate": "{year} tot vandaag",
+    "vsLastYear": "{arrow} {pct}% t.o.v. {year} (zelfde periode)",
+    "perMonth": "Gemiddeld per maand",
+    "overMonths": "over {n} maanden",
+    "perSquareMeter": "Per m² bed",
+    "bedArea": "{area} m² bedden",
+    "overTime": "Kosten in de tijd",
+    "by": {
+      "year": "Jaar",
+      "quarter": "Kwartaal",
+      "month": "Maand"
+    },
+    "quarter": "K{q} {y}",
+    "byCategory": "Per categorie",
+    "categoryByYear": "Categorie × jaar",
+    "totalRow": "Totaal",
+    "invoiceList": "Facturen",
+    "noInvoices": "Geen facturen in deze periode.",
+    "editorsOnly": "De kosten zijn enkel zichtbaar voor wie iets mag bewerken.",
+    "rest": "Rest",
+    "category": {
+      "one": "Categorie",
+      "new": "Nieuwe kostencategorie",
+      "edit": "Kostencategorie bewerken",
+      "color": "Kleur"
+    },
+    "invoice": {
+      "new": "Factuur toevoegen",
+      "edit": "Factuur bewerken",
+      "attachment": "Factuur (PDF of foto)",
+      "attachmentHint": "PDF, JPG, PNG, WebP of HEIC, max. 15 MB.",
+      "open": "Bijlage openen",
+      "date": "Datum",
+      "supplier": "Leverancier",
+      "number": "Factuurnummer",
+      "total": "Totaal",
+      "site": "Locatie",
+      "siteHint": "Optioneel, om locaties te vergelijken.",
+      "allSites": "Alle locaties",
+      "split": "Verdeling",
+      "description": "Omschrijving",
+      "amount": "Bedrag",
+      "addLine": "Lijn toevoegen",
+      "assignRest": "Rest toewijzen",
+      "allocated": "{allocated} van {total} verdeeld",
+      "remaining": "nog {amount}",
+      "over": "{amount} te veel",
+      "notes": "Notities"
+    },
+    "ai": {
+      "title": "Laat een AI-assistent de factuur invullen",
+      "copy": "Prompt kopiëren",
+      "fill": "Formulier invullen",
+      "help": "Kopieer de prompt, plak hem met de PDF of foto van de factuur in een AI-assistent, en plak het JSON-antwoord hieronder. Controleer daarna alles.",
+      "paste": "Plak hier het JSON-antwoord",
+      "filled": "Formulier ingevuld: controleer de gegevens.",
+      "invalid": "Dat is geen geldige JSON.",
+      "unknownCategory": "Onbekende categorie \"{name}\": kies zelf de juiste.",
+      "notBalanced": "De lijnen tellen niet op tot het totaal.",
+      "prompt": "Lees de factuur in de bijlage en geef ALLEEN JSON terug, zonder uitleg, in dit formaat:\n{example}\n\nRegels:\n- date in het formaat JJJJ-MM-DD; number is het factuurnummer of null.\n- total is het totaal inclusief btw.\n- Verdeel het totaal over de lijnen; de bedragen (incl. btw) tellen exact op tot total.\n- category is precies één van: {categories}.\n- Verzending en kleine bijkomende kosten mogen in één lijn."
     }
   }
 }

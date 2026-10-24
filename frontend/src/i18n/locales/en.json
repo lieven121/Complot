@@ -18,7 +18,6 @@
     "en": "English"
   },
   "common": {
-    "comingSoon": "This section arrives in a later stage.",
     "applicable": "Applicable",
     "notApplicable": "Not applicable",
     "from": "From",
@@ -104,7 +103,11 @@
     "email": "Not a valid e-mail address.",
     "duplicateSite": "Each location only once.",
     "unknownTool": "Unknown tool.",
-    "duplicateTool": "Each tool only once."
+    "duplicateTool": "Each tool only once.",
+    "linesTotal": "The lines add up to {lines}, the total is {total}.",
+    "unknownCostCategory": "Choose a category.",
+    "attachmentType": "Only PDF, JPG, PNG, WebP or HEIC.",
+    "attachmentTooLarge": "File is larger than {maxMb} MB."
   },
   "errors": {
     "generic": "Something went wrong. Please try again.",
@@ -152,6 +155,10 @@
       "reconnect": "The Google Calendar link no longer works. Please link the calendar again.",
       "notConfigured": "The Google link is not set up.",
       "notYours": "You can only link your own calendar."
+    },
+    "costCategory": {
+      "inUse": "This category is still used on invoices.",
+      "duplicate": "A category with that name already exists."
     }
   },
   "catalog": {
@@ -809,6 +816,73 @@
     "per": {
       "plant": "per plant",
       "bed": "per bed"
+    }
+  },
+  "costs": {
+    "allYears": "All years",
+    "allYearsLower": "all years",
+    "total": "Total {period}",
+    "invoices": "{n} invoices",
+    "yearToDate": "{year} to date",
+    "vsLastYear": "{arrow} {pct}% vs. {year} (same period)",
+    "perMonth": "Average per month",
+    "overMonths": "over {n} months",
+    "perSquareMeter": "Per m² of bed",
+    "bedArea": "{area} m² of beds",
+    "overTime": "Costs over time",
+    "by": {
+      "year": "Year",
+      "quarter": "Quarter",
+      "month": "Month"
+    },
+    "quarter": "Q{q} {y}",
+    "byCategory": "By category",
+    "categoryByYear": "Category × year",
+    "totalRow": "Total",
+    "invoiceList": "Invoices",
+    "noInvoices": "No invoices in this period.",
+    "editorsOnly": "Costs are only visible to people who may edit something.",
+    "rest": "Rest",
+    "category": {
+      "one": "Category",
+      "new": "New cost category",
+      "edit": "Edit cost category",
+      "color": "Colour"
+    },
+    "invoice": {
+      "new": "Add invoice",
+      "edit": "Edit invoice",
+      "attachment": "Invoice (PDF or photo)",
+      "attachmentHint": "PDF, JPG, PNG, WebP or HEIC, max. 15 MB.",
+      "open": "Open attachment",
+      "date": "Date",
+      "supplier": "Supplier",
+      "number": "Invoice number",
+      "total": "Total",
+      "site": "Location",
+      "siteHint": "Optional, to compare locations.",
+      "allSites": "All locations",
+      "split": "Split",
+      "description": "Description",
+      "amount": "Amount",
+      "addLine": "Add line",
+      "assignRest": "Assign the rest",
+      "allocated": "{allocated} of {total} assigned",
+      "remaining": "{amount} left",
+      "over": "{amount} too much",
+      "notes": "Notes"
+    },
+    "ai": {
+      "title": "Let an AI assistant fill in the invoice",
+      "copy": "Copy prompt",
+      "fill": "Fill in the form",
+      "help": "Copy the prompt, paste it with the PDF or photo of the invoice into an AI assistant, and paste the JSON answer below. Check everything afterwards.",
+      "paste": "Paste the JSON answer here",
+      "filled": "Form filled in: please check the details.",
+      "invalid": "That is not valid JSON.",
+      "unknownCategory": "Unknown category \"{name}\": pick the right one.",
+      "notBalanced": "The lines do not add up to the total.",
+      "prompt": "Read the attached invoice and return ONLY JSON, without explanation, in this format:\n{example}\n\nRules:\n- date as YYYY-MM-DD; number is the invoice number or null.\n- total is the total including VAT.\n- Split the total over the lines; the amounts (incl. VAT) add up exactly to total.\n- category is exactly one of: {categories}.\n- Shipping and small extra costs may share one line."
     }
   }
 }
