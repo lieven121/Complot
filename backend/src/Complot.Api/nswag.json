@@ -44,7 +44,7 @@
       "useLeafType": false,
       "classTypes": [],
       "extendedClasses": [],
-      "extensionCode": null,
+      "extensionCode": "nswag-extensions.ts",
       "generateDefaultValues": false,
       "excludedTypeNames": [],
       "excludedParameterNames": [],

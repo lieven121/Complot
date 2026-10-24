@@ -1,0 +1,19 @@
+services:
+  complot:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: complot:latest
+    container_name: complot
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      TZ: ${TZ:-Europe/Brussels}
+    volumes:
+      - complot-data:/data
+
+volumes:
+  complot-data:

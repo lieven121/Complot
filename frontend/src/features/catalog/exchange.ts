@@ -1,0 +1,134 @@
+import type { CatalogExchange, CategoryDto } from '@/shared/api'
+
+type Translate = (key: string, params?: Record<string, unknown>) => string
+
+/** Shape of the exchange format with placeholder values, shown to the AI as the answer template. */
+const FORMAT_TEMPLATE = {
+  categories: [
+    {
+      id: 'lowercase-slug',
+      name: 'string',
+      family: 'Latin botanical family, e.g. Solanaceae',
+      icon: 'one emoji',
+      color: '#rrggbb',
+      rotationExempt: false,
+      goodNeighbours: ['category id'],
+      badNeighbours: ['category id'],
+    },
+  ],
+  varieties: [
+    {
+      category: 'category id (existing or from "categories")',
+      name: 'common name',
+      cultivar: 'cultivar name',
+      latin: 'Latin name',
+      family: 'Latin botanical family',
+      life: 'annual | biennial | perennial',
+      sowDepthCm: 1,
+      spacingInRowCm: 10,
+      spacingBetweenRowsCm: 30,
+      heightCm: 40,
+      sun: ['full', 'half', 'shade'],
+      sowIndoorMonths: [3, 4],
+      weeksIndoorBeforePlanting: 6,
+      sowOutdoorMonths: [4, 6],
+      plantOutMonths: [5, 6],
+      germinationDays: [7, 14],
+      daysToFirstHarvest: 70,
+      harvestWeeks: 8,
+      harvestMonths: [7, 9],
+      maxYearsInBed: 1,
+      notes: 'string',
+      actions: [{ title: 'string', month: 2, estimatedMinutes: 30 }],
+      suppliers: [{ name: 'string', price: 2.95, unit: 'string' }],
+    },
+  ],
+}
+
+/** The prompt to paste into an AI chat; its answer can be imported as-is. */
+export function buildAiPrompt(t: Translate, task: string, categories: CategoryDto[]): string {
+  return [
+    t('catalog.exchange.prompt.intro'),
+    '',
+    `${t('catalog.exchange.prompt.task')}: ${task.trim() || t('catalog.exchange.prompt.taskPlaceholder')}`,
+    '',
+    t('catalog.exchange.prompt.format'),
+    JSON.stringify(FORMAT_TEMPLATE, null, 2),
+    '',
+    t('catalog.exchange.prompt.rulesTitle'),
+    `- ${t('catalog.exchange.prompt.ruleMonths')}`,
+    `- ${t('catalog.exchange.prompt.ruleDays')}`,
+    `- ${t('catalog.exchange.prompt.ruleFamily')}`,
+    `- ${t('catalog.exchange.prompt.ruleNames')}`,
+    `- ${t('catalog.exchange.prompt.ruleCategories', { list: categories.map((c) => `${c.slug}: ${c.name}`).join(', ') })}`,
+    `- ${t('catalog.exchange.prompt.rulePrices')}`,
+  ].join('\n')
+}
+
+/** A realistic AI answer (incl. one invalid row) to try the import with. */
+export const EXAMPLE_ANSWER: CatalogExchange = {
+  categories: [
+    {
+      id: 'biet',
+      name: 'Bieten',
+      family: 'Amaranthaceae',
+      icon: '🫒',
+      color: '#a0306b',
+      rotationExempt: false,
+      goodNeighbours: ['ui', 'sla', 'kool'],
+      badNeighbours: [],
+    },
+  ],
+  varieties: [
+    {
+      category: 'biet',
+      name: 'Rode biet',
+      cultivar: 'Detroit 2',
+      latin: 'Beta vulgaris',
+      family: 'Amaranthaceae',
+      life: 'annual',
+      sowDepthCm: 2,
+      spacingInRowCm: 10,
+      spacingBetweenRowsCm: 30,
+      heightCm: 35,
+      sun: ['full', 'half'],
+      sowIndoorMonths: undefined,
+      weeksIndoorBeforePlanting: undefined,
+      sowOutdoorMonths: [4, 7],
+      plantOutMonths: undefined,
+      germinationDays: [8, 16],
+      daysToFirstHarvest: 70,
+      harvestWeeks: 10,
+      harvestMonths: [7, 11],
+      maxYearsInBed: 1,
+      notes: 'Kluwen bevatten meerdere zaden: uitdunnen.',
+      actions: [],
+      suppliers: [{ name: 'De Bolster', price: 2.45, unit: 'zakje 5 g', url: undefined }],
+    },
+    {
+      category: 'radijs',
+      name: 'Radijs',
+      cultivar: 'Cherry Belle',
+      latin: undefined,
+      family: 'Brassicaceae',
+      life: 'annual',
+      sowDepthCm: undefined,
+      spacingInRowCm: undefined,
+      spacingBetweenRowsCm: undefined,
+      heightCm: undefined,
+      sun: undefined,
+      sowIndoorMonths: undefined,
+      weeksIndoorBeforePlanting: undefined,
+      sowOutdoorMonths: [3, 9],
+      plantOutMonths: undefined,
+      germinationDays: undefined,
+      daysToFirstHarvest: 28,
+      harvestWeeks: undefined,
+      harvestMonths: [4, 10],
+      maxYearsInBed: undefined,
+      notes: undefined,
+      actions: undefined,
+      suppliers: undefined,
+    },
+  ],
+}
