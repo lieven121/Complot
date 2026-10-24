@@ -27,19 +27,33 @@ public sealed class UserInputValidator : AbstractValidator<UserInput>
         RuleFor(x => x.Email).NotEmpty().MaximumLength(254).EmailAddress();
         RuleFor(x => x.Name).MaximumLength(100);
         RuleFor(x => x.PersonId).MustAsync((id, ct) => db.People.ExistsAsync(id!.Value, ct)).WithErrorCode("unknownPerson").When(x => x.PersonId is not null);
-        RuleFor(x => x.Sites).Must(s => s.Select(x => x.SiteId).Distinct().Count() == s.Count).WithErrorCode("duplicateSite");
-        RuleForEach(x => x.Sites).ChildRules(site =>
-        {
-            site.RuleFor(x => x.SiteId).MustAsync((id, ct) => db.Sites.ExistsAsync(id, ct)).WithErrorCode("unknownSite");
-            site.RuleFor(x => x.Role).IsInEnum();
-        });
+        RuleFor(x => x.Sites).ValidSiteRoles(db);
     }
+}
+
+public sealed class SiteRoleDtoValidator : AbstractValidator<SiteRoleDto>
+{
+    public SiteRoleDtoValidator(ComplotDbContext db)
+    {
+        RuleFor(x => x.SiteId).MustAsync((id, ct) => db.Sites.ExistsAsync(id, ct)).WithErrorCode("unknownSite");
+        RuleFor(x => x.Role).IsInEnum();
+    }
+}
+
+public static class SiteRoleRules
+{
+    /// <summary>Roles per site, for users and access links: each site once, and only existing sites.</summary>
+    public static void ValidSiteRoles<T>(this IRuleBuilder<T, List<SiteRoleDto>> rule, ComplotDbContext db) =>
+        rule.Must(s => s.Select(x => x.SiteId).Distinct().Count() == s.Count).WithErrorCode("duplicateSite")
+            .ForEach(site => site.SetValidator(new SiteRoleDtoValidator(db)));
 }
 
 public static class UserEndpoints
 {
     public static void MapAdmin(this IEndpointRouteBuilder api)
     {
+        api.MapAccessLinks();
+
         var users = api.MapGroup("/admin/users").WithTags("Admin").RequireAdmin();
         users.MapGet("/", List).WithName("ListUsers");
         users.MapPost("/", Create).WithName("InviteUser").Validate<UserInput>();

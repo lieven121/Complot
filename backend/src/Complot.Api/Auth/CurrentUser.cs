@@ -5,13 +5,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Complot.Api.Auth;
 
-/// <summary>What the caller may do. In open mode (no OIDC) everybody is an admin.</summary>
-public sealed record UserAccess(Guid? UserId, string? Email, string? Name, bool IsAdmin, IReadOnlyDictionary<Guid, SiteRole> Roles)
+/// <summary>
+/// What the caller may do: a signed-in user (<see cref="UserId"/>) or someone who opened an access link
+/// (<see cref="LinkId"/>). In open mode (no OIDC) everybody is an admin.
+/// </summary>
+public sealed record UserAccess(Guid? UserId, string? Email, string? Name, bool IsAdmin, IReadOnlyDictionary<Guid, SiteRole> Roles, Guid? LinkId = null)
 {
     public static readonly UserAccess OpenMode = new(null, null, null, true, new Dictionary<Guid, SiteRole>());
     public static readonly UserAccess Anonymous = new(null, null, null, false, new Dictionary<Guid, SiteRole>());
 
-    public bool IsAuthenticated => IsAdmin || UserId is not null;
+    public bool IsAuthenticated => IsAdmin || UserId is not null || LinkId is not null;
     public bool IsPending => AccessPolicy.IsPending(IsAdmin, Roles.Count);
 
     /// <summary>May change shared data (catalog, people): admins and whoever can edit at least one site.</summary>
@@ -37,6 +40,9 @@ public sealed class AccessOptions
 /// </summary>
 public sealed class CurrentUser(IHttpContextAccessor http, ComplotDbContext db, AuthMode mode, AccessOptions options, TimeProvider time)
 {
+    /// <summary>Subject of a session started with an access link: "link:{id}".</summary>
+    public const string LinkSubjectPrefix = "link:";
+
     private static readonly TimeSpan SeenInterval = TimeSpan.FromMinutes(1);
     private UserAccess? _access;
 
@@ -47,9 +53,26 @@ public sealed class CurrentUser(IHttpContextAccessor http, ComplotDbContext db, 
         var principal = http.HttpContext?.User;
         if (principal?.Identity?.IsAuthenticated != true || principal.FindFirstValue("sub") is not { } subject) return _access = UserAccess.Anonymous;
 
+        if (subject.StartsWith(LinkSubjectPrefix, StringComparison.Ordinal))
+            return _access = Guid.TryParse(subject[LinkSubjectPrefix.Length..], out var linkId) ? await FromLinkAsync(linkId, ct) : UserAccess.Anonymous;
+
         var user = await FindOrCreateAsync(subject, principal, ct);
         var isAdmin = user.IsAdmin || options.IsConfigAdmin(user.Email);
         return _access = new UserAccess(user.Id, user.Email, user.Name, isAdmin, user.Sites.ToDictionary(a => a.SiteId, a => a.Role));
+    }
+
+    /// <summary>A link session only lasts while the link exists and has not expired.</summary>
+    private async Task<UserAccess> FromLinkAsync(Guid linkId, CancellationToken ct)
+    {
+        var now = time.GetUtcNow().UtcDateTime;
+        if (await db.AccessLinks.Include(l => l.Sites).FirstOrDefaultAsync(l => l.Id == linkId, ct) is not { } link || !link.IsValidAt(now))
+            return UserAccess.Anonymous;
+        if (!(link.LastUsedAt > now - SeenInterval))
+        {
+            link.LastUsedAt = now;
+            await db.SaveChangesAsync(ct);
+        }
+        return new UserAccess(null, null, link.Label, false, link.Sites.ToDictionary(s => s.SiteId, s => s.Role), link.Id);
     }
 
     private async Task<AppUser> FindOrCreateAsync(string subject, ClaimsPrincipal principal, CancellationToken ct)

@@ -2754,6 +2754,217 @@ export class AdminClient {
     /**
      * @return OK
      */
+    listAccessLinks(signal?: AbortSignal): Promise<AccessLinkDto[]> {
+        let url_ = this.baseUrl + "/api/admin/links";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            signal,
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processListAccessLinks(_response);
+        });
+    }
+
+    protected processListAccessLinks(response: Response): Promise<AccessLinkDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as AccessLinkDto[];
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<AccessLinkDto[]>(null as any);
+    }
+
+    /**
+     * @return Created
+     */
+    createAccessLink(body: AccessLinkInput, signal?: AbortSignal): Promise<AccessLinkCreatedDto> {
+        let url_ = this.baseUrl + "/api/admin/links";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            signal,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreateAccessLink(_response);
+        });
+    }
+
+    protected processCreateAccessLink(response: Response): Promise<AccessLinkCreatedDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 201) {
+            return response.text().then((_responseText) => {
+            let result201: any = null;
+            result201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as AccessLinkCreatedDto;
+            return result201;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<AccessLinkCreatedDto>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    updateAccessLink(id: string, body: AccessLinkInput, signal?: AbortSignal): Promise<AccessLinkDto> {
+        let url_ = this.baseUrl + "/api/admin/links/{id}";
+        if (id === undefined || id === null)
+            throw new globalThis.Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "PUT",
+            signal,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processUpdateAccessLink(_response);
+        });
+    }
+
+    protected processUpdateAccessLink(response: Response): Promise<AccessLinkDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as AccessLinkDto;
+            return result200;
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            result400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<AccessLinkDto>(null as any);
+    }
+
+    /**
+     * @return No Content
+     */
+    deleteAccessLink(id: string, signal?: AbortSignal): Promise<void> {
+        let url_ = this.baseUrl + "/api/admin/links/{id}";
+        if (id === undefined || id === null)
+            throw new globalThis.Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "DELETE",
+            signal,
+            headers: {
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processDeleteAccessLink(_response);
+        });
+    }
+
+    protected processDeleteAccessLink(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 204) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    renewAccessLinkToken(id: string, signal?: AbortSignal): Promise<AccessLinkCreatedDto> {
+        let url_ = this.baseUrl + "/api/admin/links/{id}/token";
+        if (id === undefined || id === null)
+            throw new globalThis.Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "POST",
+            signal,
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processRenewAccessLinkToken(_response);
+        });
+    }
+
+    protected processRenewAccessLinkToken(response: Response): Promise<AccessLinkCreatedDto> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as AccessLinkCreatedDto;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<AccessLinkCreatedDto>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
     listUsers(signal?: AbortSignal): Promise<UserDto[]> {
         let url_ = this.baseUrl + "/api/admin/users";
         url_ = url_.replace(/[?&]$/, "");
@@ -2921,6 +3132,28 @@ export class AdminClient {
         }
         return Promise.resolve<void>(null as any);
     }
+}
+
+export interface AccessLinkCreatedDto {
+    link: AccessLinkDto;
+    token: string;
+}
+
+export interface AccessLinkDto {
+    id: string;
+    label: string;
+    personId: string | undefined;
+    validUntil: string;
+    expired: boolean;
+    lastUsedAt: string | undefined;
+    sites: SiteRoleDto[];
+}
+
+export interface AccessLinkInput {
+    label: string;
+    personId: string | undefined;
+    validUntil: string;
+    sites: SiteRoleDto[];
 }
 
 export type AuthModeKind = "none" | "oidc";

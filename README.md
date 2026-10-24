@@ -64,6 +64,10 @@ location (the invitation is linked at the first sign-in). Anyone else who signs 
 up on that page. Changing shared data (catalog, people) needs edit access to at least one location. An archived
 location is hidden and read-only; only an archived location can be deleted, which removes everything on it.
 
+**Access links** (Beheer → Toegangslinks) give access without an account, e.g. for volunteers: choose the rights per
+location and a "valid until" date, and share the link (it is shown once; only a hash is stored). Opening it signs the
+browser in until that date; deleting the link or making a new one ends that access immediately.
+
 ## Docker
 
 ```bash

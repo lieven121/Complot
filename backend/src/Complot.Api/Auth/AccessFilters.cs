@@ -86,10 +86,17 @@ public static class AccessFilters
                 ? await next(context)
                 : ApiProblems.Forbidden("access.readOnly"));
 
-    /// <summary>Signed in but not yet given access: only <c>/api/me</c> answers.</summary>
+    /// <summary>
+    /// Signed in but not yet given access: only <c>/api/me</c> answers. A session whose access link expired or was
+    /// deleted is no longer signed in (401).
+    /// </summary>
     public static TBuilder RequireActiveUser<TBuilder>(this TBuilder builder) where TBuilder : IEndpointConventionBuilder =>
         builder.AddEndpointFilter(async (context, next) =>
-            (await ResolveAsync(context)).Access.IsPending ? ApiProblems.Forbidden("access.pending") : await next(context));
+        {
+            var access = (await ResolveAsync(context)).Access;
+            if (!access.IsAuthenticated) return TypedResults.Unauthorized();
+            return access.IsPending ? ApiProblems.Forbidden("access.pending") : await next(context);
+        });
 
     private static async Task<(ComplotDbContext Db, UserAccess Access, CancellationToken Ct)> ResolveAsync(EndpointFilterInvocationContext context)
     {

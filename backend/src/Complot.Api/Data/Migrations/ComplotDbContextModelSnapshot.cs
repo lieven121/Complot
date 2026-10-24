@@ -18,6 +18,65 @@ namespace Complot.Api.Data.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.13");
 
+            modelBuilder.Entity("Complot.Domain.Access.AccessLink", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("LastUsedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("PersonId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PersonId");
+
+                    b.HasIndex("TokenHash")
+                        .IsUnique();
+
+                    b.ToTable("AccessLinks");
+                });
+
+            modelBuilder.Entity("Complot.Domain.Access.AccessLinkSite", b =>
+                {
+                    b.Property<Guid>("LinkId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("SiteId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("LinkId", "SiteId");
+
+                    b.HasIndex("SiteId");
+
+                    b.ToTable("AccessLinkSite");
+                });
+
             modelBuilder.Entity("Complot.Domain.Access.AppUser", b =>
                 {
                     b.Property<Guid>("Id")
@@ -892,6 +951,29 @@ namespace Complot.Api.Data.Migrations
                     b.ToTable("TaskStates");
                 });
 
+            modelBuilder.Entity("Complot.Domain.Access.AccessLink", b =>
+                {
+                    b.HasOne("Complot.Domain.Work.Person", null)
+                        .WithMany()
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.SetNull);
+                });
+
+            modelBuilder.Entity("Complot.Domain.Access.AccessLinkSite", b =>
+                {
+                    b.HasOne("Complot.Domain.Access.AccessLink", null)
+                        .WithMany("Sites")
+                        .HasForeignKey("LinkId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Complot.Domain.Garden.Site", null)
+                        .WithMany()
+                        .HasForeignKey("SiteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Complot.Domain.Access.AppUser", b =>
                 {
                     b.HasOne("Complot.Domain.Work.Person", null)
@@ -1204,6 +1286,11 @@ namespace Complot.Api.Data.Migrations
                         .WithMany()
                         .HasForeignKey("AssigneeId")
                         .OnDelete(DeleteBehavior.SetNull);
+                });
+
+            modelBuilder.Entity("Complot.Domain.Access.AccessLink", b =>
+                {
+                    b.Navigation("Sites");
                 });
 
             modelBuilder.Entity("Complot.Domain.Access.AppUser", b =>

@@ -615,7 +615,8 @@
     "status": "Status",
     "tabs": {
       "sites": "Locations",
-      "users": "Users"
+      "users": "Users",
+      "links": "Access links"
     },
     "site": {
       "new": "New location",
@@ -666,6 +667,27 @@
       },
       "openModeTitle": "Sign-in is off",
       "openMode": "Without OpenID Connect everybody has full access. Set Auth__Oidc__Authority and Auth__Oidc__ClientId to manage users and their access per location."
+    },
+    "link": {
+      "new": "New access link",
+      "edit": "Edit access link",
+      "label": "Description",
+      "labelHint": "e.g. \"Saturday volunteers\" or the name of the person",
+      "validUntil": "Valid up to and including",
+      "person": "For person",
+      "personHint": "Optional: who uses the link (for the task list).",
+      "help": "An access link gives access without an account, for example to volunteers, until the chosen date. Whoever has the link gets its rights.",
+      "valid": "Valid",
+      "expiresSoon": "Expires soon",
+      "expired": "Expired",
+      "until": "until {date}",
+      "lastUsed": "Last used",
+      "renew": "New link",
+      "renewTitle": "Make a new link?",
+      "renewWarning": "The current link of \"{label}\" stops working. You get a new link to share.",
+      "createdTitle": "Link for {label}",
+      "createdHelp": "Share this link with whoever needs access. It works up to and including {date}.",
+      "onlyOnce": "Save or share the link now: it is only shown once. Lost it? Make a new link."
     }
   }
 }

@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,7 +10,10 @@ using Microsoft.Extensions.Options;
 
 namespace Complot.Api.Tests.Infrastructure;
 
-/// <summary>Signs a request in as the user in the <c>X-Test-User: sub;email;name</c> header, with OIDC-style claims.</summary>
+/// <summary>
+/// Signs a request in as the user in the <c>X-Test-User: sub;email;name</c> header, with OIDC-style claims; without
+/// the header the app's own session cookie is used.
+/// </summary>
 public sealed class TestAuthHandler(IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger, UrlEncoder encoder)
     : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
 {
@@ -18,7 +22,8 @@ public sealed class TestAuthHandler(IOptionsMonitor<AuthenticationSchemeOptions>
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
-        if (!Request.Headers.TryGetValue(Header, out var value)) return Task.FromResult(AuthenticateResult.NoResult());
+        // Without the header: the app's own session cookie (e.g. from an access link).
+        if (!Request.Headers.TryGetValue(Header, out var value)) return Context.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         var parts = value.ToString().Split(';');
         var claims = new List<Claim> { new("sub", parts[0]) };
         if (parts.Length > 1) claims.Add(new Claim("email", parts[1]));
@@ -64,4 +69,7 @@ public sealed class SignedInApiFactory : ApiFactory
     }
 
     public HttpClient Admin() => ClientFor("admin-sub", AdminEmail, "Admin");
+
+    /// <summary>A browser without a session; it keeps cookies between requests.</summary>
+    public HttpClient Anonymous() => CreateClient(new() { AllowAutoRedirect = false });
 }

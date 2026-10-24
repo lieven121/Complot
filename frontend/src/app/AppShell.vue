@@ -9,7 +9,7 @@ import { navItems } from './router'
 
 const { t } = useI18n()
 const { locale, locales } = useLocale()
-const { isAdmin, isPending } = useSession()
+const { me, isAdmin, isPending, signInEnabled } = useSession()
 const visibleNav = computed(() => (isPending.value ? [] : navItems.filter((item) => !item.adminOnly || isAdmin.value)))
 </script>
 
@@ -24,6 +24,10 @@ const visibleNav = computed(() => (isPending.value ? [] : navItems.filter((item)
         <span class="label">{{ t(`nav.${item.navKey}`) }}</span>
       </RouterLink>
       <div class="side-foot">
+        <form v-if="signInEnabled && me.data.value?.isAuthenticated" method="post" action="/auth/logout" class="who">
+          <span class="name">{{ me.data.value?.name ?? me.data.value?.email }}</span>
+          <button type="submit" class="logout">{{ t('access.logout') }}</button>
+        </form>
         <label for="locale">{{ t('language.label') }}</label>
         <Select
           v-model="locale"
@@ -93,6 +97,24 @@ const visibleNav = computed(() => (isPending.value ? [] : navItems.filter((item)
   padding: 10px;
   font-size: 11px;
   opacity: 0.85;
+}
+.who {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+.who .name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.logout {
+  all: unset;
+  cursor: pointer;
+  text-decoration: underline;
 }
 .main {
   overflow: auto;

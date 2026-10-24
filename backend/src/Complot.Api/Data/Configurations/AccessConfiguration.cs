@@ -30,3 +30,24 @@ internal sealed class SiteAccessConfiguration : IEntityTypeConfiguration<SiteAcc
         b.HasOne<Site>().WithMany().HasForeignKey(a => a.SiteId).OnDelete(DeleteBehavior.Cascade);
     }
 }
+
+internal sealed class AccessLinkConfiguration : IEntityTypeConfiguration<AccessLink>
+{
+    public void Configure(EntityTypeBuilder<AccessLink> b)
+    {
+        b.Property(l => l.Label).HasMaxLength(100);
+        b.Property(l => l.TokenHash).HasMaxLength(64);
+        b.HasIndex(l => l.TokenHash).IsUnique();
+        b.HasOne<Person>().WithMany().HasForeignKey(l => l.PersonId).OnDelete(DeleteBehavior.SetNull);
+        b.HasMany(l => l.Sites).WithOne().HasForeignKey(s => s.LinkId).OnDelete(DeleteBehavior.Cascade);
+    }
+}
+
+internal sealed class AccessLinkSiteConfiguration : IEntityTypeConfiguration<AccessLinkSite>
+{
+    public void Configure(EntityTypeBuilder<AccessLinkSite> b)
+    {
+        b.HasKey(s => new { s.LinkId, s.SiteId });
+        b.HasOne<Site>().WithMany().HasForeignKey(s => s.SiteId).OnDelete(DeleteBehavior.Cascade);
+    }
+}

@@ -615,7 +615,8 @@
     "status": "Status",
     "tabs": {
       "sites": "Locaties",
-      "users": "Gebruikers"
+      "users": "Gebruikers",
+      "links": "Toegangslinks"
     },
     "site": {
       "new": "Nieuwe locatie",
@@ -666,6 +667,27 @@
       },
       "openModeTitle": "Aanmelden staat uit",
       "openMode": "Zonder OpenID Connect heeft iedereen volledige toegang. Stel Auth__Oidc__Authority en Auth__Oidc__ClientId in om gebruikers en hun toegang per locatie te beheren."
+    },
+    "link": {
+      "new": "Nieuwe toegangslink",
+      "edit": "Toegangslink bewerken",
+      "label": "Omschrijving",
+      "labelHint": "bv. \"Vrijwilligers zaterdag\" of de naam van de persoon",
+      "validUntil": "Geldig tot en met",
+      "person": "Voor persoon",
+      "personHint": "Optioneel: wie de link gebruikt (voor de takenlijst).",
+      "help": "Een toegangslink geeft toegang zonder account, bijvoorbeeld voor vrijwilligers, tot de gekozen datum. Wie de link heeft, krijgt de rechten van de link.",
+      "valid": "Geldig",
+      "expiresSoon": "Verloopt binnenkort",
+      "expired": "Verlopen",
+      "until": "tot {date}",
+      "lastUsed": "Laatst gebruikt",
+      "renew": "Nieuwe link",
+      "renewTitle": "Nieuwe link maken?",
+      "renewWarning": "De huidige link van \"{label}\" werkt daarna niet meer. Je krijgt een nieuwe link om te delen.",
+      "createdTitle": "Link voor {label}",
+      "createdHelp": "Deel deze link met wie toegang nodig heeft. Hij werkt tot en met {date}.",
+      "onlyOnce": "Bewaar of deel de link nu: hij wordt maar één keer getoond. Kwijt? Maak een nieuwe link."
     }
   }
 }

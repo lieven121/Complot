@@ -31,6 +31,7 @@ public sealed class ComplotDbContext(DbContextOptions<ComplotDbContext> options)
 
     public DbSet<AppUser> Users => Set<AppUser>();
     public DbSet<SiteAccess> SiteAccess => Set<SiteAccess>();
+    public DbSet<AccessLink> AccessLinks => Set<AccessLink>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) =>
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ComplotDbContext).Assembly);
