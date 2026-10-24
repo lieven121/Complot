@@ -526,5 +526,34 @@
     "discardTitle": "Wijzigingen weggooien?",
     "discard": "Je ontwerp heeft niet-bewaarde wijzigingen. Wil je ze weggooien?",
     "discardConfirm": "Weggooien"
+  },
+  "notes": {
+    "title": "Logboek",
+    "add": "Notitie",
+    "addHarvest": "Oogst",
+    "new": "Nieuwe notitie",
+    "edit": "Notitie bewerken",
+    "kind": "Soort",
+    "date": "Datum",
+    "person": "Door",
+    "crop": "Teelt",
+    "wholeBed": "Het hele bed",
+    "quantity": "Hoeveelheid",
+    "unit": "Eenheid",
+    "unitHint": "bv. kg, st., bos",
+    "text": "Notitie",
+    "photo": "Foto",
+    "photoHint": "JPG, PNG, WebP of HEIC, max. 10 MB",
+    "harvested": "Geoogst in {year}:",
+    "empty": "Nog niets in het logboek.",
+    "showAll": "Alle {n} notities tonen",
+    "tag": {
+      "observation": "Waarneming",
+      "harvest": "Oogst",
+      "disease": "Ziekte",
+      "pest": "Plaag",
+      "soil": "Bodem",
+      "weather": "Weer"
+    }
   }
 }

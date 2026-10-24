@@ -14,10 +14,11 @@ import DesignerPanel from './components/DesignerPanel.vue'
 import DimensionOverlay from './components/DimensionOverlay.vue'
 import GardenMap, { type Crop } from './components/GardenMap.vue'
 import MapLegend from './components/MapLegend.vue'
+import NoteLog from './components/NoteLog.vue'
 import OverviewPanel from './components/OverviewPanel.vue'
 import TimelineBar from './components/TimelineBar.vue'
 import TreePanel from './components/TreePanel.vue'
-import { harvestSummary } from './harvest'
+import { harvestSummary } from './notes'
 import { addDays, IN_BED, phaseAt } from './map'
 import { mapPeriod, useLayout, useNotes, usePlantings, useSiteChecks, useSites } from './queries'
 import { useDesigner } from './useDesigner'
@@ -98,6 +99,14 @@ const harvested = computed(() =>
     (notes.data.value ?? []).filter((n) => n.date.slice(0, 4) === date.value.slice(0, 4)),
     decimal,
   ),
+)
+
+/** Crops of the selected bed, to link a log entry to one. */
+const bedCrops = computed(() =>
+  forBed(plantings.data.value, selectedBed.value?.id ?? '').map((p) => ({
+    id: p.id,
+    name: `${cropOf(p.varietyId)?.name ?? ''} (${p.sowOn.slice(0, 4)})`,
+  })),
 )
 
 const forBed = <T extends { bedId?: string }>(items: T[] | undefined, id: string) => (items ?? []).filter((x) => x.bedId === id)
@@ -215,7 +224,11 @@ const center = () => map.value?.center() ?? { x: 0, y: 0 }
           :where-of="whereOf"
           @close="selectedId = undefined"
           @date="date = $event"
-        />
+        >
+          <template #log>
+            <NoteLog :site-id="siteId!" :bed-id="selectedBed.id" :plantings="bedCrops" :date="date" />
+          </template>
+        </BedPanel>
         <TreePanel
           v-else-if="selectedTree"
           :key="selectedTree.id"
@@ -224,7 +237,11 @@ const center = () => map.value?.center() ?? { x: 0, y: 0 }
           :today="period.today"
           :where-of="whereOf"
           @close="selectedId = undefined"
-        />
+        >
+          <template #log>
+            <NoteLog :site-id="siteId!" :tree-id="selectedTree.id" :date="date" />
+          </template>
+        </TreePanel>
         <OverviewPanel
           v-else-if="layout.data.value && site"
           :site-name="site.name"

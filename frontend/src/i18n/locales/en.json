@@ -526,5 +526,34 @@
     "discardTitle": "Discard changes?",
     "discard": "Your design has unsaved changes. Do you want to discard them?",
     "discardConfirm": "Discard"
+  },
+  "notes": {
+    "title": "Log",
+    "add": "Note",
+    "addHarvest": "Harvest",
+    "new": "New note",
+    "edit": "Edit note",
+    "kind": "Kind",
+    "date": "Date",
+    "person": "By",
+    "crop": "Crop",
+    "wholeBed": "The whole bed",
+    "quantity": "Quantity",
+    "unit": "Unit",
+    "unitHint": "e.g. kg, pcs, bunch",
+    "text": "Note",
+    "photo": "Photo",
+    "photoHint": "JPG, PNG, WebP or HEIC, max. 10 MB",
+    "harvested": "Harvested in {year}:",
+    "empty": "Nothing logged yet.",
+    "showAll": "Show all {n} notes",
+    "tag": {
+      "observation": "Observation",
+      "harvest": "Harvest",
+      "disease": "Disease",
+      "pest": "Pest",
+      "soil": "Soil",
+      "weather": "Weather"
+    }
   }
 }
