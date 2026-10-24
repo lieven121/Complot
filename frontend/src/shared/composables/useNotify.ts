@@ -22,5 +22,9 @@ export function useNotify() {
     toast.add({ severity: 'error', summary: t(key), life: 5000 })
   }
 
-  return { success, error }
+  /** An error code the API returned inside a successful response (e.g. a calendar sync that failed). */
+  const errorCode = (code: string) =>
+    toast.add({ severity: 'warn', summary: t(i18n.te(`errors.${code}`) ? `errors.${code}` : 'errors.generic'), life: 6000 })
+
+  return { success, error, errorCode }
 }

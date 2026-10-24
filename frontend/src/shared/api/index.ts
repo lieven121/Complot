@@ -7,6 +7,7 @@ import {
   InventoryLotsClient,
   NotesClient,
   PeopleClient,
+  PlannerClient,
   PlantingsClient,
   SitesClient,
   SuppliersClient,
@@ -45,6 +46,7 @@ export const api = {
   tasks: new TasksClient(baseUrl, http),
   notes: new NotesClient(baseUrl, http),
   admin: new AdminClient(baseUrl, http),
+  planner: new PlannerClient(baseUrl, http),
 }
 
 export type * from './client'

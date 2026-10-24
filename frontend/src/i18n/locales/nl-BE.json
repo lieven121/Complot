@@ -144,6 +144,12 @@
       "self": "Je kan je eigen beheerdersrechten niet afnemen of jezelf verwijderen.",
       "lastAdmin": "Er moet minstens één beheerder overblijven.",
       "duplicateEmail": "Er bestaat al een gebruiker met dat e-mailadres."
+    },
+    "calendar": {
+      "failed": "Google Agenda kon niet bijgewerkt worden; de planning zelf is wel bewaard.",
+      "reconnect": "De Google Agenda-koppeling werkt niet meer. Koppel de agenda opnieuw.",
+      "notConfigured": "De Google-koppeling is niet ingesteld.",
+      "notYours": "Je kan alleen je eigen agenda koppelen."
     }
   },
   "catalog": {
@@ -504,7 +510,8 @@
       "new": "Persoon toevoegen",
       "edit": "Persoon bewerken",
       "color": "Kleur"
-    }
+    },
+    "unschedule": "Uit agenda halen"
   },
   "design": {
     "start": "Ontwerpen",
@@ -688,6 +695,44 @@
       "createdTitle": "Link voor {label}",
       "createdHelp": "Deel deze link met wie toegang nodig heeft. Hij werkt tot en met {date}.",
       "onlyOnce": "Bewaar of deel de link nu: hij wordt maar één keer getoond. Kwijt? Maak een nieuwe link."
+    }
+  },
+  "planner": {
+    "thisWeek": "Deze week",
+    "previous": "Vorige week",
+    "next": "Volgende week",
+    "week": "Week {n} · {from} – {to}",
+    "calendarOf": "Agenda van",
+    "everyone": "Iedereen",
+    "toSchedule": "In te plannen",
+    "nothingToSchedule": "Niets in te plannen rond deze week.",
+    "help": "Sleep een taak naar een tijdstip, of tik op een taak en daarna op een tijdstip. Sleep een ingeplande taak terug naar de lijst om ze uit de agenda te halen.",
+    "picked": "Tik op een tijdstip om \"{task}\" in te plannen (Esc om te annuleren).",
+    "due": "tegen {date}",
+    "busy": "Bezet",
+    "inGoogle": "In Google Agenda",
+    "scheduled": "\"{task}\" ingepland op {when}",
+    "scheduledFor": "\"{task}\" ingepland op {when} voor {name}",
+    "overlap": "Ingepland, maar {name} is dan al bezet in de agenda.",
+    "unscheduled": "Uit de agenda gehaald",
+    "calendar": {
+      "title": "Agenda van {name}",
+      "google": "Google Agenda",
+      "linked": "Gekoppeld met {account}",
+      "notLinked": "Niet gekoppeld. Ingeplande taken komen dan niet in Google Agenda.",
+      "connect": "Google Agenda koppelen",
+      "disconnect": "Ontkoppelen",
+      "disconnectWarning": "Complot schrijft dan niet meer in de agenda van {name}. Wat er al in staat, blijft staan.",
+      "disconnected": "Google Agenda ontkoppeld",
+      "connected": "Google Agenda gekoppeld",
+      "denied": "Koppelen geannuleerd",
+      "failed": "Koppelen mislukt. Probeer opnieuw.",
+      "notConfigured": "De beheerder heeft de Google-koppeling nog niet ingesteld. De agendalink hieronder werkt wel.",
+      "notYours": "Alleen {name} zelf of een beheerder kan deze agenda koppelen.",
+      "feed": "Agendalink (iCal)",
+      "feedHelp": "Abonneer je in Google Agenda (Andere agenda's → Via URL) of een andere agenda-app. Alleen lezen; wordt met vertraging bijgewerkt.",
+      "feedCreate": "Agendalink maken",
+      "feedRenew": "Nieuwe link"
     }
   }
 }

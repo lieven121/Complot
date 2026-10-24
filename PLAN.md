@@ -199,8 +199,8 @@ user(id, oidc_sub, name, email)       audit(id, user_id, entity, entity_id, acti
 | **4 Plantings** | Plan plantings, date calculation, Gantt, phases on the map, rotation/companion/sun/stay checks, actual dates | done |
 | **5 Tasks & log** | Task generation + manual tasks, mobile todo with check-off & actual time, learning estimates, notes with photos & harvest quantities | done |
 | **5b Admin** | Users (OIDC + invitations), view/edit access per location, archive/delete locations, admin page | done |
-| **6 Planner** | Week planner (DnD + tap), people, Google OAuth, free/busy, event sync, iCal feed | next |
-| **7 Tools & costs** | Tools + maintenance tasks + demand; invoices with attachments, manual split + AI import, reports |  |
+| **6 Planner** | Week planner (DnD + tap), people, Google OAuth, free/busy, event sync, iCal feed; access links for volunteers | done |
+| **7 Tools & costs** | Tools + maintenance tasks + demand; invoices with attachments, manual split + AI import, reports | next |
 | **8 Polish** | Polygons, backups UI, full export/import, accessibility, Playwright e2e (mobile), PWA option |  |
 | Later | Weather/frost alerts, per-person/variety estimate learning, tree shade on beds, yield statistics, seed-saving tracking, budgets |  |
 

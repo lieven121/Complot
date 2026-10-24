@@ -144,6 +144,12 @@
       "self": "You cannot remove your own admin rights or delete yourself.",
       "lastAdmin": "At least one admin has to remain.",
       "duplicateEmail": "A user with that e-mail address already exists."
+    },
+    "calendar": {
+      "failed": "Google Calendar could not be updated; the schedule itself was saved.",
+      "reconnect": "The Google Calendar link no longer works. Please link the calendar again.",
+      "notConfigured": "The Google link is not set up.",
+      "notYours": "You can only link your own calendar."
     }
   },
   "catalog": {
@@ -504,7 +510,8 @@
       "new": "Add person",
       "edit": "Edit person",
       "color": "Colour"
-    }
+    },
+    "unschedule": "Remove from calendar"
   },
   "design": {
     "start": "Design",
@@ -688,6 +695,44 @@
       "createdTitle": "Link for {label}",
       "createdHelp": "Share this link with whoever needs access. It works up to and including {date}.",
       "onlyOnce": "Save or share the link now: it is only shown once. Lost it? Make a new link."
+    }
+  },
+  "planner": {
+    "thisWeek": "This week",
+    "previous": "Previous week",
+    "next": "Next week",
+    "week": "Week {n} · {from} – {to}",
+    "calendarOf": "Calendar of",
+    "everyone": "Everyone",
+    "toSchedule": "To schedule",
+    "nothingToSchedule": "Nothing to schedule around this week.",
+    "help": "Drag a task onto a time, or tap a task and then a time. Drag a scheduled task back to the list to take it out of the calendar.",
+    "picked": "Tap a time to schedule \"{task}\" (Esc to cancel).",
+    "due": "due {date}",
+    "busy": "Busy",
+    "inGoogle": "In Google Calendar",
+    "scheduled": "\"{task}\" scheduled on {when}",
+    "scheduledFor": "\"{task}\" scheduled on {when} for {name}",
+    "overlap": "Scheduled, but {name} is busy at that time.",
+    "unscheduled": "Taken out of the calendar",
+    "calendar": {
+      "title": "Calendar of {name}",
+      "google": "Google Calendar",
+      "linked": "Linked to {account}",
+      "notLinked": "Not linked. Scheduled tasks will not appear in Google Calendar.",
+      "connect": "Link Google Calendar",
+      "disconnect": "Unlink",
+      "disconnectWarning": "Complot will no longer write to the calendar of {name}. What is already there stays.",
+      "disconnected": "Google Calendar unlinked",
+      "connected": "Google Calendar linked",
+      "denied": "Linking cancelled",
+      "failed": "Linking failed. Please try again.",
+      "notConfigured": "The admin has not set up the Google link yet. The calendar link below does work.",
+      "notYours": "Only {name} or an admin can link this calendar.",
+      "feed": "Calendar link (iCal)",
+      "feedHelp": "Subscribe in Google Calendar (Other calendars → From URL) or another calendar app. Read-only; updates with a delay.",
+      "feedCreate": "Make calendar link",
+      "feedRenew": "New link"
     }
   }
 }

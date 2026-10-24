@@ -31,14 +31,22 @@ const estimate = ref(props.task.estimateMinutes)
 const factor = computed(() => estimates.data.value?.find((f) => f.kind === props.task.kind))
 const manualId = computed(() => manualTaskId(props.task.key))
 
-async function save() {
+const override = () => (estimate.value !== props.task.estimateMinutes || props.task.estimateOverride ? estimate.value : undefined)
+
+/** Saves assignee and estimate, keeping the planned slot unless the task is taken out of the calendar. */
+async function save(unschedule = false) {
   try {
-    const override = estimate.value !== props.task.estimateMinutes || props.task.estimateOverride ? estimate.value : undefined
-    await setState.mutateAsync({
+    const result = await setState.mutateAsync({
       key: props.task.key,
-      input: { assigneeId: assigneeId.value, estimateOverride: override, scheduledStart: props.task.scheduledStart },
+      input: {
+        assigneeId: assigneeId.value,
+        estimateOverride: override(),
+        scheduledStart: unschedule ? undefined : props.task.scheduledStart,
+        calendarTitle: texts.task(props.task),
+      },
     })
-    notify.success('common.saved')
+    notify.success(unschedule ? 'planner.unscheduled' : 'common.saved')
+    if (result.calendarError) notify.errorCode(result.calendarError)
     visible.value = false
   } catch (error) {
     notify.error(error)
@@ -105,9 +113,19 @@ async function remove() {
         <p v-if="task.done" class="full small">
           ✔ {{ t('tasks.doneOn', { date: date(task.doneOn), duration: task.actualMinutes ? duration(task.actualMinutes) : '—' }) }}
         </p>
+        <p v-if="task.calendarError" class="full small calendar-error">⚠ {{ t(`errors.${task.calendarError}`) }}</p>
       </fieldset>
     </form>
     <template #footer>
+      <Button
+        v-if="task.scheduledStart && !readonly"
+        :label="t('tasks.unschedule')"
+        icon="pi pi-calendar-minus"
+        text
+        severity="secondary"
+        class="delete"
+        @click="save(true)"
+      />
       <Button
         v-if="manualId && !readonly"
         :label="t('common.delete')"
@@ -132,5 +150,11 @@ fieldset {
 }
 .delete {
   margin-right: auto;
+}
+.delete + .delete {
+  margin-right: 0;
+}
+.calendar-error {
+  color: var(--c-warn);
 }
 </style>

@@ -55,6 +55,8 @@ cd frontend && vp run verify       # vue-tsc (templates too), format + lint, uni
 | `Seed__DemoData` | `true` in Development | Fill an empty database with the demo catalog and garden |
 | `Auth__Oidc__Authority`, `Auth__Oidc__ClientId`, `Auth__Oidc__ClientSecret` | empty | OpenID Connect sign-in; empty = open (internal use) |
 | `Auth__Admins` | empty | With sign-in: comma-separated e-mail addresses that are always admin |
+| `Google__ClientId`, `Google__ClientSecret` | empty | Google OAuth client for linking people's Google Calendars (planner) |
+| `TZ` | system | Time zone of the garden: planned times are local times there (Docker: `Europe/Brussels`) |
 
 ### Users and access
 
@@ -63,6 +65,27 @@ admins create, archive and delete locations, invite users by e-mail and give the
 location (the invitation is linked at the first sign-in). Anyone else who signs in sees "waiting for access" and shows
 up on that page. Changing shared data (catalog, people) needs edit access to at least one location. An archived
 location is hidden and read-only; only an archived location can be deleted, which removes everything on it.
+
+### Planner and calendars
+
+Drag tasks onto a person's week (or tap a task, then a time). Scheduled tasks can reach people's calendars in two ways:
+
+- **iCal link** (no setup): in the planner, choose a person and *Agendalink maken*. Subscribe to that URL in Google
+  Calendar (*Other calendars → From URL*) or any calendar app. Read-only, and Google refreshes it only every few hours.
+- **Google Calendar** (instant, two-way free/busy): each person links their own Google account in the planner. Complot
+  then writes their scheduled tasks as events (marked "free", so they do not block other appointments) and shows their
+  busy times in the planner. Set it up once:
+  1. In [Google Cloud Console](https://console.cloud.google.com/) create a project, enable the **Google Calendar API**,
+     and configure the OAuth consent screen (*External*; scopes `calendar.events` and `calendar.freebusy`).
+  2. Create an OAuth client of type **Web application** with redirect URI
+     `https://<your-host>/api/planner/google/callback` (locally: `http://localhost:5180/api/planner/google/callback`).
+  3. Set `Google__ClientId` and `Google__ClientSecret`.
+
+  While the consent screen is in *Testing*, only listed test users can link, and Google expires the link after 7 days.
+  Publishing the app (Google shows an "unverified app" warning for a small private app) avoids the weekly re-linking.
+
+The encryption keys for sign-in cookies and Google tokens are kept in the data directory (`keys/`), so keep that
+directory with the database in backups.
 
 **Access links** (Beheer → Toegangslinks) give access without an account, e.g. for volunteers: choose the rights per
 location and a "valid until" date, and share the link (it is shown once; only a hash is stored). Opening it signs the
