@@ -70,11 +70,12 @@ onBeforeUnmount(() => observer.disconnect())
 watch(() => props.layout, fit, { flush: 'post' })
 
 // Pointer: drag on empty space pans; in design mode drag on an item moves it; a click without movement selects.
+// The item is taken from pointerdown: after setPointerCapture, pointerup targets the <svg> itself.
 let gesture: { kind: 'pan' | 'move'; id?: string; x: number; y: number; tx: number; ty: number; moved: boolean } | undefined
-const itemAt = (e: PointerEvent) => (e.target as Element).closest<SVGElement>('[data-id]')?.dataset.id
 function onDown(e: PointerEvent) {
-  const id = props.designMode ? itemAt(e) : undefined
-  gesture = { kind: id ? 'move' : 'pan', id, x: e.clientX, y: e.clientY, tx: view.tx, ty: view.ty, moved: false }
+  const id = (e.target as Element).closest<SVGElement>('[data-id]')?.dataset.id
+  const kind = props.designMode && id ? 'move' : 'pan'
+  gesture = { kind, id, x: e.clientX, y: e.clientY, tx: view.tx, ty: view.ty, moved: false }
   svg.value!.setPointerCapture(e.pointerId)
 }
 function onMove(e: PointerEvent) {
@@ -91,9 +92,9 @@ function onMove(e: PointerEvent) {
     view.ty = gesture.ty + dy
   } else emit('move', gesture.id!, dx / view.k, dy / view.k)
 }
-function onUp(e: PointerEvent) {
+function onUp() {
   if (gesture?.moved && gesture.kind === 'move') emit('moveEnd', gesture.id!)
-  if (gesture && !gesture.moved) emit('select', itemAt(e))
+  if (gesture && !gesture.moved) emit('select', gesture.id)
   gesture = undefined
 }
 const onWheel = (e: WheelEvent) => {

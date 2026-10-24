@@ -1368,7 +1368,8 @@ function getObj(sel) { return sel && KINDS[sel.kind] ? KINDS[sel.kind].find(o =>
   svg.addEventListener('pointerdown', e => {
     const o = state.design && e.target.closest('[data-obj]');
     if (o) { const [kind, id] = o.dataset.obj.split(':'), obj = getObj({kind, id}); drag = {mode:'move', kind, id, obj, x:e.clientX, y:e.clientY, ox:obj.x, oy:obj.y, moved:false}; }
-    else drag = {mode:'pan', x:e.clientX, y:e.clientY, tx:view.tx, ty:view.ty, moved:false};
+    // Remember the clicked bed/tree now: after setPointerCapture, pointerup targets the <svg> itself.
+    else drag = {mode:'pan', sel:e.target.closest('[data-sel]')?.dataset.sel, x:e.clientX, y:e.clientY, tx:view.tx, ty:view.ty, moved:false};
     svg.setPointerCapture(e.pointerId);
   });
   svg.addEventListener('pointermove', e => {
@@ -1402,7 +1403,7 @@ function getObj(sel) { return sel && KINDS[sel.kind] ? KINDS[sel.kind].find(o =>
       renderMap(); renderPanel();
     } else if (drag && !drag.moved) {
       if (state.design) { state.dsel = null; renderMap(); renderPanel(); }
-      else { const g = e.target.closest('[data-sel]'); selectBed(g ? g.dataset.sel : null); }
+      else selectBed(drag.sel || null);
     }
     drag = null;
   });
