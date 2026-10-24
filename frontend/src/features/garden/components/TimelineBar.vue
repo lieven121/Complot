@@ -4,7 +4,7 @@ import Button from 'primevue/button'
 import { useI18n } from 'vue-i18n'
 import { fromIsoDate, toIsoDate } from '@/shared/dates'
 import { useFormat } from '@/shared/composables/useFormat'
-import { addDays } from '../map'
+import { addDays } from '@/shared/dates'
 
 /** Time scrubber over the map period: seasons, today marker, drag, season jumps, play and arrow keys. */
 const props = defineProps<{ from: string; to: string; today: string }>()

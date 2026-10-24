@@ -457,6 +457,38 @@
       "clear": "Bed leegmaken",
       "care": "Onderhoud",
       "custom": "Andere taak"
+    },
+    "page": {
+      "summary": "{n} open taken de komende 7 dagen",
+      "everyone": "Iedereen",
+      "showDone": "Afgewerkte tonen",
+      "empty": "Geen taken voor deze selectie.",
+      "workload": "Werklast komende 7 dagen",
+      "estimates": "Tijdsschattingen",
+      "estimatesHelp": "De correctie leert uit de werkelijke tijd die je ingeeft bij het afvinken (vanaf 2 taken).",
+      "kind": "Soort",
+      "base": "Basis",
+      "factor": "Correctie",
+      "samples": "Taken"
+    },
+    "group": {
+      "overdue": "Achterstallig",
+      "today": "Vandaag",
+      "thisWeek": "Deze week",
+      "nextWeek": "Volgende week",
+      "later": "Later",
+      "done": "Afgewerkt"
+    },
+    "manual": {
+      "new": "Nieuwe taak",
+      "title": "Wat moet er gebeuren?",
+      "dueOn": "Tegen",
+      "bed": "Bed"
+    },
+    "people": {
+      "new": "Persoon toevoegen",
+      "edit": "Persoon bewerken",
+      "color": "Kleur"
     }
   },
   "design": {

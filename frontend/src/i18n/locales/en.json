@@ -457,6 +457,38 @@
       "clear": "Clearing",
       "care": "Care",
       "custom": "Other task"
+    },
+    "page": {
+      "summary": "{n} open tasks in the next 7 days",
+      "everyone": "Everyone",
+      "showDone": "Show completed",
+      "empty": "No tasks for this selection.",
+      "workload": "Workload next 7 days",
+      "estimates": "Time estimates",
+      "estimatesHelp": "The correction learns from the actual time you enter when checking tasks off (from 2 tasks on).",
+      "kind": "Kind",
+      "base": "Base",
+      "factor": "Correction",
+      "samples": "Tasks"
+    },
+    "group": {
+      "overdue": "Overdue",
+      "today": "Today",
+      "thisWeek": "This week",
+      "nextWeek": "Next week",
+      "later": "Later",
+      "done": "Completed"
+    },
+    "manual": {
+      "new": "New task",
+      "title": "What needs doing?",
+      "dueOn": "Due",
+      "bed": "Bed"
+    },
+    "people": {
+      "new": "Add person",
+      "edit": "Edit person",
+      "color": "Colour"
     }
   },
   "design": {

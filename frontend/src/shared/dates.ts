@@ -14,3 +14,9 @@ export function fromIsoDate(iso: string | null | undefined): Date | null {
 }
 
 export const todayIso = () => toIsoDate(new Date())!
+
+export const addDays = (iso: string, days: number) => {
+  const date = fromIsoDate(iso)!
+  date.setDate(date.getDate() + days)
+  return toIsoDate(date)!
+}

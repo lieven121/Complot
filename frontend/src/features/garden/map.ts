@@ -47,9 +47,3 @@ export const PHASE_OPACITY: Record<PlantingPhase, number> = {
   clearing: 0.3,
   dormant: 0.42,
 }
-
-export const addDays = (iso: string, days: number) => {
-  const [y, m, d] = iso.split('-').map(Number)
-  const date = new Date(y!, m! - 1, d! + days, 12)
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
-}

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import ColorPicker from 'primevue/colorpicker'
 import InputText from 'primevue/inputtext'
 import MultiSelect from 'primevue/multiselect'
 import Select from 'primevue/select'
@@ -8,6 +7,7 @@ import ToggleSwitch from 'primevue/toggleswitch'
 import { useI18n } from 'vue-i18n'
 import type { CategoryDto, CategoryInput } from '@/shared/api'
 import { useEditor } from '@/shared/composables/useEditor'
+import ColorInput from '@/shared/ui/ColorInput.vue'
 import EditDialog from '@/shared/ui/EditDialog.vue'
 import FormField from '@/shared/ui/FormField.vue'
 import { useCategories, useDeleteCategory, useFamilies, useSaveCategory } from '../queries'
@@ -34,11 +34,6 @@ const editor = useEditor({
 const { form, errors } = editor
 defineExpose({ open: editor.open })
 
-/** The colour picker works without "#". */
-const colorHex = computed({
-  get: () => form.value.color.replace('#', ''),
-  set: (value: string) => (form.value.color = `#${value}`),
-})
 const otherCategories = computed(() => (categories.data.value ?? []).filter((c) => c.id !== editor.editing.value?.id))
 </script>
 
@@ -61,9 +56,7 @@ const otherCategories = computed(() => (categories.data.value ?? []).filter((c) 
       <InputText id="c-icon" v-model="form.icon" maxlength="16" />
     </FormField>
     <FormField :label="t('catalog.category.color')" :error="errors.field('color')">
-      <div class="row">
-        <ColorPicker v-model="colorHex" /> <code>{{ form.color }}</code>
-      </div>
+      <ColorInput v-model="form.color" />
     </FormField>
     <FormField :label="t('catalog.category.defaultFamily')" for="c-family" :error="errors.field('defaultFamilyId')">
       <Select
