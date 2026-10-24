@@ -16,7 +16,12 @@ export function mapPeriod(today = new Date()) {
   return { from: `${year - 1}-01-01`, to: `${year + 1}-12-31`, today: toIsoDate(today)! }
 }
 
-export const useSites = () => useQuery({ queryKey: [...GARDEN, 'sites'], queryFn: ({ signal }) => api.sites.listSites(signal) })
+/** Sites the user can see; `includeArchived` (admins only) also lists archived ones, for the admin page. */
+export const useSites = (includeArchived = false) =>
+  useQuery({
+    queryKey: [...GARDEN, 'sites', { includeArchived }],
+    queryFn: ({ signal }) => api.sites.listSites(includeArchived || undefined, signal),
+  })
 
 export const useLayout = (siteId: MaybeRefOrGetter<string | undefined>) =>
   useQuery({

@@ -1,3 +1,5 @@
+using Complot.Api.Auth;
+using Complot.Api.Data;
 using Complot.Domain.Common;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -50,6 +52,13 @@ public static class DbExtensions
             apply(dto, created);
             set.Add(created);
         }
+    }
+
+    /// <summary>Ids of the active (not archived) sites the user can see: what lists of tasks and notes show.</summary>
+    public static Task<List<Guid>> VisibleSiteIdsAsync(this ComplotDbContext db, UserAccess user, CancellationToken ct)
+    {
+        var memberOf = user.Roles.Keys.ToList();
+        return db.Sites.Where(s => s.ArchivedAt == null && (user.IsAdmin || memberOf.Contains(s.Id))).Select(s => s.Id).ToListAsync(ct);
     }
 
     /// <summary>Escapes LIKE wildcards in user input and wraps it for a "contains" match.</summary>

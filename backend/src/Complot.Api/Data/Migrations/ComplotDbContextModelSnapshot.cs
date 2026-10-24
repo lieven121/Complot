@@ -18,6 +18,71 @@ namespace Complot.Api.Data.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.13");
 
+            modelBuilder.Entity("Complot.Domain.Access.AppUser", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(254)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("LastSeenAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("PersonId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Subject")
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("PersonId");
+
+                    b.HasIndex("Subject")
+                        .IsUnique();
+
+                    b.ToTable("Users", (string)null);
+                });
+
+            modelBuilder.Entity("Complot.Domain.Access.SiteAccess", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("SiteId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("UserId", "SiteId");
+
+                    b.HasIndex("SiteId");
+
+                    b.ToTable("SiteAccess");
+                });
+
             modelBuilder.Entity("Complot.Domain.Catalog.InventoryLot", b =>
                 {
                     b.Property<Guid>("Id")
@@ -529,6 +594,9 @@ namespace Complot.Api.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime?>("ArchivedAt")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
@@ -824,6 +892,29 @@ namespace Complot.Api.Data.Migrations
                     b.ToTable("TaskStates");
                 });
 
+            modelBuilder.Entity("Complot.Domain.Access.AppUser", b =>
+                {
+                    b.HasOne("Complot.Domain.Work.Person", null)
+                        .WithMany()
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.SetNull);
+                });
+
+            modelBuilder.Entity("Complot.Domain.Access.SiteAccess", b =>
+                {
+                    b.HasOne("Complot.Domain.Garden.Site", null)
+                        .WithMany()
+                        .HasForeignKey("SiteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Complot.Domain.Access.AppUser", null)
+                        .WithMany("Sites")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Complot.Domain.Catalog.InventoryLot", b =>
                 {
                     b.HasOne("Complot.Domain.Catalog.Supplier", "Supplier")
@@ -1113,6 +1204,11 @@ namespace Complot.Api.Data.Migrations
                         .WithMany()
                         .HasForeignKey("AssigneeId")
                         .OnDelete(DeleteBehavior.SetNull);
+                });
+
+            modelBuilder.Entity("Complot.Domain.Access.AppUser", b =>
+                {
+                    b.Navigation("Sites");
                 });
 #pragma warning restore 612, 618
         }

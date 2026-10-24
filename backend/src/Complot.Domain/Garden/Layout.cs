@@ -8,6 +8,11 @@ public sealed class Site : Entity
 {
     public required string Name { get; set; }
     public string? Notes { get; set; }
+
+    /// <summary>Set when the site is archived: hidden, read-only, and only then allowed to be deleted.</summary>
+    public DateTime? ArchivedAt { get; set; }
+
+    public bool IsArchived => ArchivedAt is not null;
 }
 
 public enum PlotType

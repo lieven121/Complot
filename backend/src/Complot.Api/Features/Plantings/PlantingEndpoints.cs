@@ -1,6 +1,8 @@
+using Complot.Api.Auth;
 using Complot.Api.Common;
 using Complot.Api.Data;
 using Complot.Domain.Plantings;
+using Complot.Domain.Access;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,14 +12,17 @@ public static class PlantingEndpoints
 {
     public static void MapPlantings(this IEndpointRouteBuilder api)
     {
-        api.MapGet("/sites/{siteId:guid}/plantings", List).WithTags("Plantings").WithName("ListPlantings");
-        api.MapGet("/sites/{siteId:guid}/checks", Checks).WithTags("Plantings").WithName("GetSiteChecks");
+        var site = SiteResolvers.Route("siteId");
+        api.MapGet("/sites/{siteId:guid}/plantings", List).WithTags("Plantings").WithName("ListPlantings").RequireSite(SiteRole.View, site);
+        api.MapGet("/sites/{siteId:guid}/checks", Checks).WithTags("Plantings").WithName("GetSiteChecks").RequireSite(SiteRole.View, site);
 
+        var bed = SiteResolvers.BedInBody<PlanPlantingInput>(x => x.BedId);
         var group = api.MapGroup("/plantings").WithTags("Plantings");
-        group.MapPost("/preview", Preview).WithName("PreviewPlanting").Validate<PlanPlantingInput>();
-        group.MapPost("/", Create).WithName("CreatePlanting").Validate<PlanPlantingInput>();
-        group.MapPut("/{id:guid}", Update).WithName("UpdatePlanting").Validate<UpdatePlantingInput>();
-        group.MapDelete("/{id:guid}", Delete).WithName("DeletePlanting");
+        group.MapPost("/preview", Preview).WithName("PreviewPlanting").Validate<PlanPlantingInput>().RequireSite(SiteRole.Edit, bed);
+        group.MapPost("/", Create).WithName("CreatePlanting").Validate<PlanPlantingInput>().RequireSite(SiteRole.Edit, bed);
+        group.MapPut("/{id:guid}", Update).WithName("UpdatePlanting").Validate<UpdatePlantingInput>()
+            .RequireSite(SiteRole.Edit, SiteResolvers.Planting);
+        group.MapDelete("/{id:guid}", Delete).WithName("DeletePlanting").RequireSite(SiteRole.Edit, SiteResolvers.Planting);
     }
 
     /// <summary>Plantings with everything the rules need (bed geometry, variety, category companions, families).</summary>

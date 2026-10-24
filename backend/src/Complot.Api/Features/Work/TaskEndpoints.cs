@@ -1,5 +1,7 @@
+using Complot.Api.Auth;
 using Complot.Api.Common;
 using Complot.Api.Data;
+using Complot.Domain.Access;
 using Complot.Domain.Work;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -45,7 +47,9 @@ public sealed class ManualTaskInputValidator : AbstractValidator<ManualTaskInput
         RuleFor(x => x.Title).NotEmpty().MaximumLength(200);
         RuleFor(x => x.BaseMinutes).InclusiveBetween(1, 1440);
         RuleFor(x => x.SiteId).MustAsync((id, ct) => db.Sites.ExistsAsync(id!.Value, ct)).WithErrorCode("unknownSite").When(x => x.SiteId is not null);
-        RuleFor(x => x.BedId).MustAsync((id, ct) => db.Beds.ExistsAsync(id!.Value, ct)).WithErrorCode("unknownBed").When(x => x.BedId is not null);
+        RuleFor(x => x.BedId)
+            .MustAsync((x, id, ct) => db.Beds.AnyAsync(b => b.Id == id && b.SiteId == x.SiteId, ct)).WithErrorCode("unknownBed")
+            .When(x => x.BedId is not null);
         RuleFor(x => x.AssigneeId).MustAsync((id, ct) => db.People.ExistsAsync(id!.Value, ct)).WithErrorCode("unknownPerson").When(x => x.AssigneeId is not null);
     }
 }
@@ -57,14 +61,17 @@ public static class TaskEndpoints
         var tasks = api.MapGroup("/tasks").WithTags("Tasks");
         tasks.MapGet("/", List).WithName("ListTasks");
         tasks.MapGet("/estimates", Estimates).WithName("GetTaskEstimates");
-        tasks.MapPut("/{key}/state", SetState).WithName("SetTaskState").Validate<TaskStateInput>();
-        tasks.MapPost("/{key}/complete", Complete).WithName("CompleteTask").Validate<CompleteTaskInput>();
-        tasks.MapPost("/{key}/reopen", Reopen).WithName("ReopenTask");
+        tasks.MapPut("/{key}/state", SetState).WithName("SetTaskState").Validate<TaskStateInput>().RequireSite(SiteRole.Edit, SiteResolvers.TaskKey);
+        tasks.MapPost("/{key}/complete", Complete).WithName("CompleteTask").Validate<CompleteTaskInput>()
+            .RequireSite(SiteRole.Edit, SiteResolvers.TaskKey);
+        tasks.MapPost("/{key}/reopen", Reopen).WithName("ReopenTask").RequireSite(SiteRole.Edit, SiteResolvers.TaskKey);
 
+        var target = SiteResolvers.Body<ManualTaskInput>(x => x.SiteId);
         var manual = api.MapGroup("/manual-tasks").WithTags("Tasks");
-        manual.MapPost("/", CreateManual).WithName("CreateManualTask").Validate<ManualTaskInput>();
-        manual.MapPut("/{id:guid}", UpdateManual).WithName("UpdateManualTask").Validate<ManualTaskInput>();
-        manual.MapDelete("/{id:guid}", DeleteManual).WithName("DeleteManualTask");
+        manual.MapPost("/", CreateManual).WithName("CreateManualTask").Validate<ManualTaskInput>().RequireSite(SiteRole.Edit, target);
+        manual.MapPut("/{id:guid}", UpdateManual).WithName("UpdateManualTask").Validate<ManualTaskInput>()
+            .RequireSite(SiteRole.Edit, SiteResolvers.ManualTask).RequireSite(SiteRole.Edit, target);
+        manual.MapDelete("/{id:guid}", DeleteManual).WithName("DeleteManualTask").RequireSite(SiteRole.Edit, SiteResolvers.ManualTask);
     }
 
     private static TaskDto ToDto(GardenTask t, TaskState? s, IReadOnlyDictionary<TaskKind, TaskEstimates.Factor> factors) => new(
@@ -72,11 +79,17 @@ public static class TaskEndpoints
         t.BaseMinutes, TaskEstimates.Estimate(t, s, factors),
         s?.Done ?? false, s?.DoneOn, s?.ActualMinutes, s?.AssigneeId, s?.EstimateOverride, s?.ScheduledStart);
 
-    /// <summary>Default period: two months back (overdue work) to two months ahead.</summary>
-    private static async Task<TaskDto[]> List(DateOnly? from, DateOnly? to, Guid? siteId, TaskService tasks, ComplotDbContext db, TimeProvider time, CancellationToken ct)
+    /// <summary>
+    /// Tasks of the sites the caller can see (or of one of them). Default period: two months back (overdue work) to two
+    /// months ahead.
+    /// </summary>
+    private static async Task<TaskDto[]> List(
+        DateOnly? from, DateOnly? to, Guid? siteId, TaskService tasks, ComplotDbContext db, CurrentUser user, TimeProvider time, CancellationToken ct)
     {
         var today = time.Today();
-        var generated = await tasks.GenerateAsync(from ?? today.AddDays(-60), to ?? today.AddDays(60), siteId, ct);
+        var visible = await db.VisibleSiteIdsAsync(await user.GetAsync(ct), ct);
+        var sites = siteId is { } id ? visible.Where(v => v == id).ToList() : visible;
+        var generated = await tasks.GenerateAsync(from ?? today.AddDays(-60), to ?? today.AddDays(60), sites, includeSiteless: siteId is null, ct);
         var keys = generated.Select(t => t.Key).ToList();
         var states = await db.TaskStates.AsNoTracking().Where(s => keys.Contains(s.SourceKey)).ToDictionaryAsync(s => s.SourceKey, ct);
         var factors = await tasks.FactorsAsync(ct);

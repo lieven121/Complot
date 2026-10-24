@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -12,15 +11,22 @@ public enum AuthModeKind
     Oidc,
 }
 
-public sealed record MeDto(AuthModeKind AuthMode, bool IsAuthenticated, string? Name, string? Email);
+/// <summary>
+/// The caller. <see cref="IsPending"/>: signed in but not given access yet. <see cref="IsEditor"/>: may change shared data
+/// such as the catalog. Rights per site are on each site (<c>SiteDto.MyRole</c>).
+/// </summary>
+public sealed record MeDto(AuthModeKind AuthMode, bool IsAuthenticated, string? Name, string? Email, bool IsAdmin, bool IsPending, bool IsEditor);
 
 public static class AuthEndpoints
 {
     /// <summary><c>GET /api/me</c>: who is signed in, and whether sign-in is used at all.</summary>
     public static void MapMeEndpoint(this IEndpointRouteBuilder api) =>
-        api.MapGet("/me", (ClaimsPrincipal user, AuthMode mode) => mode.OidcEnabled
-                ? new MeDto(AuthModeKind.Oidc, user.Identity?.IsAuthenticated == true, user.Identity?.Name, user.FindFirstValue("email"))
-                : new MeDto(AuthModeKind.None, true, null, null))
+        api.MapGet("/me", async (CurrentUser current, AuthMode mode, CancellationToken ct) =>
+            {
+                var user = await current.GetAsync(ct);
+                return new MeDto(mode.OidcEnabled ? AuthModeKind.Oidc : AuthModeKind.None, user.IsAuthenticated, user.Name, user.Email,
+                    user.IsAdmin, user.IsAuthenticated && user.IsPending, user.IsEditor);
+            })
             .WithName("GetMe")
             .WithTags("Auth")
             .AllowAnonymous();

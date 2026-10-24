@@ -1,6 +1,8 @@
+using Complot.Api.Auth;
 using Complot.Api.Common;
 using Complot.Api.Data;
 using Complot.Api.Hosting;
+using Complot.Domain.Access;
 using Complot.Domain.Work;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -50,21 +52,26 @@ public static class NoteEndpoints
     public static void MapNotes(this IEndpointRouteBuilder api)
     {
         var group = api.MapGroup("/notes").WithTags("Notes");
+        var target = SiteResolvers.Body<NoteInput>(x => x.SiteId);
         group.MapGet("/", List).WithName("ListNotes");
-        group.MapPost("/", Create).WithName("CreateNote").Validate<NoteInput>();
-        group.MapPut("/{id:guid}", Update).WithName("UpdateNote").Validate<NoteInput>();
-        group.MapDelete("/{id:guid}", Delete).WithName("DeleteNote");
+        group.MapPost("/", Create).WithName("CreateNote").Validate<NoteInput>().RequireSite(SiteRole.Edit, target);
+        group.MapPut("/{id:guid}", Update).WithName("UpdateNote").Validate<NoteInput>()
+            .RequireSite(SiteRole.Edit, SiteResolvers.Note).RequireSite(SiteRole.Edit, target);
+        group.MapDelete("/{id:guid}", Delete).WithName("DeleteNote").RequireSite(SiteRole.Edit, SiteResolvers.Note);
         // Same-site cookies protect this upload; the multipart antiforgery token is not used by the SPA.
-        group.MapPut("/{id:guid}/photo", UploadPhoto).WithName("UploadNotePhoto").DisableAntiforgery();
-        group.MapGet("/{id:guid}/photo", GetPhoto).WithName("GetNotePhoto");
+        group.MapPut("/{id:guid}/photo", UploadPhoto).WithName("UploadNotePhoto").DisableAntiforgery()
+            .RequireSite(SiteRole.Edit, SiteResolvers.Note);
+        group.MapGet("/{id:guid}/photo", GetPhoto).WithName("GetNotePhoto").RequireSite(SiteRole.View, SiteResolvers.Note);
     }
 
     private static NoteDto ToDto(Note n, Guid? varietyId) => new(
         n.Id, n.SiteId, n.BedId, n.TreeId, n.PlantingId, varietyId, n.PersonId, n.Date, n.Tag, n.Text, n.HarvestQuantity, n.HarvestUnit, n.PhotoFileName is not null);
 
-    private static async Task<NoteDto[]> List(Guid? siteId, Guid? bedId, Guid? treeId, Guid? varietyId, ComplotDbContext db, CancellationToken ct)
+    private static async Task<NoteDto[]> List(
+        Guid? siteId, Guid? bedId, Guid? treeId, Guid? varietyId, ComplotDbContext db, CurrentUser user, CancellationToken ct)
     {
-        var query = from note in db.Notes.AsNoTracking()
+        var visible = await db.VisibleSiteIdsAsync(await user.GetAsync(ct), ct);
+        var query = from note in db.Notes.AsNoTracking().Where(n => visible.Contains(n.SiteId))
                     join planting in db.Plantings on note.PlantingId equals planting.Id into plantings
                     from planting in plantings.DefaultIfEmpty()
                     select new { note, VarietyId = (Guid?)planting.VarietyId };
@@ -96,7 +103,7 @@ public static class NoteEndpoints
     private static async Task<Results<NoContent, ProblemHttpResult>> Delete(Guid id, ComplotDbContext db, IOptions<StorageOptions> storage, CancellationToken ct)
     {
         if (await db.Notes.FindAsync([id], ct) is not { } note) return ApiProblems.NotFound();
-        if (note.PhotoFileName is { } file) File.Delete(Path.Combine(PhotoDir(storage.Value), file));
+        if (note.PhotoFileName is { } file) File.Delete(Path.Combine(storage.Value.PhotoDir, file));
         db.Notes.Remove(note);
         await db.SaveChangesAsync(ct);
         return TypedResults.NoContent();
@@ -111,7 +118,7 @@ public static class NoteEndpoints
         if (file.Length > MaxPhotoBytes)
             return ApiProblems.Validation(new Dictionary<string, ErrorDetail[]> { ["file"] = [new ErrorDetail("photoTooLarge", new Dictionary<string, object?> { ["maxMb"] = MaxPhotoBytes / 1024 / 1024 })] });
 
-        var directory = PhotoDir(storage.Value);
+        var directory = storage.Value.PhotoDir;
         Directory.CreateDirectory(directory);
         if (note.PhotoFileName is { } old) File.Delete(Path.Combine(directory, old));
         note.PhotoFileName = $"{note.Id:N}{extension}";
@@ -125,10 +132,8 @@ public static class NoteEndpoints
     {
         if (await db.Notes.AsNoTracking().FirstOrDefaultAsync(n => n.Id == id, ct) is not { PhotoFileName: { } file }) return ApiProblems.NotFound();
         var contentType = PhotoTypes.First(t => t.Value == Path.GetExtension(file)).Key;
-        return TypedResults.PhysicalFile(Path.Combine(PhotoDir(storage.Value), file), contentType);
+        return TypedResults.PhysicalFile(Path.Combine(storage.Value.PhotoDir, file), contentType);
     }
-
-    private static string PhotoDir(StorageOptions storage) => Path.Combine(storage.FullDataDir, "photos");
 
     private static async Task<Guid?> VarietyOf(Note note, ComplotDbContext db, CancellationToken ct) =>
         note.PlantingId is { } id ? await db.Plantings.Where(p => p.Id == id).Select(p => (Guid?)p.VarietyId).FirstOrDefaultAsync(ct) : null;

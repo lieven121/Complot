@@ -2,6 +2,7 @@ using Complot.Api.Auth;
 using Complot.Api.Data;
 using Complot.Api.Features;
 using Complot.Api.Features.Catalog;
+using Complot.Api.Features.Garden;
 using Complot.Api.Features.Work;
 using Complot.Api.Hosting;
 using Scalar.AspNetCore;
@@ -13,6 +14,7 @@ builder.Services
     .AddComplotData()
     .AddComplotAuth(builder.Configuration)
     .AddCatalog()
+    .AddGarden()
     .AddWork();
 
 var app = builder.Build();

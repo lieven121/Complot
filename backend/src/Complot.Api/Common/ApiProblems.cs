@@ -24,6 +24,11 @@ public static class ApiProblems
         TypedResults.Problem(statusCode: StatusCodes.Status409Conflict, title: "Conflict",
             extensions: new Dictionary<string, object?> { ["code"] = code });
 
+    /// <summary>403 with a <c>code</c>, e.g. "access.readOnly".</summary>
+    public static ProblemHttpResult Forbidden(string code) =>
+        TypedResults.Problem(statusCode: StatusCodes.Status403Forbidden, title: "Forbidden",
+            extensions: new Dictionary<string, object?> { ["code"] = code });
+
     public static ProblemHttpResult NotFound() => TypedResults.Problem(statusCode: StatusCodes.Status404NotFound);
 }
 

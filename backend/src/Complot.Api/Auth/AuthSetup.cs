@@ -26,6 +26,9 @@ public static class AuthSetup
     {
         var oidc = configuration.GetSection(OidcOptions.Section).Get<OidcOptions>() ?? new OidcOptions();
         services.AddSingleton(new AuthMode(oidc.IsConfigured));
+        services.AddSingleton(new AccessOptions { Admins = ReadAdmins(configuration.GetSection("Auth:Admins")) });
+        services.AddHttpContextAccessor();
+        services.AddScoped<CurrentUser>();
 
         if (!oidc.IsConfigured)
         {
@@ -66,6 +69,12 @@ public static class AuthSetup
             .SetFallbackPolicy(new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
         return services;
     }
+
+    /// <summary><c>Auth__Admins="a@x.be,b@y.be"</c> or an array (<c>Auth__Admins__0</c>, …).</summary>
+    private static string[] ReadAdmins(IConfigurationSection section) =>
+        (section.Value is { } list ? list.Split([',', ';'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries) : section.Get<string[]>() ?? [])
+        .Select(Complot.Domain.Access.AppUser.NormalizeEmail)
+        .ToArray();
 
     private static Task ApiAwareRedirect(Microsoft.AspNetCore.Authentication.RedirectContext<CookieAuthenticationOptions> context, int apiStatus)
     {

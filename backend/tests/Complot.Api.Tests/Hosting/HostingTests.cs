@@ -18,10 +18,10 @@ public sealed class HostingTests(ApiFactory factory) : IClassFixture<ApiFactory>
     }
 
     [Fact]
-    public async Task Without_oidc_everyone_is_signed_in()
+    public async Task Without_oidc_everyone_is_a_signed_in_admin()
     {
         var me = await _client.GetFromJsonAsync<MeDto>("/api/me", ApiJson.Options, Ct);
-        Assert.Equal(new MeDto(AuthModeKind.None, true, null, null), me);
+        Assert.Equal(new MeDto(AuthModeKind.None, true, null, null, IsAdmin: true, IsPending: false, IsEditor: true), me);
     }
 
     [Fact]
@@ -49,7 +49,7 @@ public sealed class OidcHostingTests(OidcApiFactory factory) : IClassFixture<Oid
     public async Task Me_is_public_and_reports_oidc_mode()
     {
         var me = await _client.GetFromJsonAsync<MeDto>("/api/me", ApiJson.Options, Ct);
-        Assert.Equal(new MeDto(AuthModeKind.Oidc, false, null, null), me);
+        Assert.Equal(new MeDto(AuthModeKind.Oidc, false, null, null, IsAdmin: false, IsPending: false, IsEditor: false), me);
     }
 
     [Fact]

@@ -1,3 +1,4 @@
+using Complot.Domain.Access;
 using Complot.Domain.Catalog;
 using Complot.Domain.Garden;
 using Complot.Domain.Plantings;
@@ -27,6 +28,9 @@ public sealed class ComplotDbContext(DbContextOptions<ComplotDbContext> options)
     public DbSet<ManualTask> ManualTasks => Set<ManualTask>();
     public DbSet<TaskState> TaskStates => Set<TaskState>();
     public DbSet<Note> Notes => Set<Note>();
+
+    public DbSet<AppUser> Users => Set<AppUser>();
+    public DbSet<SiteAccess> SiteAccess => Set<SiteAccess>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) =>
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ComplotDbContext).Assembly);

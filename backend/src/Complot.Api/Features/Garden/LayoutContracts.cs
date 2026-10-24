@@ -1,10 +1,12 @@
 using Complot.Api.Common;
+using Complot.Domain.Access;
 using Complot.Domain.Catalog;
 using Complot.Domain.Garden;
 
 namespace Complot.Api.Features.Garden;
 
-public sealed record SiteDto(Guid Id, string Name, string? Notes, int BedCount);
+/// <summary>A site as the caller sees it: <see cref="MyRole"/> is what the caller may do there.</summary>
+public sealed record SiteDto(Guid Id, string Name, string? Notes, int BedCount, int MemberCount, bool Archived, SiteRole MyRole);
 
 public sealed record SiteInput(string Name, string? Notes);
 

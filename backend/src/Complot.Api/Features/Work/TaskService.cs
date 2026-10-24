@@ -11,14 +11,16 @@ public sealed class TaskService(ComplotDbContext db)
     private const int FirstYear = 2000;
     private const int LastYear = 2100;
 
-    public async Task<List<GardenTask>> GenerateAsync(DateOnly from, DateOnly to, Guid? siteId, CancellationToken ct)
+    /// <summary>Tasks of <paramref name="siteIds"/>; <paramref name="includeSiteless"/> adds manual tasks that belong to no site.</summary>
+    public async Task<List<GardenTask>> GenerateAsync(
+        DateOnly from, DateOnly to, IReadOnlyCollection<Guid> siteIds, bool includeSiteless, CancellationToken ct)
     {
         var plantings = await db.Plantings.AsNoTracking().Include(p => p.Bed).Include(p => p.Variety)
-            .Where(p => (siteId == null || p.Bed.SiteId == siteId) && p.SowOn <= to && (p.ClearOn == null || p.ClearOn >= from))
+            .Where(p => siteIds.Contains(p.Bed.SiteId) && p.SowOn <= to && (p.ClearOn == null || p.ClearOn >= from))
             .ToListAsync(ct);
-        var trees = await db.Trees.AsNoTracking().Where(t => siteId == null || t.SiteId == siteId).ToListAsync(ct);
+        var trees = await db.Trees.AsNoTracking().Where(t => siteIds.Contains(t.SiteId)).ToListAsync(ct);
         var manual = await db.ManualTasks.AsNoTracking()
-            .Where(t => (siteId == null || t.SiteId == siteId) && t.DueOn >= from && t.DueOn <= to)
+            .Where(t => (t.SiteId == null ? includeSiteless : siteIds.Contains(t.SiteId.Value)) && t.DueOn >= from && t.DueOn <= to)
             .ToListAsync(ct);
 
         return plantings.SelectMany(p => TaskGenerator.ForPlanting(p, from.Year, to.Year))

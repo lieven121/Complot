@@ -1,5 +1,7 @@
+using Complot.Api.Auth;
 using Complot.Api.Common;
 using Complot.Api.Data;
+using Complot.Domain.Access;
 using Complot.Domain.Garden;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
@@ -8,47 +10,82 @@ namespace Complot.Api.Features.Garden;
 
 public static class SiteEndpoints
 {
+    public static IServiceCollection AddGarden(this IServiceCollection services) => services.AddScoped<SiteDeletion>();
+
     public static void MapSites(this IEndpointRouteBuilder api)
     {
         var group = api.MapGroup("/sites").WithTags("Sites");
         group.MapGet("/", List).WithName("ListSites");
-        group.MapPost("/", Create).WithName("CreateSite").Validate<SiteInput>();
-        group.MapPut("/{id:guid}", Update).WithName("UpdateSite").Validate<SiteInput>();
-        group.MapDelete("/{id:guid}", Delete).WithName("DeleteSite");
-        group.MapGet("/{id:guid}/layout", GetLayout).WithName("GetSiteLayout");
-        group.MapPut("/{id:guid}/layout", SaveLayout).WithName("SaveSiteLayout").Validate<SiteLayoutDto>();
+        group.MapPost("/", Create).WithName("CreateSite").Validate<SiteInput>().RequireAdmin();
+        group.MapPut("/{id:guid}", Update).WithName("UpdateSite").Validate<SiteInput>().RequireAdmin();
+        group.MapPost("/{id:guid}/archive", (Guid id, ComplotDbContext db, CurrentUser user, TimeProvider time, CancellationToken ct) =>
+            SetArchived(id, time.GetUtcNow().UtcDateTime, db, user, ct)).WithName("ArchiveSite").RequireAdmin();
+        group.MapPost("/{id:guid}/restore", (Guid id, ComplotDbContext db, CurrentUser user, CancellationToken ct) =>
+            SetArchived(id, null, db, user, ct)).WithName("RestoreSite").RequireAdmin();
+        group.MapDelete("/{id:guid}", Delete).WithName("DeleteSite").RequireAdmin();
+        group.MapGet("/{id:guid}/layout", GetLayout).WithName("GetSiteLayout").RequireSite(SiteRole.View, SiteResolvers.Route());
+        group.MapPut("/{id:guid}/layout", SaveLayout).WithName("SaveSiteLayout").Validate<SiteLayoutDto>()
+            .RequireSite(SiteRole.Edit, SiteResolvers.Route());
     }
 
-    private static async Task<SiteDto[]> List(ComplotDbContext db, CancellationToken ct)
+    /// <summary>The sites the caller can see; archived ones only on request, for admins (the admin page).</summary>
+    private static async Task<SiteDto[]> List(bool? includeArchived, ComplotDbContext db, CurrentUser current, CancellationToken ct)
     {
-        var bedCounts = await db.Beds.GroupBy(b => b.SiteId).Select(g => new { g.Key, Count = g.Count() }).ToDictionaryAsync(x => x.Key, x => x.Count, ct);
-        return (await db.Sites.AsNoTracking().OrderBy(s => s.CreatedAt).ToListAsync(ct))
-            .Select(s => new SiteDto(s.Id, s.Name, s.Notes, bedCounts.GetValueOrDefault(s.Id))).ToArray();
+        var user = await current.GetAsync(ct);
+        var withArchived = includeArchived == true && user.IsAdmin;
+        var sites = await db.Sites.AsNoTracking()
+            .Where(s => withArchived || s.ArchivedAt == null)
+            .OrderBy(s => s.CreatedAt)
+            .ToListAsync(ct);
+        var visible = sites.Where(s => user.CanView(s.Id, s.IsArchived)).ToList();
+        var ids = visible.Select(s => s.Id).ToList();
+        var beds = await db.Beds.Where(b => ids.Contains(b.SiteId)).GroupBy(b => b.SiteId).Select(g => new { g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.Key, x => x.Count, ct);
+        var members = await db.SiteAccess.Where(a => ids.Contains(a.SiteId)).GroupBy(a => a.SiteId).Select(g => new { g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.Key, x => x.Count, ct);
+        return visible.Select(s => ToDto(s, user, beds.GetValueOrDefault(s.Id), members.GetValueOrDefault(s.Id))).ToArray();
     }
 
-    private static async Task<Created<SiteDto>> Create(SiteInput input, ComplotDbContext db, CancellationToken ct)
+    private static SiteDto ToDto(Site site, UserAccess user, int bedCount, int memberCount) => new(
+        site.Id, site.Name, site.Notes, bedCount, memberCount, site.IsArchived, user.CanEdit(site.Id, site.IsArchived) ? SiteRole.Edit : SiteRole.View);
+
+    private static async Task<SiteDto> ToDtoAsync(Site site, ComplotDbContext db, CurrentUser current, CancellationToken ct) => ToDto(
+        site, await current.GetAsync(ct), await db.Beds.CountAsync(b => b.SiteId == site.Id, ct), await db.SiteAccess.CountAsync(a => a.SiteId == site.Id, ct));
+
+    private static async Task<Created<SiteDto>> Create(SiteInput input, ComplotDbContext db, CurrentUser current, CancellationToken ct)
     {
-        var site = new Site { Name = input.Name.Trim(), Notes = input.Notes };
+        var site = new Site { Name = input.Name.Trim(), Notes = Clean(input.Notes) };
         db.Sites.Add(site);
         await db.SaveChangesAsync(ct);
-        return TypedResults.Created($"/api/sites/{site.Id}", new SiteDto(site.Id, site.Name, site.Notes, 0));
+        return TypedResults.Created($"/api/sites/{site.Id}", await ToDtoAsync(site, db, current, ct));
     }
 
-    private static async Task<Results<Ok<SiteDto>, ProblemHttpResult>> Update(Guid id, SiteInput input, ComplotDbContext db, CancellationToken ct)
+    private static async Task<Results<Ok<SiteDto>, ProblemHttpResult>> Update(Guid id, SiteInput input, ComplotDbContext db, CurrentUser current, CancellationToken ct)
     {
         if (await db.Sites.FindAsync([id], ct) is not { } site) return ApiProblems.NotFound();
         site.Name = input.Name.Trim();
-        site.Notes = input.Notes;
+        site.Notes = Clean(input.Notes);
         await db.SaveChangesAsync(ct);
-        return TypedResults.Ok(new SiteDto(site.Id, site.Name, site.Notes, await db.Beds.CountAsync(b => b.SiteId == id, ct)));
+        return TypedResults.Ok(await ToDtoAsync(site, db, current, ct));
     }
 
-    private static async Task<Results<NoContent, ProblemHttpResult>> Delete(Guid id, ComplotDbContext db, CancellationToken ct)
+    private static async Task<Results<Ok<SiteDto>, ProblemHttpResult>> SetArchived(
+        Guid id, DateTime? archivedAt, ComplotDbContext db, CurrentUser current, CancellationToken ct)
     {
         if (await db.Sites.FindAsync([id], ct) is not { } site) return ApiProblems.NotFound();
-        if (await db.Beds.AnyAsync(b => b.SiteId == id, ct)) return ApiProblems.Conflict("site.hasBeds");
-        db.Sites.Remove(site);
+        site.ArchivedAt = archivedAt;
         await db.SaveChangesAsync(ct);
+        return TypedResults.Ok(await ToDtoAsync(site, db, current, ct));
+    }
+
+    /// <summary>Only an archived site can be deleted, and only with its exact name as confirmation; it removes everything.</summary>
+    private static async Task<Results<NoContent, ProblemHttpResult>> Delete(
+        Guid id, string? confirmName, ComplotDbContext db, SiteDeletion deletion, CancellationToken ct)
+    {
+        if (await db.Sites.AsNoTracking().FirstOrDefaultAsync(s => s.Id == id, ct) is not { } site) return ApiProblems.NotFound();
+        if (!site.IsArchived) return ApiProblems.Conflict("site.notArchived");
+        if (confirmName?.Trim() != site.Name) return ApiProblems.Conflict("site.confirmName");
+        await deletion.DeleteAsync(id, ct);
         return TypedResults.NoContent();
     }
 
