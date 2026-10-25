@@ -10,6 +10,7 @@ const layout = (): SiteLayoutDto => ({
       id: 'b1',
       plotId: 'p1',
       code: 'A1',
+      kind: 'strips',
       shape: { kind: 'rect', x: 1, y: 1, width: 1.2, height: 4 },
       sun: 'full',
       soil: undefined,

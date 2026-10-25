@@ -1,4 +1,4 @@
-import type { PlantingDto, PlantingPhase, ShapeDto, SiteLayoutDto } from '@/shared/api'
+import type { BedDto, PlantingDto, PlantingPhase, ShapeDto, SiteLayoutDto } from '@/shared/api'
 
 /** Drawing only: the planted area and neighbour rules are calculated by the API. */
 export function keyholePath(s: ShapeDto): string {
@@ -47,3 +47,33 @@ export const PHASE_OPACITY: Record<PlantingPhase, number> = {
   clearing: 0.3,
   dormant: 0.42,
 }
+
+/** Smallest drawn spot radius (m), so a single small plant stays visible and clickable. */
+const MIN_SPOT_RADIUS = 0.08
+
+/** Radius of a circle with the planted area of a spot (m²; the API calculates it from count and spacing). */
+export const spotRadius = (usedArea: number) => Math.max(MIN_SPOT_RADIUS, Math.sqrt(usedArea / Math.PI))
+
+export interface Spot {
+  planting: PlantingDto
+  phase: PlantingPhase
+  /** Centre in map coordinates (m). */
+  x: number
+  y: number
+  r: number
+}
+
+/** Spots of a spots bed that are in the bed on the date. */
+export function spotsOf(bed: BedDto, plantings: PlantingDto[], isoDate: string): Spot[] {
+  return plantings.flatMap((planting) => {
+    const phase = planting.bedId === bed.id ? phaseAt(planting, isoDate) : undefined
+    if (!phase || !IN_BED.has(phase)) return []
+    const x = bed.shape.x + (planting.spotX ?? bed.shape.width / 2)
+    const y = bed.shape.y + (planting.spotY ?? bed.shape.height / 2)
+    return [{ planting, phase, x, y, r: spotRadius(planting.usedArea) }]
+  })
+}
+
+/** How much of a crop a planting holds, for lists: "3×" in a spots bed, "50%" of a strips bed. */
+export const amountLabel = (planting: PlantingDto) =>
+  planting.count != null ? `${planting.count}×` : planting.share < 1 ? `${Math.round(planting.share * 100)}%` : ''

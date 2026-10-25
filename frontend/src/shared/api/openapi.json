@@ -3518,6 +3518,7 @@
           "id",
           "plotId",
           "code",
+          "kind",
           "shape",
           "sun",
           "soil",
@@ -3536,6 +3537,9 @@
           },
           "code": {
             "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/BedKind"
           },
           "shape": {
             "$ref": "#/components/schemas/ShapeDto"
@@ -3557,6 +3561,12 @@
           }
         },
         "additionalProperties": false
+      },
+      "BedKind": {
+        "enum": [
+          "strips",
+          "spots"
+        ]
       },
       "BusyDto": {
         "required": [
@@ -5049,6 +5059,21 @@
           "notes": {
             "type": "string",
             "nullable": true
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "spotX": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "spotY": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -5059,6 +5084,9 @@
           "bedId",
           "varietyId",
           "share",
+          "count",
+          "spotX",
+          "spotY",
           "sowOn",
           "plantOutOn",
           "harvestFrom",
@@ -5066,6 +5094,7 @@
           "clearOn",
           "notes",
           "plantCount",
+          "usedArea",
           "phases"
         ],
         "type": "object",
@@ -5085,6 +5114,21 @@
           "share": {
             "type": "number",
             "format": "double"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "spotX": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "spotY": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
           },
           "sowOn": {
             "type": "string",
@@ -5118,6 +5162,10 @@
             "type": "integer",
             "format": "int32",
             "nullable": true
+          },
+          "usedArea": {
+            "type": "number",
+            "format": "double"
           },
           "phases": {
             "type": "array",
@@ -6086,6 +6134,21 @@
           },
           "notes": {
             "type": "string",
+            "nullable": true
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "spotX": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "spotY": {
+            "type": "number",
+            "format": "double",
             "nullable": true
           }
         },

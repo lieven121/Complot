@@ -6,7 +6,7 @@ import InputNumber from '@/shared/ui/NumberInput.vue'
 import InputText from 'primevue/inputtext'
 import Select from 'primevue/select'
 import { useI18n } from 'vue-i18n'
-import type { BedDto, FeatureDto, PathDto, PlotDto, ShapeDto, TreeDto, YearlyActionDto } from '@/shared/api'
+import type { BedDto, BedKind, FeatureDto, PathDto, PlotDto, ShapeDto, TreeDto, YearlyActionDto } from '@/shared/api'
 import { fromIsoDate, toIsoDate } from '@/shared/dates'
 import { useFormat } from '@/shared/composables/useFormat'
 import { useNotify } from '@/shared/composables/useNotify'
@@ -15,7 +15,13 @@ import { useSaveLayout } from '../queries'
 import type { ItemKind, useDesigner } from '../useDesigner'
 
 /** Edits the layout copy held by the designer; saves the whole layout at once. */
-const props = defineProps<{ designer: ReturnType<typeof useDesigner>; siteId: string; center: () => { x: number; y: number } }>()
+const props = defineProps<{
+  designer: ReturnType<typeof useDesigner>
+  siteId: string
+  center: () => { x: number; y: number }
+  /** Beds with plantings: their kind can no longer change. */
+  bedsInUse: ReadonlySet<string>
+}>()
 const emit = defineEmits<{ cancel: []; saved: [] }>()
 
 const { t } = useI18n()
@@ -35,6 +41,7 @@ const plotTypes = computed(() => options<PlotDto['type']>(['open', 'greenhouse',
 const materials = computed(() => options<PathDto['material']>(['woodChips', 'grass', 'pavers', 'gravel'], 'design.material'))
 const featureTypes = computed(() => options<FeatureDto['type']>(['compost', 'water', 'pond', 'hedge', 'shed'], 'design.featureType'))
 const treeKinds = computed(() => options<TreeDto['kind']>(['tree', 'shrub'], 'map.tree.kind'))
+const bedKinds = computed(() => options<BedKind>(['strips', 'spots'], 'design.bedKind'))
 const suns = computed(() => options<BedDto['sun']>(['full', 'half', 'shade'], 'sun'))
 const months = computed(() => Array.from({ length: 12 }, (_, i) => ({ value: i + 1, label: month(i + 1) })))
 
@@ -46,6 +53,7 @@ interface EditableItem {
   code?: string
   shape?: ShapeDto
   plotId?: string
+  kind?: TreeDto['kind'] | BedKind
   sun?: BedDto['sun']
   soil?: string
   type?: PlotDto['type'] | FeatureDto['type']
@@ -53,7 +61,6 @@ interface EditableItem {
   x?: number
   y?: number
   crownDiameter?: number
-  kind?: TreeDto['kind']
   cultivar?: string
   plantedOn?: string
   actions?: YearlyActionDto[]
@@ -84,13 +91,13 @@ const addAction = () =>
   d.edit(`actions+${actions.value.length}`, () => item.value!.actions!.push({ title: t('design.pruning'), month: 2, estimatedMinutes: 60 }))
 const removeAction = (index: number) => d.edit(`actions-${index}`, () => item.value!.actions!.splice(index, 1))
 
-const add = (kind: ItemKind) =>
-  d.add(kind, props.center(), {
-    path: t('design.newPath'),
-    tree: t('design.newTree'),
-    plot: t('design.newPlot'),
-    feature: t('design.newFeature'),
-  })
+const add = (kind: ItemKind, bedKind?: BedKind) =>
+  d.add(
+    kind,
+    props.center(),
+    { path: t('design.newPath'), tree: t('design.newTree'), plot: t('design.newPlot'), feature: t('design.newFeature') },
+    bedKind,
+  )
 
 const groups = computed(() => {
   const layout = d.draft.value
@@ -168,6 +175,7 @@ async function save() {
         outlined
         @click="add(k)"
       />
+      <Button :label="t('design.addSpotsBed')" icon="pi pi-plus" size="small" severity="secondary" outlined @click="add('bed', 'spots')" />
     </div>
 
     <form v-if="item && kind" class="form-grid editor" @submit.prevent>
@@ -303,6 +311,20 @@ async function save() {
           />
         </FormField>
         <template v-if="kind === 'bed'">
+          <FormField
+            :label="t('design.bedKind.label')"
+            :hint="t(bedsInUse.has(item.id) ? 'design.bedKind.inUse' : `design.bedKind.${item.kind}Help`)"
+            full
+          >
+            <Select
+              :model-value="item.kind"
+              :options="bedKinds"
+              option-label="label"
+              option-value="value"
+              :disabled="bedsInUse.has(item.id)"
+              @update:model-value="set('kind', $event)"
+            />
+          </FormField>
           <FormField :label="t('design.plot')">
             <Select
               :model-value="item.plotId"

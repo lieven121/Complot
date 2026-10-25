@@ -55,9 +55,11 @@ public static class PlantingEndpoints
     private static async Task<PlantingWarningDto[]> Checks(Guid siteId, ComplotDbContext db, CancellationToken ct) =>
         PlantingChecks.Check(await db.ForSiteAsync(siteId, ct)).Select(w => w.ToDto()).ToArray();
 
-    private static async Task<Ok<PlantingPreviewDto>> Preview(PlanPlantingInput input, ComplotDbContext db, TimeProvider time, CancellationToken ct)
+    private static async Task<Results<Ok<PlantingPreviewDto>, ProblemHttpResult>> Preview(
+        PlanPlantingInput input, ComplotDbContext db, TimeProvider time, CancellationToken ct)
     {
         var planting = await BuildAsync(input, db, ct);
+        if (SpotProblem(planting) is { } problem) return problem;
         var siteId = planting.Bed.SiteId;
         var all = (await db.ForSiteAsync(siteId, ct)).Append(planting).ToList();
         var warnings = PlantingChecks.Check(all).Where(w => w.PlantingId == planting.Id).ToList();
@@ -66,9 +68,11 @@ public static class PlantingEndpoints
         return TypedResults.Ok(new PlantingPreviewDto(planting.ToDto(from, to), warnings.Select(w => w.ToDto()).ToList()));
     }
 
-    private static async Task<Created<PlantingDto>> Create(PlanPlantingInput input, ComplotDbContext db, TimeProvider time, CancellationToken ct)
+    private static async Task<Results<Created<PlantingDto>, ProblemHttpResult>> Create(
+        PlanPlantingInput input, ComplotDbContext db, TimeProvider time, CancellationToken ct)
     {
         var planting = await BuildAsync(input, db, ct);
+        if (SpotProblem(planting) is { } problem) return problem;
         db.Plantings.Add(planting);
         await db.SaveChangesAsync(ct);
         var (from, to) = Period(null, null, time);
@@ -80,6 +84,8 @@ public static class PlantingEndpoints
     {
         if (await db.Plantings.WithRuleData().FirstOrDefaultAsync(p => p.Id == id, ct) is not { } planting) return ApiProblems.NotFound();
         planting.Share = input.Share;
+        (planting.Count, planting.SpotX, planting.SpotY) = (input.Count, input.SpotX, input.SpotY);
+        if (SpotProblem(planting) is { } problem) return problem;
         planting.ApplyDates(new PlantingDates(input.SowOn, input.PlantOutOn, input.HarvestFrom, input.HarvestTo, input.ClearOn));
         planting.Notes = string.IsNullOrWhiteSpace(input.Notes) ? null : input.Notes.Trim();
         await db.SaveChangesAsync(ct);
@@ -104,9 +110,16 @@ public static class PlantingEndpoints
         var planting = new Planting
         {
             BedId = bed.Id, Bed = bed, VarietyId = variety.Id, Variety = variety, Share = input.Share,
+            Count = input.Count, SpotX = input.SpotX, SpotY = input.SpotY,
             Notes = string.IsNullOrWhiteSpace(input.Notes) ? null : input.Notes.Trim(),
         };
         planting.ApplyDates(PlantingSchedule.Calculate(variety, input.SowOn, input.Direct));
         return planting;
     }
+
+    /// <summary>400 when the count/position does not fit the kind of bed (see <see cref="Planting.SpotProblem"/>).</summary>
+    private static ProblemHttpResult? SpotProblem(Planting planting) =>
+        planting.SpotProblem() is var (field, code)
+            ? ApiProblems.Validation(new Dictionary<string, ErrorDetail[]> { [field] = [new ErrorDetail(code)] })
+            : null;
 }

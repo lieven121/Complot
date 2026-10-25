@@ -106,13 +106,15 @@ public static class SiteEndpoints
         if (await UsesIdsOfOtherSitesAsync(id, layout, db, ct)) return ApiProblems.Conflict("layout.foreignId");
         var removedBedIds = beds.Select(b => b.Id).Except(layout.Beds.Select(b => b.Id)).ToList();
         if (await BedUsage.AnyInUseAsync(db, removedBedIds, ct)) return ApiProblems.Conflict("bed.inUse");
+        var kindChangedIds = beds.Where(b => layout.Beds.Any(x => x.Id == b.Id && x.Kind != b.Kind)).Select(b => b.Id).ToList();
+        if (await BedUsage.AnyInUseAsync(db, kindChangedIds, ct)) return ApiProblems.Conflict("bed.kindInUse");
 
         db.Plots.SyncById(plots, layout.Plots, p => p.Id,
             p => new Plot { Id = p.Id, SiteId = id, Name = "", Shape = p.Shape.ToDomain() },
             (p, e) => { e.Name = p.Name.Trim(); e.Type = p.Type; e.Shape = p.Shape.ToDomain(); });
         db.Beds.SyncById(beds, layout.Beds, b => b.Id,
             b => new Bed { Id = b.Id, SiteId = id, Code = "", Shape = b.Shape.ToDomain() },
-            (b, e) => { e.PlotId = b.PlotId; e.Code = b.Code.Trim(); e.Shape = b.Shape.ToDomain(); e.Sun = b.Sun; e.Soil = Clean(b.Soil); e.Notes = Clean(b.Notes); });
+            (b, e) => { e.PlotId = b.PlotId; e.Code = b.Code.Trim(); e.Kind = b.Kind; e.Shape = b.Shape.ToDomain(); e.Sun = b.Sun; e.Soil = Clean(b.Soil); e.Notes = Clean(b.Notes); });
         db.Paths.SyncById(paths, layout.Paths, p => p.Id,
             p => new GardenPath { Id = p.Id, SiteId = id, Name = "", Shape = p.Shape.ToDomain() },
             (p, e) => { e.Name = p.Name.Trim(); e.Material = p.Material; e.Shape = p.Shape.ToDomain(); });

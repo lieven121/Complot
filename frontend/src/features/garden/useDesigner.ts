@@ -1,5 +1,5 @@
 import { computed, ref } from 'vue'
-import type { BedDto, FeatureDto, PathDto, PlotDto, ShapeDto, SiteLayoutDto, TreeDto } from '@/shared/api'
+import type { BedDto, BedKind, FeatureDto, PathDto, PlotDto, ShapeDto, SiteLayoutDto, TreeDto } from '@/shared/api'
 
 export type ItemKind = 'plot' | 'bed' | 'path' | 'feature' | 'tree'
 export type LayoutItem = PlotDto | BedDto | PathDto | FeatureDto | TreeDto
@@ -102,7 +102,13 @@ export function useDesigner() {
   }
   const moveEnd = () => (dragOrigin = undefined)
 
-  function add(kind: ItemKind, at: { x: number; y: number }, labels: { path: string; tree: string; plot: string; feature: string }) {
+  /** Add an item at a point; a bed is a 1.2 × 4 m strips bed, or a 1 × 1 m spots bed (code M…) for mixed plantings. */
+  function add(
+    kind: ItemKind,
+    at: { x: number; y: number },
+    labels: { path: string; tree: string; plot: string; feature: string },
+    bedKind: BedKind = 'strips',
+  ) {
     record()
     lastEditKey = undefined
     const id = crypto.randomUUID()
@@ -118,12 +124,13 @@ export function useDesigner() {
       layout.beds.push({
         id,
         plotId: plot.id,
-        code: nextBedCode(layout.beds),
-        shape: shape(1.2, 4),
+        code: nextBedCode(layout.beds, bedKind === 'spots' ? 'M' : 'N'),
+        kind: bedKind,
+        shape: bedKind === 'spots' ? shape(1, 1) : shape(1.2, 4),
         sun: 'full',
         soil: undefined,
         notes: undefined,
-        area: 4.8,
+        area: bedKind === 'spots' ? 1 : 4.8,
       } satisfies BedDto)
     }
     if (kind === 'plot') layout.plots.push({ id, name: labels.plot, type: 'open', shape: shape(5, 5) } satisfies PlotDto)
@@ -188,9 +195,9 @@ export function useDesigner() {
   }
 }
 
-function nextBedCode(beds: BedDto[]) {
+function nextBedCode(beds: BedDto[], prefix: string) {
   const used = new Set(beds.map((b) => b.code.toUpperCase()))
   let i = 1
-  while (used.has(`N${i}`)) i++
-  return `N${i}`
+  while (used.has(`${prefix}${i}`)) i++
+  return `${prefix}${i}`
 }

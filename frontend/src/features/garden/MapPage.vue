@@ -5,8 +5,9 @@ import Button from 'primevue/button'
 import Select from 'primevue/select'
 import { useConfirm } from 'primevue/useconfirm'
 import { useI18n } from 'vue-i18n'
-import type { TaskDto } from '@/shared/api'
+import type { PlantingDto, TaskDto } from '@/shared/api'
 import { useFormat } from '@/shared/composables/useFormat'
+import { useNotify } from '@/shared/composables/useNotify'
 import { useCatalogLookups } from '@/features/catalog/queries'
 import { useTasks } from '@/features/tasks/queries'
 import BedPanel from './components/BedPanel.vue'
@@ -18,10 +19,12 @@ import NoteLog from './components/NoteLog.vue'
 import OverviewPanel from './components/OverviewPanel.vue'
 import TimelineBar from './components/TimelineBar.vue'
 import TreePanel from './components/TreePanel.vue'
+import { type CropQuery, findCrop } from './cropFinder'
 import { harvestSummary } from './notes'
 import { addDays } from '@/shared/dates'
 import { IN_BED, phaseAt } from './map'
-import { mapPeriod, useLayout, useNotes, usePlantings, useSiteChecks, useSites } from './queries'
+import { mapPeriod, useLayout, useNotes, usePlantings, useSiteChecks, useSites, useUpdatePlanting } from './queries'
+import { type Point, useSpotPicker } from './spotPicker'
 import { canEditSite } from '@/shared/session'
 import { useDesigner } from './useDesigner'
 
@@ -50,7 +53,7 @@ const plantings = usePlantings(siteId, period)
 const checks = useSiteChecks(siteId)
 const notes = useNotes(computed(() => ({ siteId: siteId.value })))
 const tasks = useTasks(computed(() => ({ siteId: siteId.value })))
-const { varietyById, categoryById } = useCatalogLookups()
+const { categories, varieties, varietyById, categoryById } = useCatalogLookups()
 
 const site = computed(() => sites.data.value?.find((s) => s.id === siteId.value))
 const readonly = computed(() => !canEditSite(site.value))
@@ -122,6 +125,62 @@ const select = (id: string | undefined) => {
 
 const map = ref<InstanceType<typeof GardenMap>>()
 
+// Spots: the planting form picks a place by a tap on the map; a spot of the selected bed can be dragged elsewhere.
+const notify = useNotify()
+const picker = useSpotPicker()
+const updatePlanting = useUpdatePlanting()
+async function moveSpot(plantingId: string, point: Point) {
+  const p = plantings.data.value?.find((x) => x.id === plantingId)
+  if (!p) return
+  try {
+    await updatePlanting.mutateAsync({ id: p.id, input: { ...updateInput(p), spotX: point.x, spotY: point.y } })
+  } catch (error) {
+    notify.error(error)
+  }
+}
+const updateInput = (p: PlantingDto) => ({
+  share: p.share,
+  sowOn: p.sowOn,
+  plantOutOn: p.plantOutOn,
+  harvestFrom: p.harvestFrom,
+  harvestTo: p.harvestTo,
+  clearOn: p.clearOn,
+  notes: p.notes,
+  count: p.count,
+  spotX: p.spotX,
+  spotY: p.spotY,
+})
+
+// Crop finder: "where is my tomato?" — a whole category or one variety, on the selected date.
+const findValue = ref<string>()
+const findOptions = computed(() =>
+  (categories.data.value ?? []).map((c) => ({
+    label: `${c.icon} ${c.name}`,
+    items: [
+      { value: `c:${c.id}`, label: t('map.find.allOf', { name: c.name }) },
+      ...(varieties.data.value ?? [])
+        .filter((v) => v.categoryId === c.id)
+        .map((v) => ({ value: `v:${v.id}`, label: [v.name, v.cultivar].filter(Boolean).join(' — ') })),
+    ],
+  })),
+)
+const findQuery = computed((): CropQuery | undefined => {
+  const [kind, id] = findValue.value?.split(':') ?? []
+  return !id ? undefined : kind === 'c' ? { categoryId: id } : { varietyId: id }
+})
+const found = computed(() =>
+  findQuery.value && layout.data.value
+    ? findCrop(
+        findQuery.value,
+        layout.data.value.beds,
+        plantings.data.value ?? [],
+        date.value,
+        (id) => varietyById.value.get(id)?.categoryId,
+      )
+    : undefined,
+)
+const foundBedIds = computed(() => (found.value ? new Set(found.value.map((h) => h.bed.id)) : undefined))
+
 // Design mode: the map shows the designer's working copy; nothing is saved until "Save".
 const confirm = useConfirm()
 const designer = useDesigner()
@@ -165,7 +224,13 @@ const center = () => map.value?.center() ?? { x: 0, y: 0 }
           :warning-bed-ids="warningBedIds"
           :alert-ids="alertIds"
           :design-mode="designing"
+          :pick-bed-id="designing ? undefined : picker.bedId.value"
+          :pick-point="picker.point.value"
+          :spots-editable="!designing && !readonly"
+          :highlight-bed-ids="designing ? undefined : foundBedIds"
           @select="designing ? designer.select($event) : select($event)"
+          @pick="picker.point.value = $event"
+          @move-spot="moveSpot"
           @move-start="designer.moveStart"
           @move="designer.move"
           @move-end="designer.moveEnd"
@@ -174,27 +239,58 @@ const center = () => map.value?.center() ?? { x: 0, y: 0 }
             <DimensionOverlay v-if="designing && designer.selected.value" :item="designer.selected.value" />
           </template>
         </GardenMap>
-        <div class="toolbar">
-          <span class="compass" aria-hidden="true">N ↑</span>
-          <Select
-            v-model="siteId"
-            :options="sites.data.value ?? []"
-            option-label="name"
-            option-value="id"
-            size="small"
-            :aria-label="t('map.site')"
-            :disabled="designing"
-          />
-          <Button
-            v-if="!designing && !readonly"
-            :label="t('design.start')"
-            icon="pi pi-pencil"
-            size="small"
-            severity="secondary"
-            :disabled="!layout.data.value"
-            @click="startDesign"
-          />
-          <span v-else-if="designing" class="designing">✏️ {{ t('design.active') }}</span>
+        <div class="top-left">
+          <div class="toolbar">
+            <span class="compass" aria-hidden="true">N ↑</span>
+            <Select
+              v-model="siteId"
+              :options="sites.data.value ?? []"
+              option-label="name"
+              option-value="id"
+              size="small"
+              :aria-label="t('map.site')"
+              :disabled="designing"
+            />
+            <Button
+              v-if="!designing && !readonly"
+              :label="t('design.start')"
+              icon="pi pi-pencil"
+              size="small"
+              severity="secondary"
+              :disabled="!layout.data.value"
+              @click="startDesign"
+            />
+            <span v-else-if="designing" class="designing">✏️ {{ t('design.active') }}</span>
+            <Select
+              v-if="!designing"
+              v-model="findValue"
+              :options="findOptions"
+              option-group-label="label"
+              option-group-children="items"
+              option-label="label"
+              option-value="value"
+              filter
+              show-clear
+              size="small"
+              class="finder"
+              :placeholder="t('map.find.placeholder')"
+              :aria-label="t('map.find.placeholder')"
+            />
+          </div>
+          <div v-if="found && !designing" class="found">
+            <span v-if="!found.length" class="muted small">{{ t('map.find.none') }}</span>
+            <Button
+              v-for="hit in found"
+              :key="hit.bed.id"
+              size="small"
+              :severity="selectedId === hit.bed.id ? 'contrast' : 'secondary'"
+              :outlined="selectedId !== hit.bed.id"
+              @click="selectedId = hit.bed.id"
+            >
+              <b>{{ hit.bed.code }}</b>
+              <span v-if="hit.amounts.length" class="small">{{ hit.amounts.join(' · ') }}</span>
+            </Button>
+          </div>
         </div>
         <div class="zoom">
           <Button icon="pi pi-plus" severity="secondary" :aria-label="t('map.zoomIn')" @click="map?.zoom(1.3)" />
@@ -210,6 +306,7 @@ const center = () => map.value?.center() ?? { x: 0, y: 0 }
           :designer="designer"
           :site-id="siteId"
           :center="center"
+          :beds-in-use="new Set((plantings.data.value ?? []).map((p) => p.bedId))"
           @cancel="stopDesign"
           @saved="designing = false"
         />
@@ -283,13 +380,41 @@ const center = () => map.value?.center() ?? { x: 0, y: 0 }
   position: relative;
   min-height: 0;
 }
-.toolbar {
+.top-left {
   position: absolute;
   top: 12px;
   left: 12px;
+  right: 64px;
   display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  pointer-events: none;
+}
+.top-left > * {
+  pointer-events: auto;
+}
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
   gap: 6px;
   align-items: center;
+}
+.finder {
+  width: 220px;
+}
+.found {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+  background: var(--c-panel);
+  border-radius: 10px;
+  padding: 6px 8px;
+  box-shadow: var(--shadow);
+}
+.found .p-button {
+  gap: 6px;
 }
 .designing {
   background: var(--c-ink);

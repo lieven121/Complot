@@ -20,6 +20,14 @@ public sealed class TaskGeneratorTests
     }
 
     [Fact]
+    public void Spot_task_minutes_scale_with_its_plants_not_the_bed()
+    {
+        var spot = Spot(SpotsBed("M1"), CherryTomato, new DateOnly(2026, 2, 20), 2);
+        var plantOut = TaskGenerator.ForPlanting(spot, 2026, 2026).Single(t => t.Kind == TaskKind.PlantOut);
+        Assert.Equal(6, plantOut.BaseMinutes); // 8 min/m² × 0.7 m²
+    }
+
+    [Fact]
     public void Perennial_gets_a_harvest_and_its_care_actions_every_year()
     {
         Strawberry.Actions = [new YearlyAction { Title = "Uitlopers verwijderen", Month = 7, EstimatedMinutes = 40 }];

@@ -39,6 +39,7 @@ public sealed class SiteLayoutValidator : AbstractValidator<SiteLayoutDto>
         RuleForEach(x => x.Beds).ChildRules(b =>
         {
             b.RuleFor(x => x.Code).NotEmpty().MaximumLength(12);
+            b.RuleFor(x => x.Kind).IsInEnum();
             b.RuleFor(x => x.Shape).NotNull().SetValidator(shape);
             b.RuleFor(x => x.Sun).IsInEnum();
             b.RuleFor(x => x.Soil).MaximumLength(200);

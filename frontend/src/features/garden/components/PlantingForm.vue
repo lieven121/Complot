@@ -1,22 +1,27 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import Button from 'primevue/button'
 import Checkbox from 'primevue/checkbox'
 import DatePicker from 'primevue/datepicker'
 import Select from 'primevue/select'
 import SelectButton from 'primevue/selectbutton'
 import { useI18n } from 'vue-i18n'
-import type { PlanPlantingInput, PlantingPreviewDto } from '@/shared/api'
+import type { BedDto, PlanPlantingInput, PlantingPreviewDto } from '@/shared/api'
 import { fromIsoDate, toIsoDate } from '@/shared/dates'
 import { useFormat } from '@/shared/composables/useFormat'
 import { useNotify } from '@/shared/composables/useNotify'
 import FormField from '@/shared/ui/FormField.vue'
+import NumberInput from '@/shared/ui/NumberInput.vue'
 import { useCatalogLookups } from '@/features/catalog/queries'
 import { useCreatePlanting, usePreviewPlanting } from '../queries'
+import { useSpotPicker } from '../spotPicker'
 import WarningList from './WarningList.vue'
 
-/** Plan a crop in a bed: the API calculates the dates and runs the checks before anything is saved. */
-const props = defineProps<{ bedId: string; bedCode: string; date: string }>()
+/**
+ * Plan a crop in a bed: the API calculates the dates and runs the checks before anything is saved. In a spots bed
+ * the crop gets a number of plants and a place, picked by tapping the bed on the map.
+ */
+const props = defineProps<{ bed: BedDto; date: string }>()
 const emit = defineEmits<{ done: [] }>()
 
 const { t } = useI18n()
@@ -30,7 +35,13 @@ const varietyId = ref<string>()
 const sowOn = ref(props.date)
 const share = ref(1)
 const direct = ref(false)
+const count = ref<number | null | undefined>(1)
 const result = ref<PlantingPreviewDto>()
+
+const spots = computed(() => props.bed.kind === 'spots')
+const picker = useSpotPicker()
+if (spots.value) picker.start(props.bed.id, { x: props.bed.shape.width / 2, y: props.bed.shape.height / 2 })
+onBeforeUnmount(picker.stop)
 
 const groups = computed(() =>
   (categories.data.value ?? []).map((c) => ({
@@ -45,8 +56,16 @@ const sowDate = computed({ get: () => fromIsoDate(sowOn.value), set: (d) => (sow
 const shares = [1, 0.7, 0.5, 0.3].map((value) => ({ value, label: `${value * 100}%` }))
 
 const input = computed<PlanPlantingInput | undefined>(() =>
-  varietyId.value
-    ? { bedId: props.bedId, varietyId: varietyId.value, share: share.value, sowOn: sowOn.value, direct: direct.value, notes: undefined }
+  varietyId.value && (!spots.value || count.value)
+    ? {
+        bedId: props.bed.id,
+        varietyId: varietyId.value,
+        share: spots.value ? 1 : share.value,
+        sowOn: sowOn.value,
+        direct: direct.value,
+        notes: undefined,
+        ...(spots.value && { count: count.value ?? undefined, spotX: picker.point.value?.x, spotY: picker.point.value?.y }),
+      }
     : undefined,
 )
 
@@ -72,7 +91,7 @@ async function add() {
   if (!input.value) return
   try {
     await create.mutateAsync(input.value)
-    notify.success('map.plan.added', { name: variety.value?.name ?? '', bed: props.bedCode })
+    notify.success('map.plan.added', { name: variety.value?.name ?? '', bed: props.bed.code })
     emit('done')
   } catch (error) {
     notify.error(error)
@@ -82,7 +101,7 @@ async function add() {
 
 <template>
   <form class="plan" @submit.prevent="add">
-    <h3>{{ t('map.plan.title', { bed: bedCode }) }}</h3>
+    <h3>{{ t('map.plan.title', { bed: bed.code }) }}</h3>
     <FormField :label="t('map.plan.variety')" for="p-variety">
       <Select
         v-model="varietyId"
@@ -100,10 +119,14 @@ async function add() {
       <FormField :label="t('map.plan.sowOn')" for="p-date">
         <DatePicker v-model="sowDate" input-id="p-date" show-icon date-format="dd/mm/yy" />
       </FormField>
-      <FormField :label="t('map.plan.share')">
+      <FormField v-if="spots" :label="t('map.plan.count')" for="p-count">
+        <NumberInput v-model="count" input-id="p-count" :min="1" :max="999" show-buttons />
+      </FormField>
+      <FormField v-else :label="t('map.plan.share')">
         <SelectButton v-model="share" :options="shares" option-label="label" option-value="value" :allow-empty="false" />
       </FormField>
     </div>
+    <span v-if="spots" class="muted small">📍 {{ t('map.plan.pickSpot') }}</span>
     <label v-if="variety?.sowIndoor" class="row small">
       <Checkbox v-model="direct" binary input-id="p-direct" />
       <span>{{ t('map.plan.direct') }}</span>

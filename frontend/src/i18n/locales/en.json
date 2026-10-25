@@ -107,7 +107,9 @@
     "linesTotal": "The lines add up to {lines}, the total is {total}.",
     "unknownCostCategory": "Choose a category.",
     "attachmentType": "Only PDF, JPG, PNG, WebP or HEIC.",
-    "attachmentTooLarge": "File is larger than {maxMb} MB."
+    "attachmentTooLarge": "File is larger than {maxMb} MB.",
+    "spotOutside": "The spot is outside the bed.",
+    "notSpotBed": "Count and spot only apply to a mixed bed."
   },
   "errors": {
     "generic": "Something went wrong. Please try again.",
@@ -138,7 +140,8 @@
     },
     "bed": {
       "inUse": "A bed with plantings cannot be removed.",
-      "duplicateCode": "That bed code already exists on this site."
+      "duplicateCode": "That bed code already exists on this site.",
+      "kindInUse": "The kind of bed cannot change once it has plantings."
     },
     "access": {
       "pending": "You do not have access yet.",
@@ -422,7 +425,9 @@
       "noConflicts": "No conflicts with rotation, neighbours or sun.",
       "calculating": "Calculating…",
       "add": "Add to plan",
-      "added": "{name} added to {bed}"
+      "added": "{name} added to {bed}",
+      "count": "Number of plants",
+      "pickSpot": "Tap the bed to choose the spot."
     },
     "overview": {
       "title": "Overview · {site}",
@@ -439,6 +444,11 @@
       "nothingHarvested": "Nothing recorded yet.",
       "checks": "Checks {year}",
       "noIssues": "No issues found."
+    },
+    "find": {
+      "placeholder": "Find a crop…",
+      "allOf": "All {name}",
+      "none": "Nowhere on this date."
     }
   },
   "checks": {
@@ -590,7 +600,16 @@
     "all": "All items",
     "discardTitle": "Discard changes?",
     "discard": "Your design has unsaved changes. Do you want to discard them?",
-    "discardConfirm": "Discard"
+    "discardConfirm": "Discard",
+    "addSpotsBed": "Mixed bed",
+    "bedKind": {
+      "label": "Kind of bed",
+      "strips": "Strips (share of the bed)",
+      "spots": "Mixed bed (plant spots)",
+      "stripsHelp": "Each planting takes a share of the bed, in strips along its length.",
+      "spotsHelp": "For small beds with different plants: each planting is a number of plants in one spot.",
+      "inUse": "The kind of bed is fixed once it has plantings."
+    }
   },
   "notes": {
     "title": "Log",

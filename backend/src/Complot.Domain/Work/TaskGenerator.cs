@@ -27,7 +27,7 @@ public static class TaskGenerator
     public static IEnumerable<GardenTask> ForPlanting(Planting p, int fromYear, int toYear)
     {
         var variety = p.Variety;
-        var area = p.Bed.Shape.Area * p.Share;
+        var area = p.UsedArea();
         GardenTask Task(TaskKind kind, DateOnly date, int? year = null, string? title = null, int? minutes = null) =>
             new(title is null ? TaskKeys.Planting(p.Id, kind, year) : TaskKeys.PlantingCare(p.Id, title, date.Year),
                 kind, date, p.Bed.SiteId, p.BedId, null, p.Id, variety.Name, title, minutes ?? Minutes(kind, area));

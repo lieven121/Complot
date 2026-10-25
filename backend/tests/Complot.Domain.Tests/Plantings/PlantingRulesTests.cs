@@ -120,3 +120,48 @@ public sealed class PlantingChecksTests
         Assert.Null(PlantingChecks.OutsideSowingWindow(Plant(Bed("A1", 0), Bean, new DateOnly(2026, 5, 20))));
     }
 }
+
+public sealed class SpotPlantingTests
+{
+    [Fact]
+    public void Spot_counts_its_plants_and_uses_their_spacing()
+    {
+        var spot = Spot(SpotsBed("M1"), CherryTomato, new DateOnly(2026, 2, 20), 2);
+        Assert.Equal(2, spot.PlantCount());
+        Assert.Equal(0.7, spot.UsedArea(), 3); // 2 × 0.5 m × 0.7 m
+    }
+
+    [Fact]
+    public void Spot_without_spacing_uses_the_default_area_per_plant() =>
+        Assert.Equal(3 * Planting.DefaultSpotAreaM2, Spot(SpotsBed("M1"), Potato, new DateOnly(2026, 4, 12), 3).UsedArea(), 3);
+
+    [Fact]
+    public void Spot_needs_a_count_and_a_position_inside_the_bed()
+    {
+        var spot = Spot(SpotsBed("M1"), Onion, new DateOnly(2026, 3, 28), 4);
+        Assert.Null(spot.SpotProblem());
+        spot.SpotX = 1.2;
+        Assert.Equal(("spotX", "spotOutside"), spot.SpotProblem());
+        spot.Count = null;
+        Assert.Equal(("count", "notEmpty"), spot.SpotProblem());
+    }
+
+    [Fact]
+    public void Strips_bed_takes_no_spot_fields()
+    {
+        var planting = Plant(Bed("A1", 0), Onion, new DateOnly(2026, 3, 28));
+        Assert.Null(planting.SpotProblem());
+        planting.Count = 3;
+        Assert.Equal(("count", "notSpotBed"), planting.SpotProblem());
+    }
+
+    [Fact]
+    public void Rotation_counts_the_whole_spots_bed()
+    {
+        var bed = SpotsBed("M1");
+        var potato = Spot(bed, Potato, new DateOnly(2026, 4, 12), 3);
+        var tomato = Spot(bed, CherryTomato, new DateOnly(2027, 3, 1), 1);
+        tomato.SpotX = 0.1;
+        Assert.Single(PlantingChecks.Check([potato, tomato]), w => w.Code == "rotation" && w.PlantingId == tomato.Id);
+    }
+}

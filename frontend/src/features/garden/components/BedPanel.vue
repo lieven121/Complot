@@ -7,7 +7,7 @@ import type { BedDto, PlantingDto, PlantingWarningDto, TaskDto } from '@/shared/
 import { useFormat } from '@/shared/composables/useFormat'
 import { useNotify } from '@/shared/composables/useNotify'
 import TaskList from '@/features/tasks/components/TaskList.vue'
-import { phaseAt } from '../map'
+import { amountLabel, phaseAt } from '../map'
 import { useDeletePlanting } from '../queries'
 import BedGantt from './BedGantt.vue'
 import type { Crop } from './GardenMap.vue'
@@ -76,6 +76,9 @@ function deletePlanting(p: PlantingDto) {
       <span
         ><b>{{ t(`sun.${bed.sun}`) }}</b></span
       >
+      <span v-if="bed.kind === 'spots'"
+        ><b>{{ t('design.bedKind.spots') }}</b></span
+      >
       <span v-if="bed.soil"
         >{{ t('map.bed.soil') }} <b>{{ bed.soil }}</b></span
       >
@@ -85,7 +88,7 @@ function deletePlanting(p: PlantingDto) {
     <div class="stack">
       <RouterLink v-for="x in now" :key="x.planting.id" :to="{ name: 'variety', params: { id: x.planting.varietyId } }" class="item crop">
         {{ x.crop?.icon }} <b>{{ x.crop?.name }}</b>
-        <span v-if="x.planting.share < 1" class="muted">· {{ Math.round(x.planting.share * 100) }}%</span>
+        <span v-if="amountLabel(x.planting)" class="muted">· {{ amountLabel(x.planting) }}</span>
         <span class="end"
           ><span class="phase" :class="x.phase">{{ t(`phase.${x.phase}`) }}</span></span
         >
@@ -106,7 +109,7 @@ function deletePlanting(p: PlantingDto) {
     />
     <p class="muted small">{{ t('map.bed.ganttHelp') }}</p>
 
-    <PlantingForm v-if="planning" :bed-id="bed.id" :bed-code="bed.code" :date="date" @done="planning = false" />
+    <PlantingForm v-if="planning" :bed="bed" :date="date" @done="planning = false" />
     <Button v-else-if="!readonly" :label="t('map.plan.open')" icon="pi pi-plus" @click="planning = true" />
 
     <h3>{{ t('map.bed.tasks') }}</h3>
@@ -121,6 +124,7 @@ function deletePlanting(p: PlantingDto) {
     <div class="stack">
       <div v-for="p in plantings" :key="p.id" class="item">
         {{ cropOf(p.varietyId)?.icon }} {{ cropOf(p.varietyId)?.name }}
+        <span v-if="p.count != null" class="muted small">{{ amountLabel(p) }}</span>
         <span class="muted small">{{ formatDate(p.sowOn) }} → {{ p.clearOn ? formatDate(p.clearOn) : '∞' }}</span>
         <span class="end">
           <template v-if="p.sowOn > period.today && !readonly">

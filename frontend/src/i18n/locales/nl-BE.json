@@ -107,7 +107,9 @@
     "linesTotal": "De lijnen tellen op tot {lines}, het totaal is {total}.",
     "unknownCostCategory": "Kies een categorie.",
     "attachmentType": "Enkel PDF, JPG, PNG, WebP of HEIC.",
-    "attachmentTooLarge": "Bestand is groter dan {maxMb} MB."
+    "attachmentTooLarge": "Bestand is groter dan {maxMb} MB.",
+    "spotOutside": "De plek ligt buiten het bed.",
+    "notSpotBed": "Aantal en plek gelden alleen in een gemengd bed."
   },
   "errors": {
     "generic": "Er liep iets mis. Probeer opnieuw.",
@@ -138,7 +140,8 @@
     },
     "bed": {
       "inUse": "Een bed met teelten kan niet verwijderd worden.",
-      "duplicateCode": "Die bedcode bestaat al op deze locatie."
+      "duplicateCode": "Die bedcode bestaat al op deze locatie.",
+      "kindInUse": "Het soort bed kan niet meer veranderen zodra er teelten in staan."
     },
     "access": {
       "pending": "Je hebt nog geen toegang.",
@@ -422,7 +425,9 @@
       "noConflicts": "Geen conflicten met vruchtwisseling, buren of zon.",
       "calculating": "Berekenen…",
       "add": "Toevoegen aan planning",
-      "added": "{name} toegevoegd aan {bed}"
+      "added": "{name} toegevoegd aan {bed}",
+      "count": "Aantal planten",
+      "pickSpot": "Tik op het bed om de plek te kiezen."
     },
     "overview": {
       "title": "Overzicht · {site}",
@@ -439,6 +444,11 @@
       "nothingHarvested": "Nog niets geregistreerd.",
       "checks": "Controles {year}",
       "noIssues": "Geen problemen gevonden."
+    },
+    "find": {
+      "placeholder": "Zoek een gewas…",
+      "allOf": "Alle {name}",
+      "none": "Nergens op deze datum."
     }
   },
   "checks": {
@@ -590,7 +600,16 @@
     "all": "Alle elementen",
     "discardTitle": "Wijzigingen weggooien?",
     "discard": "Je ontwerp heeft niet-bewaarde wijzigingen. Wil je ze weggooien?",
-    "discardConfirm": "Weggooien"
+    "discardConfirm": "Weggooien",
+    "addSpotsBed": "Gemengd bed",
+    "bedKind": {
+      "label": "Soort bed",
+      "strips": "Stroken (deel van het bed)",
+      "spots": "Gemengd bed (plantplekken)",
+      "stripsHelp": "Elke teelt krijgt een deel van het bed, in stroken over de lengte.",
+      "spotsHelp": "Voor kleine bedden met verschillende planten: elke teelt is een aantal planten op een plek.",
+      "inUse": "Het soort bed ligt vast zodra er teelten in staan."
+    }
   },
   "notes": {
     "title": "Logboek",

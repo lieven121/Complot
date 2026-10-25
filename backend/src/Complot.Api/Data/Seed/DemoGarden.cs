@@ -20,12 +20,14 @@ internal static class DemoGarden
     }
 
     private sealed record SeedPlot(string Key, string Name, PlotType Type, SeedShape Shape);
-    private sealed record SeedBed(string Code, string Plot, SeedShape Shape, SunExposure Sun, string? Soil);
+    private sealed record SeedBed(string Code, string Plot, SeedShape Shape, SunExposure Sun, string? Soil, BedKind Kind = BedKind.Strips);
     private sealed record SeedPath(string Name, PathMaterial Material, SeedShape Shape);
     private sealed record SeedFeature(string Name, FeatureType Type, SeedShape Shape);
     private sealed record SeedTree(string Name, string? Cultivar, TreeKind Kind, double X, double Y, double CrownDiameter, DateOnly? PlantedOn, List<YearlyAction> Actions);
     private sealed record SeedSite(string Name, List<SeedPlot> Plots, List<SeedBed> Beds, List<SeedPath> Paths, List<SeedFeature> Features, List<SeedTree> Trees);
-    private sealed record SeedPlanting(string Bed, string Variety, string? Cultivar, double Share, DateOnly SowOn, DateOnly? PlantOutOn, DateOnly? HarvestFrom, DateOnly? HarvestTo, DateOnly? ClearOn);
+    private sealed record SeedPlanting(
+        string Bed, string Variety, string? Cultivar, double Share, DateOnly SowOn, DateOnly? PlantOutOn, DateOnly? HarvestFrom, DateOnly? HarvestTo, DateOnly? ClearOn,
+        int? Count = null, double? SpotX = null, double? SpotY = null);
     private sealed record SeedPerson(string Key, string Name, string Color);
     private sealed record SeedPlantingRef(string Bed, string Variety, string? Cultivar, DateOnly SowOn);
     private sealed record SeedNote(string? Bed, string? Tree, SeedPlantingRef? Planting, string? Person, DateOnly Date, NoteTag Tag, string Text, decimal? HarvestQuantity, string? HarvestUnit);
@@ -71,7 +73,7 @@ internal static class DemoGarden
             db.Plots.AddRange(plots.Values);
             foreach (var b in s.Beds)
             {
-                var bed = new Bed { SiteId = site.Id, PlotId = plots[b.Plot].Id, Code = b.Code, Shape = b.Shape.ToDomain(), Sun = b.Sun, Soil = b.Soil };
+                var bed = new Bed { SiteId = site.Id, PlotId = plots[b.Plot].Id, Code = b.Code, Kind = b.Kind, Shape = b.Shape.ToDomain(), Sun = b.Sun, Soil = b.Soil };
                 bedsByCode[b.Code] = bed;
                 db.Beds.Add(bed);
             }
@@ -94,7 +96,11 @@ internal static class DemoGarden
         {
             var variety = varieties[(p.Variety, p.Cultivar)];
             var bed = bedsByCode[p.Bed];
-            var planting = new Planting { BedId = bed.Id, Bed = bed, VarietyId = variety.Id, Variety = variety, Share = p.Share };
+            var planting = new Planting
+            {
+                BedId = bed.Id, Bed = bed, VarietyId = variety.Id, Variety = variety, Share = p.Share,
+                Count = p.Count, SpotX = p.SpotX, SpotY = p.SpotY,
+            };
             planting.ApplyDates(new PlantingDates(p.SowOn, p.PlantOutOn, p.HarvestFrom, p.HarvestTo, p.ClearOn));
             plantings[new SeedPlantingRef(p.Bed, p.Variety, p.Cultivar, p.SowOn)] = planting;
             db.Plantings.Add(planting);

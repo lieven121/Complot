@@ -2,7 +2,8 @@
 import { computed, onMounted, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { BedDto, PlantingDto, PlantingPhase, SiteLayoutDto } from '@/shared/api'
-import { IN_BED, layoutBounds, phaseAt, PHASE_OPACITY } from '../map'
+import { IN_BED, layoutBounds, phaseAt, PHASE_OPACITY, type Spot, spotsOf } from '../map'
+import type { Point } from '../spotPicker'
 import ShapeSvg from './ShapeSvg.vue'
 
 export interface Crop {
@@ -25,12 +26,22 @@ const props = defineProps<{
   warningBedIds?: ReadonlySet<string>
   alertIds?: ReadonlySet<string>
   designMode?: boolean
+  /** While set, a tap inside this bed reports the point (`pick`) instead of selecting. */
+  pickBedId?: string
+  /** The point picked so far (m from the bed's top-left corner), drawn as a ring. */
+  pickPoint?: Point
+  /** Spots in the selected bed can be dragged to a new place (`moveSpot`). */
+  spotsEditable?: boolean
+  /** When set, other beds are dimmed (crop finder). */
+  highlightBedIds?: ReadonlySet<string>
 }>()
 const emit = defineEmits<{
   select: [id: string | undefined]
   moveStart: [id: string]
   move: [id: string, dx: number, dy: number]
   moveEnd: [id: string]
+  pick: [point: Point]
+  moveSpot: [plantingId: string, point: Point]
 }>()
 
 const { t } = useI18n()
@@ -69,13 +80,31 @@ onMounted(() => svg.value && observer.observe(svg.value))
 onBeforeUnmount(() => observer.disconnect())
 watch(() => props.layout, fit, { flush: 'post' })
 
+/** Map coordinates (m) of a pointer position. */
+const toMap = (e: PointerEvent): Point => {
+  const rect = svg.value!.getBoundingClientRect()
+  return { x: (e.clientX - rect.left - view.tx) / view.k, y: (e.clientY - rect.top - view.ty) / view.k }
+}
+/** Point inside a bed (m from its top-left corner), kept within the bed and snapped to 5 cm. */
+const inBed = (bed: BedDto, p: Point): Point => {
+  const clamp = (v: number, max: number) => Math.round(Math.min(max, Math.max(0, v)) * 20) / 20
+  return { x: clamp(p.x - bed.shape.x, bed.shape.width), y: clamp(p.y - bed.shape.y, bed.shape.height) }
+}
+const bedById = (id: string | undefined) => props.layout.beds.find((b) => b.id === id)
+
 // Pointer: drag on empty space pans; in design mode drag on an item moves it; a click without movement selects.
-// The item is taken from pointerdown: after setPointerCapture, pointerup targets the <svg> itself.
-let gesture: { kind: 'pan' | 'move'; id?: string; x: number; y: number; tx: number; ty: number; moved: boolean } | undefined
+// Outside design mode a spot of the selected bed can be dragged. The item is taken from pointerdown: after
+// setPointerCapture, pointerup targets the <svg> itself.
+type Gesture = { kind: 'pan' | 'move' | 'spot'; id?: string; spotId?: string; x: number; y: number; tx: number; ty: number; moved: boolean }
+let gesture: Gesture | undefined
+/** Where the dragged spot is drawn until the parent has saved it. */
+const spotDrag = ref<{ id: string; x: number; y: number }>()
 function onDown(e: PointerEvent) {
-  const id = (e.target as Element).closest<SVGElement>('[data-id]')?.dataset.id
-  const kind = props.designMode && id ? 'move' : 'pan'
-  gesture = { kind, id, x: e.clientX, y: e.clientY, tx: view.tx, ty: view.ty, moved: false }
+  const target = e.target as Element
+  const id = target.closest<SVGElement>('[data-id]')?.dataset.id
+  const spotId = target.closest<SVGElement>('[data-spot]')?.dataset.spot
+  const kind = props.designMode && id ? 'move' : spotId && props.spotsEditable && id === props.selectedId ? 'spot' : 'pan'
+  gesture = { kind, id, spotId, x: e.clientX, y: e.clientY, tx: view.tx, ty: view.ty, moved: false }
   svg.value!.setPointerCapture(e.pointerId)
 }
 function onMove(e: PointerEvent) {
@@ -90,13 +119,28 @@ function onMove(e: PointerEvent) {
   if (gesture.kind === 'pan') {
     view.tx = gesture.tx + dx
     view.ty = gesture.ty + dy
+  } else if (gesture.kind === 'spot') {
+    const bed = bedById(gesture.id)!
+    const p = inBed(bed, toMap(e))
+    spotDrag.value = { id: gesture.spotId!, x: bed.shape.x + p.x, y: bed.shape.y + p.y }
   } else emit('move', gesture.id!, dx / view.k, dy / view.k)
 }
-function onUp() {
-  if (gesture?.moved && gesture.kind === 'move') emit('moveEnd', gesture.id!)
-  if (gesture && !gesture.moved) emit('select', gesture.id)
+function onUp(e: PointerEvent) {
+  const g = gesture
   gesture = undefined
+  if (!g) return
+  if (g.moved && g.kind === 'move') emit('moveEnd', g.id!)
+  else if (g.moved && g.kind === 'spot' && spotDrag.value) {
+    const bed = bedById(g.id)!
+    emit('moveSpot', g.spotId!, { x: spotDrag.value.x - bed.shape.x, y: spotDrag.value.y - bed.shape.y })
+  } else if (!g.moved && props.pickBedId && g.id === props.pickBedId) emit('pick', inBed(bedById(g.id)!, toMap(e)))
+  else if (!g.moved) emit('select', g.id)
 }
+// Keep the dragged spot where it was dropped until the saved planting comes back.
+watch(
+  () => props.plantings,
+  () => (spotDrag.value = undefined),
+)
 const onWheel = (e: WheelEvent) => {
   const rect = svg.value!.getBoundingClientRect()
   zoom(Math.pow(1.0015, -e.deltaY), e.clientX - rect.left, e.clientY - rect.top)
@@ -112,8 +156,19 @@ interface Segment {
   h: number
 }
 
-/** Crops in a bed on the date, each over its share of the bed along the long side. */
+/**
+ * Crops in a bed on the date: in a strips bed each over its share of the bed along the long side, in a spots bed as
+ * a circle per spot.
+ */
 function bedView(bed: BedDto) {
+  if (bed.kind === 'spots') {
+    const spots = spotsOf(bed, props.plantings, props.date).map((s): Spot & { crop?: Crop } => {
+      const dragged = spotDrag.value?.id === s.planting.id ? spotDrag.value : undefined
+      return { ...s, ...(dragged && { x: dragged.x, y: dragged.y }), crop: props.cropOf(s.planting.varietyId) }
+    })
+    const indoor = props.plantings.some((p) => p.bedId === bed.id && phaseAt(p, props.date) === 'indoor')
+    return { bed, segments: [], spots, indoor }
+  }
   const active = props.plantings
     .filter((p) => p.bedId === bed.id)
     .map((p) => ({ planting: p, phase: phaseAt(p, props.date) }))
@@ -131,7 +186,7 @@ function bedView(bed: BedDto) {
     offset += len
     return { ...x, crop: props.cropOf(x.planting.varietyId), ...seg }
   })
-  return { bed, segments, indoor: active.some((x) => x.phase === 'indoor') }
+  return { bed, segments, spots: [], indoor: active.some((x) => x.phase === 'indoor') }
 }
 const beds = computed(() => props.layout.beds.map(bedView))
 
@@ -241,7 +296,14 @@ const scaleBar = computed(() => ({ x: bounds.value.x + bounds.value.w - 2.6, y: 
           <text class="plot-label" :x="pl.shape.x + 0.1" :y="pl.shape.y - 0.16">{{ plotIcon[pl.type] }} {{ pl.name }}</text>
         </g>
 
-        <g v-for="v in beds" :key="v.bed.id" :data-id="v.bed.id" class="item bed" :aria-label="v.bed.code">
+        <g
+          v-for="v in beds"
+          :key="v.bed.id"
+          :data-id="v.bed.id"
+          class="item bed"
+          :class="{ dimmed: highlightBedIds && !highlightBedIds.has(v.bed.id), picking: pickBedId === v.bed.id }"
+          :aria-label="v.bed.code"
+        >
           <clipPath :id="`clip-${v.bed.id}`"><ShapeSvg :shape="v.bed.shape" /></clipPath>
           <ShapeSvg :shape="v.bed.shape" fill="url(#soil)" />
           <g :clip-path="`url(#clip-${v.bed.id})`">
@@ -261,6 +323,37 @@ const scaleBar = computed(() => ({ x: bounds.value.x + bounds.value.w - 2.6, y: 
               <rect v-if="seg.phase === 'clearing'" :x="seg.x" :y="seg.y" :width="seg.w" :height="seg.h" fill="url(#hatch)" />
               <text class="crop-label" :x="label(seg).cx" :y="label(seg).cy" :transform="label(seg).rotate">{{ label(seg).text }}</text>
             </template>
+            <g
+              v-for="spot in v.spots"
+              :key="spot.planting.id"
+              :data-spot="spot.planting.id"
+              class="spot"
+              :class="{ draggable: spotsEditable && selectedId === v.bed.id }"
+            >
+              <circle
+                :cx="spot.x"
+                :cy="spot.y"
+                :r="spot.r"
+                :fill="spot.crop?.color ?? '#888'"
+                :fill-opacity="Math.max(0.45, PHASE_OPACITY[spot.phase])"
+                stroke="#2a2a24"
+                :stroke-width="future ? 0.03 : 0.015"
+                :stroke-dasharray="future ? '.08 .05' : undefined"
+              />
+              <circle v-if="spot.phase === 'harvest'" :cx="spot.x" :cy="spot.y" :r="spot.r" fill="url(#dots)" />
+              <circle v-if="spot.phase === 'clearing'" :cx="spot.x" :cy="spot.y" :r="spot.r" fill="url(#hatch)" />
+              <text class="spot-icon" :x="spot.x" :y="spot.y" :font-size="Math.min(0.3, spot.r * 1.3)">{{ spot.crop?.icon }}</text>
+              <text v-if="(spot.planting.count ?? 1) > 1" class="spot-count" :x="spot.x + spot.r * 0.7" :y="spot.y + spot.r * 0.85">
+                {{ spot.planting.count }}
+              </text>
+            </g>
+            <circle
+              v-if="pickBedId === v.bed.id && pickPoint"
+              class="pick"
+              :cx="v.bed.shape.x + pickPoint.x"
+              :cy="v.bed.shape.y + pickPoint.y"
+              r=".12"
+            />
           </g>
           <circle
             v-if="v.bed.shape.kind === 'keyhole'"
@@ -396,6 +489,37 @@ svg {
 .outline.selected {
   stroke: var(--c-ink);
   stroke-width: 0.12;
+}
+.bed.dimmed {
+  opacity: 0.3;
+}
+.bed.picking {
+  cursor: crosshair;
+}
+.spot.draggable {
+  cursor: move;
+}
+.spot-icon {
+  text-anchor: middle;
+  dominant-baseline: central;
+  pointer-events: none;
+}
+.spot-count {
+  font-size: 0.16px;
+  font-weight: 800;
+  text-anchor: middle;
+  fill: #2a2a24;
+  paint-order: stroke;
+  stroke: #fff;
+  stroke-width: 0.05px;
+  pointer-events: none;
+}
+.pick {
+  fill: none;
+  stroke: var(--c-ink);
+  stroke-width: 0.04;
+  stroke-dasharray: 0.06 0.04;
+  pointer-events: none;
 }
 .bed-code {
   font-size: 0.24px;

@@ -47,7 +47,7 @@ public sealed class GardenTests(SeededApiFactory factory) : IClassFixture<Seeded
     {
         var site = await Read<SiteDto>(await Post("/api/sites", new SiteInput("Testtuin", null)));
         var plot = new PlotDto(Guid.NewGuid(), "Perceel", PlotType.Open, new ShapeDto(ShapeKind.Rect, 0, 0, 5, 5));
-        var bed = new BedDto(Guid.NewGuid(), plot.Id, "T1", new ShapeDto(ShapeKind.Keyhole, 1, 1, 3, 3), Domain.Catalog.SunExposure.Full, null, null, 0);
+        var bed = new BedDto(Guid.NewGuid(), plot.Id, "T1", BedKind.Strips, new ShapeDto(ShapeKind.Keyhole, 1, 1, 3, 3), Domain.Catalog.SunExposure.Full, null, null, 0);
         var path = new PathDto(Guid.NewGuid(), "Pad", PathMaterial.Grass, new ShapeDto(ShapeKind.Rect, 0, 5, 5, 0.6));
         var layout = new SiteLayoutDto([plot], [bed], [path], [], []);
 
@@ -130,6 +130,48 @@ public sealed class GardenTests(SeededApiFactory factory) : IClassFixture<Seeded
         Assert.Equal(new DateOnly(2027, 7, 8), adjusted.ClearOn);
 
         Assert.Equal(HttpStatusCode.NoContent, (await _client.DeleteAsync($"/api/plantings/{created.Id}", Ct)).StatusCode);
+    }
+
+    [Fact]
+    public async Task Demo_spots_bed_holds_counted_plants()
+    {
+        var home = await Home();
+        var m1 = (await Layout(home.Id)).Beds.Single(b => b.Code == "M1");
+        Assert.Equal(BedKind.Spots, m1.Kind);
+        var plantings = await Get<PlantingDto[]>($"/api/sites/{home.Id}/plantings?from=2026-01-01&to=2026-12-31");
+        var basil = plantings!.Single(p => p.BedId == m1.Id && p.Count == 3);
+        Assert.Equal(3, basil.PlantCount);
+        Assert.True(basil.UsedArea < 0.5);
+    }
+
+    [Fact]
+    public async Task Spot_plantings_need_a_count_and_a_position_inside_the_bed()
+    {
+        var layout = await Layout((await Home()).Id);
+        var m2 = layout.Beds.Single(b => b.Code == "M2");
+        var strips = layout.Beds.Single(b => b.Code == "B3");
+        var lettuce = await Variety("Pluksla");
+        var input = new PlanPlantingInput(m2.Id, lettuce.Id, 1, new DateOnly(2027, 4, 1), false, null, 4, 0.5, 0.5);
+
+        Assert.Equal("notEmpty", await Code(await Post("/api/plantings/preview", input with { Count = null }), HttpStatusCode.BadRequest));
+        Assert.Equal("spotOutside", await Code(await Post("/api/plantings/preview", input with { SpotX = 1.5 }), HttpStatusCode.BadRequest));
+        Assert.Equal("notSpotBed", await Code(await Post("/api/plantings/preview", input with { BedId = strips.Id }), HttpStatusCode.BadRequest));
+
+        var created = await Read<PlantingDto>(await Post("/api/plantings", input));
+        Assert.Equal(4, created.PlantCount);
+        var moved = await Read<PlantingDto>(await Put($"/api/plantings/{created.Id}",
+            new UpdatePlantingInput(1, created.SowOn, null, created.HarvestFrom, created.HarvestTo, created.ClearOn, null, 5, 0.9, 0.2)));
+        Assert.Equal((5, 0.9, 0.2), (moved.Count!.Value, moved.SpotX!.Value, moved.SpotY!.Value));
+        Assert.Equal(HttpStatusCode.NoContent, (await _client.DeleteAsync($"/api/plantings/{created.Id}", Ct)).StatusCode);
+    }
+
+    [Fact]
+    public async Task Kind_of_a_bed_in_use_cannot_change()
+    {
+        var home = await Home();
+        var layout = await Layout(home.Id);
+        var changed = layout with { Beds = layout.Beds.Select(b => b.Code == "A1" ? b with { Kind = BedKind.Spots } : b).ToList() };
+        Assert.Equal("bed.kindInUse", await Code(await Put($"/api/sites/{home.Id}/layout", changed), HttpStatusCode.Conflict));
     }
 
     [Fact]

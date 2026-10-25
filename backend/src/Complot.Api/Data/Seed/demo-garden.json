@@ -50,6 +50,18 @@
             "width": 2.8,
             "height": 2.8
           }
+        },
+        {
+          "key": "P6",
+          "name": "Mengbedden",
+          "type": "open",
+          "shape": {
+            "kind": "rect",
+            "x": 3.6,
+            "y": 14,
+            "width": 3.9,
+            "height": 1.6
+          }
         }
       ],
       "beds": [
@@ -234,6 +246,34 @@
           },
           "sun": "full",
           "soil": "Schraal en zandig (kruidenspiraal)"
+        },
+        {
+          "code": "M1",
+          "plot": "P6",
+          "kind": "spots",
+          "shape": {
+            "kind": "rect",
+            "x": 3.8,
+            "y": 14.2,
+            "width": 1.2,
+            "height": 1.2
+          },
+          "sun": "full",
+          "soil": null
+        },
+        {
+          "code": "M2",
+          "plot": "P6",
+          "kind": "spots",
+          "shape": {
+            "kind": "rect",
+            "x": 5.9,
+            "y": 14.2,
+            "width": 1.2,
+            "height": 1.2
+          },
+          "sun": "full",
+          "soil": null
         }
       ],
       "paths": [
@@ -542,6 +582,90 @@
     }
   ],
   "plantings": [
+    {
+      "bed": "M1",
+      "variety": "Heirloom tomaat",
+      "cultivar": "Coeur de Boeuf",
+      "share": 1,
+      "count": 2,
+      "spotX": 0.35,
+      "spotY": 0.4,
+      "sowOn": "2026-03-01",
+      "plantOutOn": "2026-05-18",
+      "harvestFrom": "2026-07-14",
+      "harvestTo": "2026-09-15",
+      "clearOn": "2026-09-22"
+    },
+    {
+      "bed": "M1",
+      "variety": "Basilicum",
+      "cultivar": "Genovese",
+      "share": 1,
+      "count": 3,
+      "spotX": 0.85,
+      "spotY": 0.35,
+      "sowOn": "2026-03-20",
+      "plantOutOn": "2026-05-01",
+      "harvestFrom": "2026-05-29",
+      "harvestTo": "2026-08-07",
+      "clearOn": "2026-08-14"
+    },
+    {
+      "bed": "M1",
+      "variety": "Goudsbloem",
+      "cultivar": "Calendula officinalis",
+      "share": 1,
+      "count": 1,
+      "spotX": 0.8,
+      "spotY": 0.9,
+      "sowOn": "2026-04-15",
+      "plantOutOn": null,
+      "harvestFrom": "2026-06-14",
+      "harvestTo": "2026-09-20",
+      "clearOn": "2026-09-27"
+    },
+    {
+      "bed": "M1",
+      "variety": "Kerstomaat",
+      "cultivar": "Gardener's Delight",
+      "share": 1,
+      "count": 2,
+      "spotX": 0.4,
+      "spotY": 0.7,
+      "sowOn": "2027-02-20",
+      "plantOutOn": "2027-04-15",
+      "harvestFrom": "2027-06-20",
+      "harvestTo": "2027-09-12",
+      "clearOn": "2027-09-19"
+    },
+    {
+      "bed": "M2",
+      "variety": "Spinazie",
+      "cultivar": "Matador",
+      "share": 1,
+      "count": 6,
+      "spotX": 0.6,
+      "spotY": 0.4,
+      "sowOn": "2026-10-01",
+      "plantOutOn": null,
+      "harvestFrom": "2026-11-20",
+      "harvestTo": "2027-01-01",
+      "clearOn": "2027-01-08"
+    },
+    {
+      "bed": "M2",
+      "variety": "Goudsbloem",
+      "cultivar": "Calendula officinalis",
+      "share": 1,
+      "count": 2,
+      "spotX": 0.35,
+      "spotY": 0.9,
+      "sowOn": "2026-04-15",
+      "plantOutOn": null,
+      "harvestFrom": "2026-06-14",
+      "harvestTo": "2026-09-20",
+      "clearOn": "2026-09-27"
+    },
     {
       "bed": "A1",
       "variety": "Aardappel",

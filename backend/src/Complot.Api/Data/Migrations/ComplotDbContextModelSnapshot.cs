@@ -565,6 +565,9 @@ namespace Complot.Api.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("Kind")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Notes")
                         .HasMaxLength(2000)
                         .HasColumnType("TEXT");
@@ -885,6 +888,9 @@ namespace Complot.Api.Data.Migrations
                     b.Property<DateOnly?>("ClearOn")
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("Count")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
@@ -906,6 +912,12 @@ namespace Complot.Api.Data.Migrations
 
                     b.Property<DateOnly>("SowOn")
                         .HasColumnType("TEXT");
+
+                    b.Property<double?>("SpotX")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("SpotY")
+                        .HasColumnType("REAL");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");

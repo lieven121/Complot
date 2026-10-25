@@ -30,6 +30,16 @@ public sealed class Plot : Entity
     public required Shape Shape { get; set; }
 }
 
+/// <summary>
+/// How crops are laid out in a bed: <see cref="Strips"/> gives each planting a share along the long side;
+/// <see cref="Spots"/> places a counted number of plants at a point (small mixed beds).
+/// </summary>
+public enum BedKind
+{
+    Strips,
+    Spots,
+}
+
 public sealed class Bed : Entity
 {
     /// <summary>Beds closer than this (same plot) count as neighbours for companion planting.</summary>
@@ -38,6 +48,7 @@ public sealed class Bed : Entity
     public Guid SiteId { get; set; }
     public Guid PlotId { get; set; }
     public required string Code { get; set; }
+    public BedKind Kind { get; set; } = BedKind.Strips;
     public required Shape Shape { get; set; }
     public SunExposure Sun { get; set; } = SunExposure.Full;
     public string? Soil { get; set; }

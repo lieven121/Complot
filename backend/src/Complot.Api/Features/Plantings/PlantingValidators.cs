@@ -11,6 +11,7 @@ public sealed class PlanPlantingInputValidator : AbstractValidator<PlanPlantingI
         RuleFor(x => x.BedId).MustAsync((id, ct) => db.Beds.ExistsAsync(id, ct)).WithErrorCode("unknownBed");
         RuleFor(x => x.VarietyId).MustAsync((id, ct) => db.Varieties.ExistsAsync(id, ct)).WithErrorCode("unknownVariety");
         RuleFor(x => x.Share).InclusiveBetween(0.1, 1);
+        RuleFor(x => x.Count).InclusiveBetween(1, 999).When(x => x.Count is not null);
         RuleFor(x => x.Notes).MaximumLength(2000);
     }
 }
@@ -20,6 +21,7 @@ public sealed class UpdatePlantingInputValidator : AbstractValidator<UpdatePlant
     public UpdatePlantingInputValidator()
     {
         RuleFor(x => x.Share).InclusiveBetween(0.1, 1);
+        RuleFor(x => x.Count).InclusiveBetween(1, 999).When(x => x.Count is not null);
         RuleFor(x => x.PlantOutOn).GreaterThanOrEqualTo(x => x.SowOn).When(x => x.PlantOutOn is not null);
         RuleFor(x => x.HarvestFrom).GreaterThanOrEqualTo(x => x.PlantOutOn ?? x.SowOn).When(x => x.HarvestFrom is not null);
         RuleFor(x => x.HarvestTo).NotNull().When(x => x.HarvestFrom is not null);

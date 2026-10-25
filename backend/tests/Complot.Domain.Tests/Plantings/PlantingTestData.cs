@@ -57,7 +57,18 @@ internal static class PlantingTestData
     public static Bed Bed(string code, double x, Guid? plotId = null, SunExposure sun = SunExposure.Full) =>
         new() { Code = code, PlotId = plotId ?? PlotId, Shape = new Shape(ShapeKind.Rect, x, 0, 1.2, 4), Sun = sun };
 
+    public static Bed SpotsBed(string code, double x = 0) =>
+        new() { Code = code, PlotId = PlotId, Kind = BedKind.Spots, Shape = new Shape(ShapeKind.Rect, x, 0, 1, 1) };
+
     public static readonly Guid PlotId = Guid.NewGuid();
+
+    /// <summary>A spot of <paramref name="count"/> plants in the middle of a spots bed.</summary>
+    public static Planting Spot(Bed bed, PlantVariety variety, DateOnly sowOn, int count)
+    {
+        var planting = Plant(bed, variety, sowOn);
+        (planting.Count, planting.SpotX, planting.SpotY) = (count, 0.5, 0.5);
+        return planting;
+    }
 
     public static Planting Plant(Bed bed, PlantVariety variety, DateOnly sowOn, bool direct = false)
     {

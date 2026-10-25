@@ -4330,12 +4330,15 @@ export interface BedDto {
     id: string;
     plotId: string;
     code: string;
+    kind: BedKind;
     shape: ShapeDto;
     sun: SunExposure;
     soil: string | undefined;
     notes: string | undefined;
     area: number;
 }
+
+export type BedKind = "strips" | "spots";
 
 export interface BusyDto {
     start: string;
@@ -4680,6 +4683,9 @@ export interface PlanPlantingInput {
     sowOn: string;
     direct: boolean;
     notes: string | undefined;
+    count?: number | undefined;
+    spotX?: number | undefined;
+    spotY?: number | undefined;
 }
 
 export interface PlantingDto {
@@ -4687,6 +4693,9 @@ export interface PlantingDto {
     bedId: string;
     varietyId: string;
     share: number;
+    count: number | undefined;
+    spotX: number | undefined;
+    spotY: number | undefined;
     sowOn: string;
     plantOutOn: string | undefined;
     harvestFrom: string | undefined;
@@ -4694,6 +4703,7 @@ export interface PlantingDto {
     clearOn: string | undefined;
     notes: string | undefined;
     plantCount: number | undefined;
+    usedArea: number;
     phases: PhaseSegmentDto[];
 }
 
@@ -4920,6 +4930,9 @@ export interface UpdatePlantingInput {
     harvestTo: string | undefined;
     clearOn: string | undefined;
     notes: string | undefined;
+    count?: number | undefined;
+    spotX?: number | undefined;
+    spotY?: number | undefined;
 }
 
 export interface UserDto {
