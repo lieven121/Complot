@@ -201,6 +201,7 @@ user(id, oidc_sub, name, email)       audit(id, user_id, entity, entity_id, acti
 | **5b Admin** | Users (OIDC + invitations), view/edit access per location, archive/delete locations, admin page | done |
 | **6 Planner** | Week planner (DnD + tap), people, Google OAuth, free/busy, event sync, iCal feed; access links for volunteers | done |
 | **7 Tools & costs** | Tools + maintenance tasks + demand; invoices with attachments, manual split + AI import, reports | done |
+| **7b Small beds** | Mixed beds with counted plant spots (tap to place, drag to move; rotation per whole bed), crop finder on the map, reference areas and lines (walls) | done |
 | **8 Polish** | Polygons, backups UI, full export/import, accessibility, Playwright e2e (mobile), PWA option | next |
 | Later | Weather/frost alerts, per-person/variety estimate learning, tree shade on beds, yield statistics, seed-saving tracking, budgets |  |
 
