@@ -59,6 +59,17 @@ internal sealed class GardenFeatureConfiguration : IEntityTypeConfiguration<Gard
     }
 }
 
+internal sealed class MapMarkerConfiguration : IEntityTypeConfiguration<MapMarker>
+{
+    public void Configure(EntityTypeBuilder<MapMarker> b)
+    {
+        b.ToTable("Markers");
+        b.Property(m => m.Label).HasMaxLength(100);
+        b.Property(m => m.Color).HasMaxLength(7);
+        b.HasOne<Site>().WithMany().HasForeignKey(m => m.SiteId).OnDelete(DeleteBehavior.Cascade);
+    }
+}
+
 internal sealed class TreeConfiguration : IEntityTypeConfiguration<Tree>
 {
     public void Configure(EntityTypeBuilder<Tree> b)

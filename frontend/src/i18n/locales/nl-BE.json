@@ -109,7 +109,8 @@
     "attachmentType": "Enkel PDF, JPG, PNG, WebP of HEIC.",
     "attachmentTooLarge": "Bestand is groter dan {maxMb} MB.",
     "spotOutside": "De plek ligt buiten het bed.",
-    "notSpotBed": "Aantal en plek gelden alleen in een gemengd bed."
+    "notSpotBed": "Aantal en plek gelden alleen in een gemengd bed.",
+    "lineTooShort": "Een lijn moet minstens 10 cm lang zijn."
   },
   "errors": {
     "generic": "Er liep iets mis. Probeer opnieuw.",
@@ -549,7 +550,8 @@
       "path": "Pad",
       "tree": "Boom / struik",
       "feature": "Element",
-      "plot": "Perceel"
+      "plot": "Perceel",
+      "marker": "Markering"
     },
     "code": "Code",
     "x": "X (oost)",
@@ -609,6 +611,22 @@
       "stripsHelp": "Elke teelt krijgt een deel van het bed, in stroken over de lengte.",
       "spotsHelp": "Voor kleine bedden met verschillende planten: elke teelt is een aantal planten op een plek.",
       "inUse": "Het soort bed ligt vast zodra er teelten in staan."
+    },
+    "markerKind": {
+      "area": "Vlak",
+      "line": "Lijn / muur"
+    },
+    "markerHelp": "Vlakken en lijnen zijn enkel referentiepunten (terras, muur, afsluiting): ze tellen niet mee in de planning.",
+    "label": "Label",
+    "color": "Kleur",
+    "thickness": "Dikte",
+    "lineStart": {
+      "x": "Begin X (oost)",
+      "y": "Begin Y (zuid)"
+    },
+    "lineEnd": {
+      "x": "Einde X (oost)",
+      "y": "Einde Y (zuid)"
     }
   },
   "notes": {

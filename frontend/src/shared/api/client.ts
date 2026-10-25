@@ -4589,6 +4589,17 @@ export interface ManualTaskInput {
     assigneeId: string | undefined;
 }
 
+export interface MarkerDto {
+    id: string;
+    kind: MarkerKind;
+    label: string | undefined;
+    color: string;
+    shape: ShapeDto;
+    thickness: number;
+}
+
+export type MarkerKind = "area" | "line";
+
 export interface MeDto {
     authMode: AuthModeKind;
     isAuthenticated: boolean;
@@ -4771,6 +4782,7 @@ export interface SiteLayoutDto {
     paths: PathDto[];
     features: FeatureDto[];
     trees: TreeDto[];
+    markers: MarkerDto[];
 }
 
 export type SiteRole = "view" | "edit";

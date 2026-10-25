@@ -109,7 +109,8 @@
     "attachmentType": "Only PDF, JPG, PNG, WebP or HEIC.",
     "attachmentTooLarge": "File is larger than {maxMb} MB.",
     "spotOutside": "The spot is outside the bed.",
-    "notSpotBed": "Count and spot only apply to a mixed bed."
+    "notSpotBed": "Count and spot only apply to a mixed bed.",
+    "lineTooShort": "A line must be at least 10 cm long."
   },
   "errors": {
     "generic": "Something went wrong. Please try again.",
@@ -549,7 +550,8 @@
       "path": "Path",
       "tree": "Tree / shrub",
       "feature": "Feature",
-      "plot": "Plot"
+      "plot": "Plot",
+      "marker": "Marker"
     },
     "code": "Code",
     "x": "X (east)",
@@ -609,6 +611,22 @@
       "stripsHelp": "Each planting takes a share of the bed, in strips along its length.",
       "spotsHelp": "For small beds with different plants: each planting is a number of plants in one spot.",
       "inUse": "The kind of bed is fixed once it has plantings."
+    },
+    "markerKind": {
+      "area": "Area",
+      "line": "Line / wall"
+    },
+    "markerHelp": "Areas and lines are only reference points (terrace, wall, fence): they don't count in the planning.",
+    "label": "Label",
+    "color": "Colour",
+    "thickness": "Thickness",
+    "lineStart": {
+      "x": "Start X (east)",
+      "y": "Start Y (south)"
+    },
+    "lineEnd": {
+      "x": "End X (east)",
+      "y": "End Y (south)"
     }
   },
   "notes": {

@@ -20,6 +20,12 @@ public sealed record PathDto(Guid Id, string Name, PathMaterial Material, ShapeD
 
 public sealed record FeatureDto(Guid Id, string Name, FeatureType Type, ShapeDto Shape);
 
+/// <summary>
+/// A reference area or line (see <see cref="MapMarker"/>). The shape is the area's box, or a line from (x, y) by
+/// (width, height), which may be zero or negative.
+/// </summary>
+public sealed record MarkerDto(Guid Id, MarkerKind Kind, string? Label, string Color, ShapeDto Shape, double Thickness);
+
 public sealed record TreeDto(
     Guid Id, string Name, string? Cultivar, TreeKind Kind, double X, double Y, double CrownDiameter, DateOnly? PlantedOn,
     List<YearlyActionDto> Actions);
@@ -29,7 +35,8 @@ public sealed record TreeDto(
 /// once; items keep their ids (new items get a client-generated id). <see cref="BedDto.Area"/> is ignored on save.
 /// </summary>
 public sealed record SiteLayoutDto(
-    List<PlotDto> Plots, List<BedDto> Beds, List<PathDto> Paths, List<FeatureDto> Features, List<TreeDto> Trees);
+    List<PlotDto> Plots, List<BedDto> Beds, List<PathDto> Paths, List<FeatureDto> Features, List<TreeDto> Trees,
+    List<MarkerDto> Markers);
 
 public static class LayoutMapping
 {
@@ -40,6 +47,8 @@ public static class LayoutMapping
     public static BedDto ToDto(this Bed b) => new(b.Id, b.PlotId, b.Code, b.Kind, b.Shape.ToDto(), b.Sun, b.Soil, b.Notes, Math.Round(b.Shape.Area, 2));
     public static PathDto ToDto(this GardenPath p) => new(p.Id, p.Name, p.Material, p.Shape.ToDto());
     public static FeatureDto ToDto(this GardenFeature f) => new(f.Id, f.Name, f.Type, f.Shape.ToDto());
+    public static MarkerDto ToDto(this MapMarker m) =>
+        new(m.Id, m.Kind, m.Label, m.Color, new ShapeDto(m.Outline, m.X, m.Y, m.Width, m.Height), m.Thickness);
     public static TreeDto ToDto(this Tree t) =>
         new(t.Id, t.Name, t.Cultivar, t.Kind, t.X, t.Y, t.CrownDiameter, t.PlantedOn, [.. t.Actions.ToDtos()]);
 }

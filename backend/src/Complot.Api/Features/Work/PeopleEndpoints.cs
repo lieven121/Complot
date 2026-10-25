@@ -16,7 +16,7 @@ public sealed class PersonInputValidator : AbstractValidator<PersonInput>
     public PersonInputValidator()
     {
         RuleFor(x => x.Name).NotEmpty().MaximumLength(100);
-        RuleFor(x => x.Color).NotEmpty().Matches("^#[0-9a-fA-F]{6}$").WithErrorCode("color");
+        RuleFor(x => x.Color).HexColor();
     }
 }
 

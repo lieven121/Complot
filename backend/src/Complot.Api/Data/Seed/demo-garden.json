@@ -276,6 +276,29 @@
           "soil": null
         }
       ],
+      "markers": [
+        {
+          "kind": "line",
+          "label": "Tuinmuur",
+          "color": "#8a7560",
+          "outline": "rect",
+          "x": -1.5,
+          "y": 16.3,
+          "width": 18,
+          "height": 0,
+          "thickness": 0.3
+        },
+        {
+          "kind": "area",
+          "label": "Terras",
+          "color": "#d9d4c8",
+          "outline": "rect",
+          "x": 12.5,
+          "y": 14,
+          "width": 3.5,
+          "height": 2
+        }
+      ],
       "paths": [
         {
           "name": "Hoofdpad",

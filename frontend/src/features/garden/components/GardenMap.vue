@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { BedDto, PlantingDto, PlantingPhase, SiteLayoutDto } from '@/shared/api'
+import type { BedDto, PlantingDto, PlantingPhase, ShapeDto, SiteLayoutDto } from '@/shared/api'
 import { IN_BED, layoutBounds, phaseAt, PHASE_OPACITY, type Spot, spotsOf } from '../map'
 import type { Point } from '../spotPicker'
 import ShapeSvg from './ShapeSvg.vue'
@@ -198,6 +198,14 @@ const label = (seg: Segment) => {
   return { text, cx, cy, rotate: seg.h > seg.w * 1.3 ? `rotate(-90 ${cx} ${cy})` : undefined }
 }
 
+/** A line's label sits in the middle, along the line but never upside down. */
+const lineLabel = (s: ShapeDto) => {
+  let angle = (Math.atan2(s.height, s.width) * 180) / Math.PI
+  if (angle > 90) angle -= 180
+  if (angle < -90) angle += 180
+  return `translate(${s.x + s.width / 2} ${s.y + s.height / 2}) rotate(${angle}) translate(0 -0.22)`
+}
+
 const plotIcon = { open: '🌾', greenhouse: '🏡', orchard: '🍎' } as const
 const pathFill = { woodChips: 'url(#chips)', grass: '#a9c58a', pavers: 'url(#pavers)', gravel: '#d6d0c2' } as const
 const featureStyle = {
@@ -267,6 +275,37 @@ const scaleBar = computed(() => ({ x: bounds.value.x + bounds.value.w - 2.6, y: 
             :x1="bounds.x"
             :x2="bounds.x + bounds.w"
           />
+        </g>
+
+        <g v-for="m in layout.markers" :key="m.id" :data-id="m.id" class="item marker">
+          <template v-if="m.kind === 'line'">
+            <line
+              :x1="m.shape.x"
+              :y1="m.shape.y"
+              :x2="m.shape.x + m.shape.width"
+              :y2="m.shape.y + m.shape.height"
+              :stroke="m.color"
+              :stroke-width="m.thickness"
+              stroke-linecap="square"
+            />
+            <!-- A wider invisible line, so a thin wall is easy to grab in the designer. -->
+            <line
+              v-if="designMode"
+              :x1="m.shape.x"
+              :y1="m.shape.y"
+              :x2="m.shape.x + m.shape.width"
+              :y2="m.shape.y + m.shape.height"
+              stroke="transparent"
+              :stroke-width="Math.max(m.thickness, 0.4)"
+            />
+            <text v-if="m.label" class="marker-label" :transform="lineLabel(m.shape)">{{ m.label }}</text>
+          </template>
+          <template v-else>
+            <ShapeSvg :shape="m.shape" :fill="m.color" fill-opacity=".7" :stroke="m.color" stroke-width=".04" />
+            <text v-if="m.label" class="marker-label" :x="m.shape.x + m.shape.width / 2" :y="m.shape.y + m.shape.height / 2">
+              {{ m.label }}
+            </text>
+          </template>
         </g>
 
         <g v-for="p in layout.paths" :key="p.id" :data-id="p.id" class="item">
@@ -489,6 +528,17 @@ svg {
 .outline.selected {
   stroke: var(--c-ink);
   stroke-width: 0.12;
+}
+.marker-label {
+  font-size: 0.26px;
+  font-weight: 650;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  fill: #4b5340;
+  paint-order: stroke;
+  stroke: rgba(255, 255, 255, 0.7);
+  stroke-width: 0.05px;
+  pointer-events: none;
 }
 .bed.dimmed {
   opacity: 0.3;

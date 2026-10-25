@@ -4677,6 +4677,47 @@
         },
         "additionalProperties": false
       },
+      "MarkerDto": {
+        "required": [
+          "id",
+          "kind",
+          "label",
+          "color",
+          "shape",
+          "thickness"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/MarkerKind"
+          },
+          "label": {
+            "type": "string",
+            "nullable": true
+          },
+          "color": {
+            "type": "string"
+          },
+          "shape": {
+            "$ref": "#/components/schemas/ShapeDto"
+          },
+          "thickness": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MarkerKind": {
+        "enum": [
+          "area",
+          "line"
+        ]
+      },
       "MeDto": {
         "required": [
           "authMode",
@@ -5401,7 +5442,8 @@
           "beds",
           "paths",
           "features",
-          "trees"
+          "trees",
+          "markers"
         ],
         "type": "object",
         "properties": {
@@ -5433,6 +5475,12 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/TreeDto"
+            }
+          },
+          "markers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MarkerDto"
             }
           }
         },

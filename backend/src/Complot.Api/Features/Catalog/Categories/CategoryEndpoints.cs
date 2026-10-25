@@ -22,7 +22,7 @@ public sealed class CategoryInputValidator : AbstractValidator<CategoryInput>
         RuleFor(x => x.Slug).NotEmpty().MaximumLength(60).Matches("^[a-z0-9]+(-[a-z0-9]+)*$").WithErrorCode("slug");
         RuleFor(x => x.Name).NotEmpty().MaximumLength(100);
         RuleFor(x => x.Icon).NotEmpty().MaximumLength(16);
-        RuleFor(x => x.Color).NotEmpty().Matches("^#[0-9a-fA-F]{6}$").WithErrorCode("color");
+        RuleFor(x => x.Color).HexColor();
         RuleFor(x => x.DefaultFamilyId)
             .MustAsync((id, ct) => db.Families.ExistsAsync(id!.Value, ct)).WithErrorCode("unknownFamily")
             .When(x => x.DefaultFamilyId is not null);

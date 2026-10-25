@@ -23,6 +23,7 @@ public sealed class ComplotDbContext(DbContextOptions<ComplotDbContext> options)
     public DbSet<Bed> Beds => Set<Bed>();
     public DbSet<GardenPath> Paths => Set<GardenPath>();
     public DbSet<GardenFeature> Features => Set<GardenFeature>();
+    public DbSet<MapMarker> Markers => Set<MapMarker>();
     public DbSet<Tree> Trees => Set<Tree>();
 
     public DbSet<Planting> Plantings => Set<Planting>();

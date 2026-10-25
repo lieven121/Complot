@@ -1,14 +1,14 @@
 import { computed, ref } from 'vue'
-import type { BedDto, BedKind, FeatureDto, PathDto, PlotDto, ShapeDto, SiteLayoutDto, TreeDto } from '@/shared/api'
+import type { BedDto, BedKind, FeatureDto, MarkerDto, MarkerKind, PathDto, PlotDto, ShapeDto, SiteLayoutDto, TreeDto } from '@/shared/api'
 
-export type ItemKind = 'plot' | 'bed' | 'path' | 'feature' | 'tree'
-export type LayoutItem = PlotDto | BedDto | PathDto | FeatureDto | TreeDto
+export type ItemKind = 'plot' | 'bed' | 'path' | 'feature' | 'tree' | 'marker'
+export type LayoutItem = PlotDto | BedDto | PathDto | FeatureDto | TreeDto | MarkerDto
 export interface Selection {
   kind: ItemKind
   id: string
 }
 
-const LISTS = { plot: 'plots', bed: 'beds', path: 'paths', feature: 'features', tree: 'trees' } as const
+const LISTS = { plot: 'plots', bed: 'beds', path: 'paths', feature: 'features', tree: 'trees', marker: 'markers' } as const
 const HISTORY_LIMIT = 100
 
 /** Positions snap to a 10 cm grid. */
@@ -102,12 +102,15 @@ export function useDesigner() {
   }
   const moveEnd = () => (dragOrigin = undefined)
 
-  /** Add an item at a point; a bed is a 1.2 × 4 m strips bed, or a 1 × 1 m spots bed (code M…) for mixed plantings. */
+  /**
+   * Add an item at a point. A bed is a 1.2 × 4 m strips bed, or with `variant` 'spots' a 1 × 1 m spots bed (code M…)
+   * for mixed plantings; a marker is a coloured area or, with `variant` 'line', a 3 m wall.
+   */
   function add(
     kind: ItemKind,
     at: { x: number; y: number },
     labels: { path: string; tree: string; plot: string; feature: string },
-    bedKind: BedKind = 'strips',
+    variant?: BedKind | MarkerKind,
   ) {
     record()
     lastEditKey = undefined
@@ -116,6 +119,7 @@ export function useDesigner() {
     const y = snap(at.y)
     const shape = (width: number, height: number, kind: ShapeDto['kind'] = 'rect'): ShapeDto => ({ kind, x, y, width, height })
     const layout = draft.value!
+    const bedKind: BedKind = variant === 'spots' ? 'spots' : 'strips'
     if (kind === 'bed') {
       const plot =
         layout.plots.find((p) => x >= p.shape.x && x <= p.shape.x + p.shape.width && y >= p.shape.y && y <= p.shape.y + p.shape.height) ??
@@ -136,6 +140,17 @@ export function useDesigner() {
     if (kind === 'plot') layout.plots.push({ id, name: labels.plot, type: 'open', shape: shape(5, 5) } satisfies PlotDto)
     if (kind === 'path') layout.paths.push({ id, name: labels.path, material: 'woodChips', shape: shape(0.8, 4) } satisfies PathDto)
     if (kind === 'feature') layout.features.push({ id, name: labels.feature, type: 'compost', shape: shape(2.2, 1) } satisfies FeatureDto)
+    if (kind === 'marker') {
+      const line = variant === 'line'
+      layout.markers.push({
+        id,
+        kind: line ? 'line' : 'area',
+        label: undefined,
+        color: line ? '#8a7560' : '#d9d4c8',
+        shape: line ? shape(3, 0) : shape(2, 2),
+        thickness: 0.25,
+      } satisfies MarkerDto)
+    }
     if (kind === 'tree') {
       layout.trees.push({
         id,

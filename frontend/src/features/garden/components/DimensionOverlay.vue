@@ -5,16 +5,29 @@ import { useFormat } from '@/shared/composables/useFormat'
 import ShapeSvg from './ShapeSvg.vue'
 
 /** Dimension lines and coordinates of the item selected in the designer (map units are meters). */
-const props = defineProps<{ item: { shape?: ShapeDto; x?: number; y?: number; crownDiameter?: number } }>()
+const props = defineProps<{ item: { shape?: ShapeDto; x?: number; y?: number; crownDiameter?: number; kind?: string } }>()
 const { decimal } = useFormat()
 const GAP = 0.35
 const TICK = 0.12
 const shape = computed(() => props.item.shape)
+/** A line marker: its length, and both ends. */
+const line = computed(() => {
+  const s = shape.value
+  return props.item.kind === 'line' && s
+    ? { x1: s.x, y1: s.y, x2: s.x + s.width, y2: s.y + s.height, length: Math.hypot(s.width, s.height) }
+    : undefined
+})
 </script>
 
 <template>
   <g class="dims">
-    <template v-if="shape">
+    <template v-if="line">
+      <line :x1="line.x1" :y1="line.y1" :x2="line.x2" :y2="line.y2" class="outline" />
+      <text :x="(line.x1 + line.x2) / 2" :y="(line.y1 + line.y2) / 2 - 0.3">{{ decimal(line.length) }} m</text>
+      <text class="coords" :x="line.x1" :y="line.y1 + 0.4">({{ decimal(line.x1) }}; {{ decimal(line.y1) }})</text>
+      <text class="coords" :x="line.x2" :y="line.y2 + 0.4">({{ decimal(line.x2) }}; {{ decimal(line.y2) }})</text>
+    </template>
+    <template v-else-if="shape">
       <ShapeSvg :shape="shape" class="outline" />
       <line :x1="shape.x" :y1="shape.y - GAP" :x2="shape.x + shape.width" :y2="shape.y - GAP" />
       <line :x1="shape.x" :y1="shape.y - GAP - TICK" :x2="shape.x" :y2="shape.y - GAP + TICK" />

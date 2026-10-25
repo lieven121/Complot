@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vite-plus/test'
 import type { BedDto, PlantingDto } from '@/shared/api'
 import { findCrop } from './cropFinder'
-import { amountLabel, spotRadius, spotsOf } from './map'
+import { amountLabel, layoutBounds, normalized, spotRadius, spotsOf } from './map'
 import { useDesigner } from './useDesigner'
 
 const bed = (id: string, code: string, kind: BedDto['kind'] = 'spots'): BedDto => ({
@@ -90,6 +90,7 @@ describe('designer', () => {
       paths: [],
       features: [],
       trees: [],
+      markers: [],
     })
     const labels = { path: '', tree: '', plot: '', feature: '' }
     d.add('bed', { x: 1, y: 1 }, labels, 'spots')
@@ -98,5 +99,21 @@ describe('designer', () => {
       ['M1', 'spots', 1],
       ['M2', 'spots', 1],
     ])
+  })
+})
+
+describe('markers', () => {
+  it('adds a wall line that moves as a whole and counts in the map bounds', () => {
+    const d = useDesigner()
+    d.start({ plots: [], beds: [], paths: [], features: [], trees: [], markers: [] })
+    d.add('marker', { x: 2, y: 3 }, { path: '', tree: '', plot: '', feature: '' }, 'line')
+    const wall = d.draft.value!.markers[0]!
+    expect(wall).toMatchObject({ kind: 'line', shape: { x: 2, y: 3, width: 3, height: 0 } })
+    d.moveStart(wall.id)
+    d.move(wall.id, 1, 1)
+    d.moveEnd()
+    expect(d.draft.value!.markers[0]!.shape).toMatchObject({ x: 3, y: 4, width: 3, height: 0 })
+    expect(normalized({ kind: 'rect', x: 5, y: 1, width: -2, height: 0 })).toMatchObject({ x: 3, width: 2 })
+    expect(layoutBounds(d.draft.value!).w).toBeGreaterThan(3)
   })
 })

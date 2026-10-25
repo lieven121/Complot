@@ -17,9 +17,18 @@ export interface Box {
   h: number
 }
 
+/** A box with a positive size: a line marker's shape runs from (x, y) by (width, height), either way. */
+export const normalized = (s: ShapeDto): ShapeDto => ({
+  ...s,
+  x: Math.min(s.x, s.x + s.width),
+  y: Math.min(s.y, s.y + s.height),
+  width: Math.abs(s.width),
+  height: Math.abs(s.height),
+})
+
 /** Everything drawn on the site, with a margin for labels. */
 export function layoutBounds(layout: SiteLayoutDto): Box {
-  const boxes = [...layout.plots, ...layout.beds, ...layout.paths, ...layout.features].map((i) => i.shape)
+  const boxes = [...layout.plots, ...layout.beds, ...layout.paths, ...layout.features, ...layout.markers].map((i) => normalized(i.shape))
   const xs = [...boxes.map((b) => b.x), ...layout.trees.map((t) => t.x - t.crownDiameter / 2)]
   const ys = [...boxes.map((b) => b.y), ...layout.trees.map((t) => t.y - t.crownDiameter / 2)]
   const xe = [...boxes.map((b) => b.x + b.width), ...layout.trees.map((t) => t.x + t.crownDiameter / 2)]

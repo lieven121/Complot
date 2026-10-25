@@ -718,6 +718,58 @@ namespace Complot.Api.Data.Migrations
                     b.ToTable("Paths", (string)null);
                 });
 
+            modelBuilder.Entity("Complot.Domain.Garden.MapMarker", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasMaxLength(7)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double>("Height")
+                        .HasColumnType("REAL");
+
+                    b.Property<int>("Kind")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Label")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Outline")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("SiteId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double>("Thickness")
+                        .HasColumnType("REAL");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double>("Width")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("X")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("Y")
+                        .HasColumnType("REAL");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SiteId");
+
+                    b.ToTable("Markers", (string)null);
+                });
+
             modelBuilder.Entity("Complot.Domain.Garden.Plot", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1481,6 +1533,15 @@ namespace Complot.Api.Data.Migrations
                 });
 
             modelBuilder.Entity("Complot.Domain.Garden.GardenPath", b =>
+                {
+                    b.HasOne("Complot.Domain.Garden.Site", null)
+                        .WithMany()
+                        .HasForeignKey("SiteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Complot.Domain.Garden.MapMarker", b =>
                 {
                     b.HasOne("Complot.Domain.Garden.Site", null)
                         .WithMany()

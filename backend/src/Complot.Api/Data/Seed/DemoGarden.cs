@@ -24,7 +24,10 @@ internal static class DemoGarden
     private sealed record SeedPath(string Name, PathMaterial Material, SeedShape Shape);
     private sealed record SeedFeature(string Name, FeatureType Type, SeedShape Shape);
     private sealed record SeedTree(string Name, string? Cultivar, TreeKind Kind, double X, double Y, double CrownDiameter, DateOnly? PlantedOn, List<YearlyAction> Actions);
-    private sealed record SeedSite(string Name, List<SeedPlot> Plots, List<SeedBed> Beds, List<SeedPath> Paths, List<SeedFeature> Features, List<SeedTree> Trees);
+    private sealed record SeedMarker(MarkerKind Kind, string? Label, string Color, ShapeKind Outline, double X, double Y, double Width, double Height, double Thickness = 0.2);
+    private sealed record SeedSite(
+        string Name, List<SeedPlot> Plots, List<SeedBed> Beds, List<SeedPath> Paths, List<SeedFeature> Features, List<SeedTree> Trees,
+        List<SeedMarker>? Markers);
     private sealed record SeedPlanting(
         string Bed, string Variety, string? Cultivar, double Share, DateOnly SowOn, DateOnly? PlantOutOn, DateOnly? HarvestFrom, DateOnly? HarvestTo, DateOnly? ClearOn,
         int? Count = null, double? SpotX = null, double? SpotY = null);
@@ -79,6 +82,11 @@ internal static class DemoGarden
             }
             db.Paths.AddRange(s.Paths.Select(p => new GardenPath { SiteId = site.Id, Name = p.Name, Material = p.Material, Shape = p.Shape.ToDomain() }));
             db.Features.AddRange(s.Features.Select(f => new GardenFeature { SiteId = site.Id, Name = f.Name, Type = f.Type, Shape = f.Shape.ToDomain() }));
+            db.Markers.AddRange((s.Markers ?? []).Select(m => new MapMarker
+            {
+                SiteId = site.Id, Kind = m.Kind, Label = m.Label, Color = m.Color, Outline = m.Outline,
+                X = m.X, Y = m.Y, Width = m.Width, Height = m.Height, Thickness = m.Thickness,
+            }));
             foreach (var t in s.Trees)
             {
                 trees[t.Name] = new Tree

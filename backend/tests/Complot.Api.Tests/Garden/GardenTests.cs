@@ -39,6 +39,7 @@ public sealed class GardenTests(SeededApiFactory factory) : IClassFixture<Seeded
         var layout = await Layout(sites![0].Id);
         Assert.Contains(layout.Beds, b => b.Code == "S1" && b.Shape.Kind == ShapeKind.Ellipse);
         Assert.Equal(3, layout.Trees.Count);
+        Assert.Contains(layout.Markers, m => m.Kind == MarkerKind.Line && m.Shape.Height == 0);
         Assert.Equal(4.8, layout.Beds.Single(b => b.Code == "A1").Area);
     }
 
@@ -49,15 +50,32 @@ public sealed class GardenTests(SeededApiFactory factory) : IClassFixture<Seeded
         var plot = new PlotDto(Guid.NewGuid(), "Perceel", PlotType.Open, new ShapeDto(ShapeKind.Rect, 0, 0, 5, 5));
         var bed = new BedDto(Guid.NewGuid(), plot.Id, "T1", BedKind.Strips, new ShapeDto(ShapeKind.Keyhole, 1, 1, 3, 3), Domain.Catalog.SunExposure.Full, null, null, 0);
         var path = new PathDto(Guid.NewGuid(), "Pad", PathMaterial.Grass, new ShapeDto(ShapeKind.Rect, 0, 5, 5, 0.6));
-        var layout = new SiteLayoutDto([plot], [bed], [path], [], []);
+        var marker = new MarkerDto(Guid.NewGuid(), MarkerKind.Line, "Muur", "#7a6a58", new ShapeDto(ShapeKind.Rect, 0, 6, 5, 0), 0.25);
+        var layout = new SiteLayoutDto([plot], [bed], [path], [], [], [marker]);
 
         var saved = await Read<SiteLayoutDto>(await Put($"/api/sites/{site.Id}/layout", layout));
         Assert.Equal(bed.Id, Assert.Single(saved.Beds).Id);
+        Assert.Equal(marker, Assert.Single(saved.Markers));
 
-        var moved = layout with { Beds = [bed with { Shape = bed.Shape with { X = 1.5 } }], Paths = [] };
+        var moved = layout with { Beds = [bed with { Shape = bed.Shape with { X = 1.5 } }], Paths = [], Markers = [] };
         saved = await Read<SiteLayoutDto>(await Put($"/api/sites/{site.Id}/layout", moved));
         Assert.Equal(1.5, Assert.Single(saved.Beds).Shape.X);
         Assert.Empty(saved.Paths);
+        Assert.Empty(saved.Markers);
+    }
+
+    [Fact]
+    public async Task Markers_are_checked_per_kind()
+    {
+        var home = await Home();
+        var layout = await Layout(home.Id);
+        var line = new MarkerDto(Guid.NewGuid(), MarkerKind.Line, null, "#7a6a58", new ShapeDto(ShapeKind.Rect, 0, 0, 0.05, 0), 0.25);
+        Assert.Equal("lineTooShort", await Code(await Put($"/api/sites/{home.Id}/layout", layout with { Markers = [line] }), HttpStatusCode.BadRequest));
+
+        var area = new MarkerDto(Guid.NewGuid(), MarkerKind.Area, "Terras", "#d9d4c8", new ShapeDto(ShapeKind.Keyhole, 0, 0, 3, 2), 0.2);
+        Assert.Equal("isInEnum", await Code(await Put($"/api/sites/{home.Id}/layout", layout with { Markers = [area] }), HttpStatusCode.BadRequest));
+        Assert.Equal("color", await Code(await Put($"/api/sites/{home.Id}/layout",
+            layout with { Markers = [area with { Color = "rood", Shape = area.Shape with { Kind = ShapeKind.Rect } }] }), HttpStatusCode.BadRequest));
     }
 
     [Fact]

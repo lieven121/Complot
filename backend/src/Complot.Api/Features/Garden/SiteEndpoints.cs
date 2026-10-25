@@ -102,6 +102,7 @@ public static class SiteEndpoints
         var paths = await db.Paths.Where(x => x.SiteId == id).ToListAsync(ct);
         var features = await db.Features.Where(x => x.SiteId == id).ToListAsync(ct);
         var trees = await db.Trees.Where(x => x.SiteId == id).ToListAsync(ct);
+        var markers = await db.Markers.Where(x => x.SiteId == id).ToListAsync(ct);
 
         if (await UsesIdsOfOtherSitesAsync(id, layout, db, ct)) return ApiProblems.Conflict("layout.foreignId");
         var removedBedIds = beds.Select(b => b.Id).Except(layout.Beds.Select(b => b.Id)).ToList();
@@ -134,6 +135,16 @@ public static class SiteEndpoints
                 e.PlantedOn = t.PlantedOn;
                 e.Actions = t.Actions.ToDomain();
             });
+        db.Markers.SyncById(markers, layout.Markers, m => m.Id,
+            m => new MapMarker { Id = m.Id, SiteId = id, Color = m.Color },
+            (m, e) =>
+            {
+                e.Kind = m.Kind;
+                e.Label = Clean(m.Label);
+                e.Color = m.Color;
+                (e.Outline, e.X, e.Y, e.Width, e.Height) = (m.Shape.Kind, m.Shape.X, m.Shape.Y, m.Shape.Width, m.Shape.Height);
+                e.Thickness = m.Thickness;
+            });
 
         if (await db.SaveOrConflictAsync("bed.duplicateCode", ct) is { } conflict) return conflict;
         return TypedResults.Ok(await LoadLayout(id, db, ct));
@@ -144,17 +155,19 @@ public static class SiteEndpoints
         (await db.Beds.AsNoTracking().Where(x => x.SiteId == siteId).OrderBy(x => x.Code).ToListAsync(ct)).Select(x => x.ToDto()).ToList(),
         (await db.Paths.AsNoTracking().Where(x => x.SiteId == siteId).OrderBy(x => x.Name).ToListAsync(ct)).Select(x => x.ToDto()).ToList(),
         (await db.Features.AsNoTracking().Where(x => x.SiteId == siteId).OrderBy(x => x.Name).ToListAsync(ct)).Select(x => x.ToDto()).ToList(),
-        (await db.Trees.AsNoTracking().Where(x => x.SiteId == siteId).OrderBy(x => x.Name).ToListAsync(ct)).Select(x => x.ToDto()).ToList());
+        (await db.Trees.AsNoTracking().Where(x => x.SiteId == siteId).OrderBy(x => x.Name).ToListAsync(ct)).Select(x => x.ToDto()).ToList(),
+        (await db.Markers.AsNoTracking().Where(x => x.SiteId == siteId).OrderBy(x => x.Label).ToListAsync(ct)).Select(x => x.ToDto()).ToList());
 
     private static async Task<bool> UsesIdsOfOtherSitesAsync(Guid siteId, SiteLayoutDto layout, ComplotDbContext db, CancellationToken ct)
     {
         var ids = layout.Plots.Select(x => x.Id).Concat(layout.Beds.Select(x => x.Id)).Concat(layout.Paths.Select(x => x.Id))
-            .Concat(layout.Features.Select(x => x.Id)).Concat(layout.Trees.Select(x => x.Id)).ToList();
+            .Concat(layout.Features.Select(x => x.Id)).Concat(layout.Trees.Select(x => x.Id)).Concat(layout.Markers.Select(x => x.Id)).ToList();
         return await db.Plots.AnyAsync(x => ids.Contains(x.Id) && x.SiteId != siteId, ct)
                || await db.Beds.AnyAsync(x => ids.Contains(x.Id) && x.SiteId != siteId, ct)
                || await db.Paths.AnyAsync(x => ids.Contains(x.Id) && x.SiteId != siteId, ct)
                || await db.Features.AnyAsync(x => ids.Contains(x.Id) && x.SiteId != siteId, ct)
-               || await db.Trees.AnyAsync(x => ids.Contains(x.Id) && x.SiteId != siteId, ct);
+               || await db.Trees.AnyAsync(x => ids.Contains(x.Id) && x.SiteId != siteId, ct)
+               || await db.Markers.AnyAsync(x => ids.Contains(x.Id) && x.SiteId != siteId, ct);
     }
 
     private static string? Clean(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();

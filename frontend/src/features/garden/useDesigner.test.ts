@@ -21,6 +21,7 @@ const layout = (): SiteLayoutDto => ({
   paths: [],
   features: [],
   trees: [],
+  markers: [],
 })
 
 describe('designer', () => {

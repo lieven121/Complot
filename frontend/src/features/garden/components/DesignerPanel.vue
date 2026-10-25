@@ -6,10 +6,11 @@ import InputNumber from '@/shared/ui/NumberInput.vue'
 import InputText from 'primevue/inputtext'
 import Select from 'primevue/select'
 import { useI18n } from 'vue-i18n'
-import type { BedDto, BedKind, FeatureDto, PathDto, PlotDto, ShapeDto, TreeDto, YearlyActionDto } from '@/shared/api'
+import type { BedDto, BedKind, FeatureDto, MarkerKind, PathDto, PlotDto, ShapeDto, TreeDto, YearlyActionDto } from '@/shared/api'
 import { fromIsoDate, toIsoDate } from '@/shared/dates'
 import { useFormat } from '@/shared/composables/useFormat'
 import { useNotify } from '@/shared/composables/useNotify'
+import ColorInput from '@/shared/ui/ColorInput.vue'
 import FormField from '@/shared/ui/FormField.vue'
 import { useSaveLayout } from '../queries'
 import type { ItemKind, useDesigner } from '../useDesigner'
@@ -53,7 +54,10 @@ interface EditableItem {
   code?: string
   shape?: ShapeDto
   plotId?: string
-  kind?: TreeDto['kind'] | BedKind
+  kind?: TreeDto['kind'] | BedKind | MarkerKind
+  label?: string
+  color?: string
+  thickness?: number
   sun?: BedDto['sun']
   soil?: string
   type?: PlotDto['type'] | FeatureDto['type']
@@ -71,6 +75,24 @@ const item = computed(() => d.selected.value as EditableItem | undefined)
 const set = (field: string, value: unknown) => d.edit(field, () => Object.assign(item.value!, { [field]: value }))
 const setShape = (field: keyof ShapeDto, value: unknown) =>
   d.edit(`shape.${field}`, () => (item.value!.shape = { ...item.value!.shape!, [field]: value }))
+/** A line marker is edited by its two ends; moving one end keeps the other in place. */
+const lineEnd = (axis: 'x' | 'y') => {
+  const s = item.value!.shape!
+  return axis === 'x' ? s.x + s.width : s.y + s.height
+}
+const setLineStart = (axis: 'x' | 'y', value: number) => {
+  const end = lineEnd(axis)
+  d.edit(`line.start.${axis}`, () => {
+    const s = item.value!.shape!
+    item.value!.shape = axis === 'x' ? { ...s, x: value, width: end - value } : { ...s, y: value, height: end - value }
+  })
+}
+const setLineEnd = (axis: 'x' | 'y', value: number) =>
+  d.edit(`line.end.${axis}`, () => {
+    const s = item.value!.shape!
+    item.value!.shape = axis === 'x' ? { ...s, width: value - s.x } : { ...s, height: value - s.y }
+  })
+const isLine = computed(() => kind.value === 'marker' && item.value?.kind === 'line')
 const area = computed(() => {
   const s = item.value?.shape
   if (!s) return 0
@@ -91,12 +113,12 @@ const addAction = () =>
   d.edit(`actions+${actions.value.length}`, () => item.value!.actions!.push({ title: t('design.pruning'), month: 2, estimatedMinutes: 60 }))
 const removeAction = (index: number) => d.edit(`actions-${index}`, () => item.value!.actions!.splice(index, 1))
 
-const add = (kind: ItemKind, bedKind?: BedKind) =>
+const add = (kind: ItemKind, variant?: BedKind | MarkerKind) =>
   d.add(
     kind,
     props.center(),
     { path: t('design.newPath'), tree: t('design.newTree'), plot: t('design.newPlot'), feature: t('design.newFeature') },
-    bedKind,
+    variant,
   )
 
 const groups = computed(() => {
@@ -108,6 +130,10 @@ const groups = computed(() => {
     { kind: 'path' as const, items: layout.paths.map((p) => ({ id: p.id, label: p.name })) },
     { kind: 'tree' as const, items: layout.trees.map((x) => ({ id: x.id, label: x.name })) },
     { kind: 'feature' as const, items: layout.features.map((f) => ({ id: f.id, label: f.name })) },
+    {
+      kind: 'marker' as const,
+      items: layout.markers.map((m, i) => ({ id: m.id, label: m.label || `${t(`design.markerKind.${m.kind}`)} ${i + 1}` })),
+    },
   ]
 })
 
@@ -176,11 +202,22 @@ async function save() {
         @click="add(k)"
       />
       <Button :label="t('design.addSpotsBed')" icon="pi pi-plus" size="small" severity="secondary" outlined @click="add('bed', 'spots')" />
+      <Button
+        v-for="m in ['area', 'line'] as const"
+        :key="m"
+        :label="t(`design.markerKind.${m}`)"
+        icon="pi pi-plus"
+        size="small"
+        severity="secondary"
+        outlined
+        @click="add('marker', m)"
+      />
     </div>
+    <p class="muted small">{{ t('design.markerHelp') }}</p>
 
     <form v-if="item && kind" class="form-grid editor" @submit.prevent>
       <div class="full row">
-        <b>{{ t(`design.kind.${kind}`) }}</b>
+        <b>{{ kind === 'marker' ? t(`design.markerKind.${item.kind}`) : t(`design.kind.${kind}`) }}</b>
         <span class="grow" />
         <Button icon="pi pi-trash" :label="t('common.delete')" size="small" severity="danger" text @click="d.remove" />
       </div>
@@ -188,11 +225,54 @@ async function save() {
       <FormField v-if="kind === 'bed'" :label="t('design.code')" for="d-code">
         <InputText id="d-code" :model-value="item.code" maxlength="12" @update:model-value="set('code', $event)" />
       </FormField>
+      <template v-else-if="kind === 'marker'">
+        <FormField :label="t('design.label')" for="d-label">
+          <InputText id="d-label" :model-value="item.label" maxlength="100" @update:model-value="set('label', $event)" />
+        </FormField>
+        <FormField :label="t('design.color')">
+          <ColorInput :model-value="item.color!" @update:model-value="set('color', $event)" />
+        </FormField>
+      </template>
       <FormField v-else :label="t('common.name')" for="d-name">
         <InputText id="d-name" :model-value="item.name" @update:model-value="set('name', $event)" />
       </FormField>
 
-      <template v-if="kind === 'tree'">
+      <template v-if="isLine && item.shape">
+        <FormField v-for="axis in ['x', 'y'] as const" :key="`s${axis}`" :label="t(`design.lineStart.${axis}`)" :for="`d-s${axis}`">
+          <InputNumber
+            :input-id="`d-s${axis}`"
+            :model-value="item.shape[axis]"
+            :max-fraction-digits="2"
+            :step="0.1"
+            suffix=" m"
+            @update:model-value="setLineStart(axis, $event ?? 0)"
+          />
+        </FormField>
+        <FormField v-for="axis in ['x', 'y'] as const" :key="`e${axis}`" :label="t(`design.lineEnd.${axis}`)" :for="`d-e${axis}`">
+          <InputNumber
+            :input-id="`d-e${axis}`"
+            :model-value="lineEnd(axis)"
+            :max-fraction-digits="2"
+            :step="0.1"
+            suffix=" m"
+            @update:model-value="setLineEnd(axis, $event ?? 0)"
+          />
+        </FormField>
+        <FormField :label="t('design.thickness')" for="d-thickness">
+          <InputNumber
+            input-id="d-thickness"
+            :model-value="item.thickness"
+            :min="0.02"
+            :max="5"
+            :max-fraction-digits="2"
+            :step="0.05"
+            suffix=" m"
+            @update:model-value="set('thickness', $event ?? 0.2)"
+          />
+        </FormField>
+      </template>
+
+      <template v-else-if="kind === 'tree'">
         <FormField :label="t('design.x')" for="d-x"
           ><InputNumber
             input-id="d-x"
@@ -301,7 +381,7 @@ async function save() {
         <p class="full small muted">
           {{ t('design.area') }}: <b>{{ area.toLocaleString($i18n.locale, { maximumFractionDigits: 2 }) }} m²</b>
         </p>
-        <FormField v-if="kind === 'bed' || kind === 'plot'" :label="t('design.shapeLabel')">
+        <FormField v-if="kind === 'bed' || kind === 'plot' || kind === 'marker'" :label="t('design.shapeLabel')">
           <Select
             :model-value="item.shape.kind"
             :options="kind === 'bed' ? shapeKinds : plotShapes"

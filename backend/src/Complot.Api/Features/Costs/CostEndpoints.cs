@@ -35,7 +35,7 @@ public sealed class CostCategoryInputValidator : AbstractValidator<CostCategoryI
     public CostCategoryInputValidator()
     {
         RuleFor(x => x.Name).NotEmpty().MaximumLength(60);
-        RuleFor(x => x.Color).NotEmpty().Matches("^#[0-9a-fA-F]{6}$").WithErrorCode("color");
+        RuleFor(x => x.Color).HexColor();
     }
 }
 

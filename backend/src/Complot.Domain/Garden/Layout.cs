@@ -111,3 +111,29 @@ public sealed class Tree : Entity
     public DateOnly? PlantedOn { get; set; }
     public List<YearlyAction> Actions { get; set; } = [];
 }
+
+public enum MarkerKind
+{
+    Area,
+    Line,
+}
+
+/// <summary>
+/// A reference drawing on the map without any rules, e.g. a terrace or a wall. An <see cref="MarkerKind.Area"/> is a
+/// coloured rectangle or ellipse (<see cref="Outline"/>) with its top-left corner at (X, Y); a
+/// <see cref="MarkerKind.Line"/> runs from (X, Y) to (X + Width, Y + Height), so its width and height may be zero or
+/// negative, and is drawn <see cref="Thickness"/> metres wide.
+/// </summary>
+public sealed class MapMarker : Entity
+{
+    public Guid SiteId { get; set; }
+    public MarkerKind Kind { get; set; }
+    public string? Label { get; set; }
+    public required string Color { get; set; }
+    public ShapeKind Outline { get; set; } = ShapeKind.Rect;
+    public double X { get; set; }
+    public double Y { get; set; }
+    public double Width { get; set; }
+    public double Height { get; set; }
+    public double Thickness { get; set; } = 0.2;
+}
