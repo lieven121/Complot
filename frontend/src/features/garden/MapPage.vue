@@ -248,7 +248,10 @@ const center = () => map.value?.center() ?? { x: 0, y: 0 }
               :disabled="!layout.data.value"
               @click="startDesign"
             />
-            <span v-else-if="designing" class="designing">✏️ {{ t('design.active') }}</span>
+            <template v-else-if="designing">
+              <span class="designing">✏️ {{ t('design.active') }}</span>
+              <Button :label="t('design.stop')" icon="pi pi-times" size="small" severity="secondary" outlined @click="stopDesign" />
+            </template>
             <Select
               v-if="!designing"
               v-model="findValue"

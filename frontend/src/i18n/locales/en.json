@@ -546,6 +546,7 @@
   "design": {
     "start": "Design",
     "active": "Design mode",
+    "stop": "Stop designing",
     "title": "Design",
     "help": "Drag items to move them (10 cm grid) or type exact dimensions. Ctrl+Z undoes, Ctrl+Y redoes.",
     "undo": "Undo",

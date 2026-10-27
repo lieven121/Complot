@@ -546,6 +546,7 @@
   "design": {
     "start": "Ontwerpen",
     "active": "Ontwerpmodus",
+    "stop": "Ontwerpen stoppen",
     "title": "Ontwerp",
     "help": "Sleep elementen om ze te verplaatsen (raster 10 cm) of geef de maten exact in. Ctrl+Z maakt ongedaan, Ctrl+Y doet opnieuw.",
     "undo": "Ongedaan maken",

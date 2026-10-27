@@ -178,7 +178,13 @@ async function save() {
         @click="d.redo"
       />
       <span class="grow" />
-      <Button :label="t('common.cancel')" size="small" severity="secondary" text @click="emit('cancel')" />
+      <Button
+        :label="d.dirty.value ? t('common.cancel') : t('design.stop')"
+        size="small"
+        severity="secondary"
+        outlined
+        @click="emit('cancel')"
+      />
       <Button
         :label="t('design.save')"
         icon="pi pi-check"
