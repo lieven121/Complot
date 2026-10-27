@@ -1,4 +1,4 @@
-import type { BedDto, PlantingDto, PlantingPhase, ShapeDto, SiteLayoutDto } from '@/shared/api'
+import type { BedDto, PlantingDto, PlantingPhase, ShapeDto, SiteLayoutDto, UpdatePlantingInput } from '@/shared/api'
 
 /** Drawing only: the planted area and neighbour rules are calculated by the API. */
 export function keyholePath(s: ShapeDto): string {
@@ -86,3 +86,17 @@ export function spotsOf(bed: BedDto, plantings: PlantingDto[], isoDate: string):
 /** How much of a crop a planting holds, for lists: "3×" in a spots bed, "50%" of a strips bed. */
 export const amountLabel = (planting: PlantingDto) =>
   planting.count != null ? `${planting.count}×` : planting.share < 1 ? `${Math.round(planting.share * 100)}%` : ''
+
+/** The planting as it stands, as input for an update (callers override the fields they change). */
+export const toUpdateInput = (p: PlantingDto): UpdatePlantingInput => ({
+  share: p.share,
+  sowOn: p.sowOn,
+  plantOutOn: p.plantOutOn,
+  harvestFrom: p.harvestFrom,
+  harvestTo: p.harvestTo,
+  clearOn: p.clearOn,
+  notes: p.notes,
+  count: p.count,
+  spotX: p.spotX,
+  spotY: p.spotY,
+})

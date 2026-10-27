@@ -117,10 +117,10 @@ async function add() {
     </FormField>
     <div class="row two">
       <FormField :label="t('map.plan.sowOn')" for="p-date">
-        <DatePicker v-model="sowDate" input-id="p-date" show-icon date-format="dd/mm/yy" />
+        <DatePicker v-model="sowDate" input-id="p-date" fluid show-icon date-format="dd/mm/yy" />
       </FormField>
       <FormField v-if="spots" :label="t('map.plan.count')" for="p-count">
-        <NumberInput v-model="count" input-id="p-count" :min="1" :max="999" show-buttons />
+        <NumberInput v-model="count" input-id="p-count" fluid :min="1" :max="999" show-buttons />
       </FormField>
       <FormField v-else :label="t('map.plan.share')">
         <SelectButton v-model="share" :options="shares" option-label="label" option-value="value" :allow-empty="false" />

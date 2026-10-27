@@ -11,6 +11,7 @@ import { amountLabel, phaseAt } from '../map'
 import { useDeletePlanting } from '../queries'
 import BedGantt from './BedGantt.vue'
 import type { Crop } from './GardenMap.vue'
+import PlantingEditForm from './PlantingEditForm.vue'
 import PlantingForm from './PlantingForm.vue'
 import WarningList from './WarningList.vue'
 
@@ -34,6 +35,7 @@ const confirm = useConfirm()
 const notify = useNotify()
 const remove = useDeletePlanting()
 const planning = ref(false)
+const editingId = ref<string>()
 
 const now = computed(() =>
   props.plantings.map((p) => ({ planting: p, phase: phaseAt(p, props.date), crop: props.cropOf(p.varietyId) })).filter((x) => x.phase),
@@ -127,8 +129,17 @@ function deletePlanting(p: PlantingDto) {
         <span v-if="p.count != null" class="muted small">{{ amountLabel(p) }}</span>
         <span class="muted small">{{ formatDate(p.sowOn) }} → {{ p.clearOn ? formatDate(p.clearOn) : '∞' }}</span>
         <span class="end">
-          <template v-if="p.sowOn > period.today && !readonly">
-            <span class="planned">{{ t('map.bed.planned') }}</span>
+          <span v-if="p.sowOn > period.today" class="planned">{{ t('map.bed.planned') }}</span>
+          <template v-if="!readonly">
+            <Button
+              icon="pi pi-pencil"
+              text
+              rounded
+              size="small"
+              severity="secondary"
+              :aria-label="t('common.edit')"
+              @click="editingId = editingId === p.id ? undefined : p.id"
+            />
             <Button
               icon="pi pi-trash"
               text
@@ -140,6 +151,14 @@ function deletePlanting(p: PlantingDto) {
             />
           </template>
         </span>
+        <PlantingEditForm
+          v-if="editingId === p.id"
+          class="edit"
+          :bed="bed"
+          :planting="p"
+          :name="cropOf(p.varietyId)?.name ?? ''"
+          @done="editingId = undefined"
+        />
       </div>
     </div>
   </section>
@@ -180,6 +199,12 @@ function deletePlanting(p: PlantingDto) {
 .phase.dormant {
   background: #e5e8ec;
   color: #56606b;
+}
+.item:has(.edit) {
+  flex-wrap: wrap;
+}
+.edit {
+  flex-basis: 100%;
 }
 .planned {
   font-size: 11px;

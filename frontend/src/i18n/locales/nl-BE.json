@@ -430,6 +430,14 @@
       "count": "Aantal planten",
       "pickSpot": "Tik op het bed om de plek te kiezen."
     },
+    "edit": {
+      "title": "{name} bewerken",
+      "harvestFrom": "Oogst vanaf",
+      "harvestTo": "Oogst tot",
+      "notes": "Notities",
+      "dragSpot": "Sleep de plek op de kaart om ze te verplaatsen.",
+      "saved": "{name} bijgewerkt"
+    },
     "overview": {
       "title": "Overzicht · {site}",
       "subtitle": "{date} · klik op een bed of boom voor details",

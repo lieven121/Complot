@@ -430,6 +430,14 @@
       "count": "Number of plants",
       "pickSpot": "Tap the bed to choose the spot."
     },
+    "edit": {
+      "title": "Edit {name}",
+      "harvestFrom": "Harvest from",
+      "harvestTo": "Harvest until",
+      "notes": "Notes",
+      "dragSpot": "Drag the spot on the map to move it.",
+      "saved": "{name} updated"
+    },
     "overview": {
       "title": "Overview · {site}",
       "subtitle": "{date} · click a bed or tree for details",

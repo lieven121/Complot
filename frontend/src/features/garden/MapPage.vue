@@ -5,7 +5,7 @@ import Button from 'primevue/button'
 import Select from 'primevue/select'
 import { useConfirm } from 'primevue/useconfirm'
 import { useI18n } from 'vue-i18n'
-import type { PlantingDto, TaskDto } from '@/shared/api'
+import type { TaskDto } from '@/shared/api'
 import { useFormat } from '@/shared/composables/useFormat'
 import { useNotify } from '@/shared/composables/useNotify'
 import { useCatalogLookups } from '@/features/catalog/queries'
@@ -22,7 +22,7 @@ import TreePanel from './components/TreePanel.vue'
 import { type CropQuery, findCrop } from './cropFinder'
 import { harvestSummary } from './notes'
 import { addDays } from '@/shared/dates'
-import { IN_BED, phaseAt } from './map'
+import { IN_BED, phaseAt, toUpdateInput } from './map'
 import { mapPeriod, useLayout, useNotes, usePlantings, useSiteChecks, useSites, useUpdatePlanting } from './queries'
 import { type Point, useSpotPicker } from './spotPicker'
 import { canEditSite } from '@/shared/session'
@@ -133,23 +133,11 @@ async function moveSpot(plantingId: string, point: Point) {
   const p = plantings.data.value?.find((x) => x.id === plantingId)
   if (!p) return
   try {
-    await updatePlanting.mutateAsync({ id: p.id, input: { ...updateInput(p), spotX: point.x, spotY: point.y } })
+    await updatePlanting.mutateAsync({ id: p.id, input: { ...toUpdateInput(p), spotX: point.x, spotY: point.y } })
   } catch (error) {
     notify.error(error)
   }
 }
-const updateInput = (p: PlantingDto) => ({
-  share: p.share,
-  sowOn: p.sowOn,
-  plantOutOn: p.plantOutOn,
-  harvestFrom: p.harvestFrom,
-  harvestTo: p.harvestTo,
-  clearOn: p.clearOn,
-  notes: p.notes,
-  count: p.count,
-  spotX: p.spotX,
-  spotY: p.spotY,
-})
 
 // Crop finder: "where is my tomato?" — a whole category or one variety, on the selected date.
 const findValue = ref<string>()
