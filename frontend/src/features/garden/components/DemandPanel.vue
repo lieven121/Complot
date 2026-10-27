@@ -34,7 +34,7 @@ const props = defineProps<{
 const emit = defineEmits<{ close: []; select: [bedId: string]; highlight: [bedIds: Set<string> | undefined] }>()
 
 const { t } = useI18n()
-const { decimal } = useFormat()
+const { decimal, currency } = useFormat()
 
 const PRESETS = [14, 31, 92]
 if (!from.value) {
@@ -64,6 +64,16 @@ const demand = usePlantDemand(
 )
 const rows = computed(() => demand.data.value ?? [])
 const short = computed(() => rows.value.filter((r) => r.status === 'short').length)
+
+/** Budget totals; varieties without a price (or with stock that cannot be counted) are left out and counted. */
+const priced = computed(() => rows.value.filter((r) => r.plants > 0))
+const sum = (values: (number | undefined)[]) => values.reduce<number>((total, v) => total + (v ?? 0), 0)
+const budget = computed(() => ({
+  without: sum(priced.value.map((r) => r.costWithoutStock)),
+  with: sum(priced.value.map((r) => r.costWithStock)),
+  unpriced: priced.value.filter((r) => r.costWithoutStock == null).length,
+  uncountedStock: priced.value.filter((r) => r.costWithoutStock != null && r.costWithStock == null).length,
+}))
 
 // One variety picked shows only its beds; otherwise every bed of the period.
 watchEffect(() => {
@@ -119,6 +129,23 @@ const stockText = (r: PlantDemandDto) =>
     </p>
     <p v-else-if="!demand.isPending.value" class="muted small">{{ t('map.demand.none') }}</p>
 
+    <template v-if="priced.length">
+      <div class="budget">
+        <div class="card stat">
+          <span class="l">{{ t('map.demand.budget.without') }}</span
+          ><span class="v">{{ currency(budget.without) }}</span>
+        </div>
+        <div class="card stat">
+          <span class="l">{{ t('map.demand.budget.with') }}</span
+          ><span class="v">{{ currency(budget.with) }}</span>
+        </div>
+      </div>
+      <p v-if="budget.unpriced || budget.uncountedStock" class="muted small">
+        <span v-if="budget.unpriced">{{ t('map.demand.budget.unpriced', { n: budget.unpriced }) }} </span>
+        <span v-if="budget.uncountedStock">{{ t('map.demand.budget.uncountedStock', { n: budget.uncountedStock }) }}</span>
+      </p>
+    </template>
+
     <div class="stack">
       <div
         v-for="r in rows"
@@ -145,6 +172,17 @@ const stockText = (r: PlantDemandDto) =>
             {{ t('map.demand.stock') }} <b>{{ stockText(r) }}</b>
             <template v-if="r.status === 'short'"> ({{ t('map.demand.missing', { n: decimal(r.plants - (r.stock ?? 0)) }) }})</template>
           </span>
+        </div>
+        <div v-if="r.plants" class="line small muted">
+          <span v-if="r.costWithoutStock == null">{{ t('map.demand.budget.noPrice') }}</span>
+          <template v-else>
+            <span>{{ t('map.demand.budget.rowWithout', { amount: currency(r.costWithoutStock) }) }}</span>
+            <span>{{
+              r.costWithStock == null
+                ? t('map.demand.budget.rowUnknown')
+                : t('map.demand.budget.rowWith', { amount: currency(r.costWithStock) })
+            }}</span>
+          </template>
         </div>
         <div class="beds">
           <Button
@@ -178,6 +216,28 @@ const stockText = (r: PlantDemandDto) =>
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   gap: 6px;
   align-items: center;
+}
+.budget {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.stat {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 12px;
+}
+.stat .l {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--c-muted);
+  font-weight: 700;
+}
+.stat .v {
+  font-size: 20px;
+  font-weight: 750;
 }
 .row {
   display: flex;

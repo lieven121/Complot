@@ -42,6 +42,7 @@ const tiles = computed(() => {
     [t('catalog.variety.daysToFirstHarvest'), value(x.daysToFirstHarvest, 'common.days')],
     [t('catalog.variety.harvestWeeks'), value(x.harvestWeeks, 'common.weeks')],
     [t('catalog.variety.weeksIndoor'), value(x.weeksIndoor, 'common.weeks')],
+    [t('catalog.variety.seedsPerGram'), x.seedsPerGram ? decimal(x.seedsPerGram) : '—'],
     [t('catalog.rotationRest'), x.rotationRestYears ? t('common.years', { n: x.rotationRestYears }) : t('common.none')],
     [
       t('catalog.variety.maxYearsInBed'),
@@ -143,7 +144,10 @@ const calendar = computed(() => [
             <div v-for="s in v.suppliers" :key="s.supplierId" class="item">
               {{ s.isOwnSource ? '♻️ ' : '' }}{{ s.supplierName }}
               <span v-if="s.price === cheapest && v.suppliers.length > 1" class="cheapest">{{ t('catalog.supplier.cheapest') }}</span>
-              <span class="end">{{ s.unit }} · {{ s.price ? currency(s.price) : t('catalog.supplier.free') }}</span>
+              <span class="end"
+                >{{ s.unit }}<template v-if="s.pieces"> ({{ t('catalog.supplier.piecesShort', { n: decimal(s.pieces) }) }})</template> ·
+                {{ s.price ? currency(s.price) : t('catalog.supplier.free') }}</span
+              >
             </div>
             <span v-if="!v.suppliers.length" class="muted">—</span>
           </div>

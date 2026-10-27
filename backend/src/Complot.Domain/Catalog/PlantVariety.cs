@@ -36,6 +36,9 @@ public sealed class PlantVariety : Entity
     /// <summary>How long the crop may stay in one bed, in years. Null = unlimited (trees, shrubs).</summary>
     public int? MaxYearsInBed { get; set; }
 
+    /// <summary>Seeds in a gram, to count stock and packets sold by weight.</summary>
+    public decimal? SeedsPerGram { get; set; }
+
     public string? Notes { get; set; }
 
     /// <summary>Null when it needs no pollinator and pollinates nothing that is tracked.</summary>
@@ -60,4 +63,9 @@ public sealed class VarietySupplier
     public decimal Price { get; set; }
     public string? Unit { get; set; }
     public string? Url { get; set; }
+
+    /// <summary>Pieces (seeds, plants) in one unit; when empty it follows from the unit ("zakje 4 g", "plant").</summary>
+    public decimal? PiecesPerUnit { get; set; }
+
+    public decimal? PiecesWith(decimal? seedsPerGram) => PiecesPerUnit ?? Pieces.Of(1, Unit, seedsPerGram);
 }

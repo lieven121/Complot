@@ -4,7 +4,9 @@ using Complot.Domain.Tools;
 
 namespace Complot.Api.Features.Catalog.Varieties;
 
-public sealed record VarietySupplierDto(Guid SupplierId, string SupplierName, bool IsOwnSource, decimal Price, string? Unit, string? Url);
+/// <summary>An offer; <see cref="PiecesPerUnit"/> is as entered, <see cref="Pieces"/> also follows from the unit ("zakje 4 g").</summary>
+public sealed record VarietySupplierDto(
+    Guid SupplierId, string SupplierName, bool IsOwnSource, decimal Price, string? Unit, string? Url, decimal? PiecesPerUnit = null, decimal? Pieces = null);
 
 /// <summary>The variety needs <see cref="Quantity"/> of a tool per plant or per bed while it is in a bed.</summary>
 public sealed record ToolNeedDto(Guid ToolId, NeedPer Per, decimal Quantity);
@@ -41,9 +43,10 @@ public sealed record VarietyDto(
     IReadOnlyList<VarietySupplierDto> Suppliers,
     IReadOnlyList<StockDto> Stock,
     IReadOnlyList<ToolNeedDto> ToolNeeds,
-    PollinationDto? Pollination);
+    PollinationDto? Pollination,
+    decimal? SeedsPerGram = null);
 
-public sealed record VarietySupplierInput(Guid SupplierId, decimal Price, string? Unit, string? Url);
+public sealed record VarietySupplierInput(Guid SupplierId, decimal Price, string? Unit, string? Url, decimal? PiecesPerUnit = null);
 
 public sealed record VarietyInput(
     Guid CategoryId,
@@ -70,4 +73,5 @@ public sealed record VarietyInput(
     List<YearlyActionDto> Actions,
     List<VarietySupplierInput> Suppliers,
     List<ToolNeedDto>? ToolNeeds = null,
-    PollinationDto? Pollination = null);
+    PollinationDto? Pollination = null,
+    decimal? SeedsPerGram = null);

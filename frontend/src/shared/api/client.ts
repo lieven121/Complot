@@ -4514,6 +4514,7 @@ export interface ExchangeSupplier {
     price: number | undefined;
     unit: string | undefined;
     url: string | undefined;
+    piecesPerUnit?: number | undefined;
 }
 
 export interface ExchangeVariety {
@@ -4541,6 +4542,7 @@ export interface ExchangeVariety {
     actions: ExchangeAction[] | undefined;
     suppliers: ExchangeSupplier[] | undefined;
     pollination?: ExchangePollination | undefined;
+    seedsPerGram?: number | undefined;
 }
 
 export interface FamilyDto {
@@ -4773,6 +4775,8 @@ export interface PlantDemandDto {
     otherStock: StockAmountDto[];
     status: DemandStatus;
     bedIds: string[];
+    costWithoutStock: number | undefined;
+    costWithStock: number | undefined;
 }
 
 export interface PlantingDto {
@@ -5099,6 +5103,7 @@ export interface VarietyDto {
     stock: StockDto[];
     toolNeeds: ToolNeedDto[];
     pollination: PollinationDto | undefined;
+    seedsPerGram?: number | undefined;
 }
 
 export interface VarietyInput {
@@ -5127,6 +5132,7 @@ export interface VarietyInput {
     suppliers: VarietySupplierInput[];
     toolNeeds?: ToolNeedDto[] | undefined;
     pollination?: PollinationDto | undefined;
+    seedsPerGram?: number | undefined;
 }
 
 export interface VarietySupplierDto {
@@ -5136,6 +5142,8 @@ export interface VarietySupplierDto {
     price: number;
     unit: string | undefined;
     url: string | undefined;
+    piecesPerUnit?: number | undefined;
+    pieces?: number | undefined;
 }
 
 export interface VarietySupplierInput {
@@ -5143,6 +5151,7 @@ export interface VarietySupplierInput {
     price: number;
     unit: string | undefined;
     url: string | undefined;
+    piecesPerUnit?: number | undefined;
 }
 
 export type WarningLevel = "info" | "warning";

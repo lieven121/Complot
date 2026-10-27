@@ -57,13 +57,14 @@ public static class PlantingEndpoints
     private static async Task<PlantingWarningDto[]> Checks(Guid siteId, ComplotDbContext db, CancellationToken ct) =>
         PlantingChecks.Check(await db.ForSiteAsync(siteId, ct), await db.TreesOfSiteAsync(siteId, ct)).Select(w => w.ToDto()).ToArray();
 
-    /// <summary>Plants needed per variety for the plantings started from <paramref name="from"/> to <paramref name="to"/>, against the stock.</summary>
+    /// <summary>Plants needed per variety for the plantings started from <paramref name="from"/> to <paramref name="to"/>, against the stock, with the budget.</summary>
     private static async Task<PlantDemandDto[]> Demand(Guid siteId, DateOnly from, DateOnly to, ComplotDbContext db, CancellationToken ct)
     {
         var plantings = await db.ForSiteAsync(siteId, ct);
         var varietyIds = plantings.Select(p => p.VarietyId).Distinct().ToList();
         var lots = await db.InventoryLots.AsNoTracking().Where(l => varietyIds.Contains(l.VarietyId)).ToListAsync(ct);
-        return PlantDemand.Calculate(plantings, lots, from, to).Select(d => d.ToDto()).ToArray();
+        var offers = await db.Varieties.AsNoTracking().Where(v => varietyIds.Contains(v.Id)).SelectMany(v => v.Suppliers).ToListAsync(ct);
+        return PlantDemand.Calculate(plantings, lots, from, to, offers).Select(d => d.ToDto()).ToArray();
     }
 
     private static Task<List<Tree>> TreesOfSiteAsync(this ComplotDbContext db, Guid siteId, CancellationToken ct) =>

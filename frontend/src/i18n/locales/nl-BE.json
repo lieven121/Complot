@@ -223,7 +223,9 @@
       "estimatedMinutes": "Geschatte duur",
       "addAction": "Actie toevoegen",
       "notes": "Notities",
-      "calendar": "Teeltkalender"
+      "calendar": "Teeltkalender",
+      "seedsPerGram": "Zaden per gram",
+      "seedsPerGramHint": "Om voorraad en zakjes in gram te tellen, bv. wortel ± 800, boon ± 4."
     },
     "category": {
       "one": "Categorie",
@@ -268,7 +270,10 @@
       "unit": "Eenheid, bv. zakje 5 g",
       "add": "Leverancier toevoegen",
       "cheapest": "goedkoopst",
-      "free": "gratis"
+      "free": "gratis",
+      "pieces": "Stuks",
+      "piecesHint": "Zaden of planten per eenheid. Leeg = uit de eenheid (zakje 4 g, 25 z., per plant).",
+      "piecesShort": "± {n} st."
     },
     "lot": {
       "new": "Voorraad toevoegen",
@@ -323,7 +328,8 @@
         "ruleNames": "Gebruik Nederlandse (Vlaamse) gewasnamen.",
         "ruleCategories": "Voeg enkel categories toe als geen bestaande categorie past. Bestaande categorieën (code: naam): {list}.",
         "rulePrices": "Prijzen in euro. Laat suppliers leeg als je het niet zeker weet; verzin nooit webadressen.",
-        "rulePollination": "Vul pollination alleen in als het ertoe doet: need 'partner' voor planten die een andere plant van hun groep nodig hebben (de meeste appels, peren, zoete kersen, tomatillo), 'female'/'male' voor planten met aparte geslachten (kiwi, duindoorn), 'selfFertile' voor zelfbestuivende planten die hun groep wel bestuiven. Laat het anders weg. rangeMeters: hoe dichtbij een partner moet staan (meestal 15–30)."
+        "rulePollination": "Vul pollination alleen in als het ertoe doet: need 'partner' voor planten die een andere plant van hun groep nodig hebben (de meeste appels, peren, zoete kersen, tomatillo), 'female'/'male' voor planten met aparte geslachten (kiwi, duindoorn), 'selfFertile' voor zelfbestuivende planten die hun groep wel bestuiven. Laat het anders weg. rangeMeters: hoe dichtbij een partner moet staan (meestal 15–30).",
+        "ruleSeeds": "seedsPerGram: hoeveel zaden (of pootgoed/bollen) in een gram, bij benadering. piecesPerUnit enkel als de eenheid het aantal niet zegt (bv. 'zakje')."
       }
     }
   },
@@ -499,11 +505,21 @@
       "status": {
         "enough": "Genoeg",
         "short": "Tekort",
-        "unknown": "Niet te vergelijken",
+        "unknown": "Niet te tellen",
         "noStock": "Geen voorraad"
       },
       "toCatalog": "Naar ras",
-      "note": "Enkel voorraad in stuks (zaden, planten, bollen…) wordt vergeleken; voorraad in gram of zakjes niet. Vervallen loten tellen niet mee, en de voorraad is gedeeld door alle locaties."
+      "note": "Enkel voorraad die te tellen is (stuks, of gram met zaden per gram) wordt vergeleken. Het budget koopt hele zakjes bij de goedkoopste leverancier. Vervallen loten tellen niet mee, en de voorraad is gedeeld door alle locaties.",
+      "budget": {
+        "without": "Alles kopen",
+        "with": "Met voorraad",
+        "unpriced": "{n} zonder prijs per stuk niet meegeteld.",
+        "uncountedStock": "{n} met voorraad die niet te tellen is: enkel in ‘alles kopen’.",
+        "noPrice": "Geen prijs per stuk: vul bij de leverancier stuks of zaden per gram in.",
+        "rowWithout": "Alles kopen {amount}",
+        "rowWith": "Bijkopen {amount}",
+        "rowUnknown": "Bijkopen: onbekend"
+      }
     }
   },
   "checks": {

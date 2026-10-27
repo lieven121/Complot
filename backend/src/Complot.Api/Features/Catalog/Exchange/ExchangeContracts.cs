@@ -43,14 +43,16 @@ public sealed record ExchangeVariety(
     string? Notes,
     List<ExchangeAction>? Actions,
     List<ExchangeSupplier>? Suppliers,
-    ExchangePollination? Pollination = null);
+    ExchangePollination? Pollination = null,
+    decimal? SeedsPerGram = null);
 
 public sealed record ExchangeAction(string Title, int Month, int EstimatedMinutes);
 
 /// <summary><see cref="Need"/>: selfFertile, partner, female or male.</summary>
 public sealed record ExchangePollination(string? Need, string? Group, double? RangeMeters);
 
-public sealed record ExchangeSupplier(string Name, decimal? Price, string? Unit, string? Url);
+/// <summary><see cref="PiecesPerUnit"/>: seeds or plants in one unit, when the unit does not say ("zakje").</summary>
+public sealed record ExchangeSupplier(string Name, decimal? Price, string? Unit, string? Url, decimal? PiecesPerUnit = null);
 
 public enum ImportRowStatus
 {

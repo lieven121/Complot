@@ -223,7 +223,9 @@
       "estimatedMinutes": "Estimated duration",
       "addAction": "Add action",
       "notes": "Notes",
-      "calendar": "Growing calendar"
+      "calendar": "Growing calendar",
+      "seedsPerGram": "Seeds per gram",
+      "seedsPerGramHint": "To count stock and packets sold by weight, e.g. carrot ± 800, bean ± 4."
     },
     "category": {
       "one": "Category",
@@ -268,7 +270,10 @@
       "unit": "Unit, e.g. packet 5 g",
       "add": "Add supplier",
       "cheapest": "cheapest",
-      "free": "free"
+      "free": "free",
+      "pieces": "Pieces",
+      "piecesHint": "Seeds or plants per unit. Empty = from the unit (zakje 4 g, 25 z., per plant).",
+      "piecesShort": "± {n} pcs"
     },
     "lot": {
       "new": "Add stock",
@@ -323,7 +328,8 @@
         "ruleNames": "Use Dutch (Flemish) common names.",
         "ruleCategories": "Only add categories when no existing category fits. Existing categories (code: name): {list}.",
         "rulePrices": "Prices in euro. Leave suppliers empty if you are not sure; never invent web addresses.",
-        "rulePollination": "Fill pollination only when it matters: need 'partner' for plants that need another plant of their group (most apples, pears, sweet cherries, tomatillo), 'female'/'male' for plants with separate sexes (kiwi, sea buckthorn), 'selfFertile' for self-fertile plants that still pollinate their group. Otherwise leave it out. rangeMeters: how close a partner has to be (usually 15–30)."
+        "rulePollination": "Fill pollination only when it matters: need 'partner' for plants that need another plant of their group (most apples, pears, sweet cherries, tomatillo), 'female'/'male' for plants with separate sexes (kiwi, sea buckthorn), 'selfFertile' for self-fertile plants that still pollinate their group. Otherwise leave it out. rangeMeters: how close a partner has to be (usually 15–30).",
+        "ruleSeeds": "seedsPerGram: roughly how many seeds (or seed potatoes/bulbs) in a gram. piecesPerUnit only when the unit does not say the number (e.g. 'packet')."
       }
     }
   },
@@ -499,11 +505,21 @@
       "status": {
         "enough": "Enough",
         "short": "Short",
-        "unknown": "Can't compare",
+        "unknown": "Can't count",
         "noStock": "No stock"
       },
       "toCatalog": "Variety",
-      "note": "Only stock counted in pieces (seeds, plants, bulbs…) is compared; stock in grams or packets is not. Expired lots don't count, and stock is shared by all sites."
+      "note": "Only stock that can be counted (pieces, or grams with seeds per gram) is compared. The budget buys whole packets from the cheapest supplier. Expired lots don't count, and stock is shared by all sites.",
+      "budget": {
+        "without": "Buy everything",
+        "with": "With stock",
+        "unpriced": "{n} without a price per piece not included.",
+        "uncountedStock": "{n} with stock that can't be counted: only in ‘buy everything’.",
+        "noPrice": "No price per piece: fill in pieces at the supplier, or seeds per gram.",
+        "rowWithout": "Buy all {amount}",
+        "rowWith": "Top up {amount}",
+        "rowUnknown": "Top up: unknown"
+      }
     }
   },
   "checks": {

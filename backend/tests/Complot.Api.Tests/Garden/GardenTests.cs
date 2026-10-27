@@ -224,12 +224,14 @@ public sealed class GardenTests(SeededApiFactory factory) : IClassFixture<Seeded
         var m2 = (await Layout(home.Id)).Beds.Single(b => b.Code == "M2");
         var lettuce = await Variety("Pluksla");
         var created = await Read<PlantingDto>(await Post("/api/plantings",
-            new PlanPlantingInput(m2.Id, lettuce.Id, 1, new DateOnly(2029, 3, 10), false, null, 7, 0.5, 0.5)));
+            new PlanPlantingInput(m2.Id, lettuce.Id, 1, new DateOnly(2027, 3, 10), false, null, 7, 0.5, 0.5)));
 
-        var demand = await Get<PlantDemandDto[]>($"/api/sites/{home.Id}/demand?from=2029-03-01&to=2029-03-31");
+        var demand = await Get<PlantDemandDto[]>($"/api/sites/{home.Id}/demand?from=2027-03-10&to=2027-03-10");
         var row = Assert.Single(demand!);
         Assert.Equal((lettuce.Id, 7, 1, m2.Id), (row.VarietyId, row.Plants, row.Plantings, Assert.Single(row.BedIds)));
-        Assert.Empty((await Get<PlantDemandDto[]>($"/api/sites/{home.Id}/demand?from=2029-04-01&to=2029-04-30"))!);
+        // 2 g in stock at 800 seeds/g; a packet of 1 g costs 2.45.
+        Assert.Equal((1600m, DemandStatus.Enough, 2.45m, 0m), (row.Stock!.Value, row.Status, row.CostWithoutStock!.Value, row.CostWithStock!.Value));
+        Assert.Empty((await Get<PlantDemandDto[]>($"/api/sites/{home.Id}/demand?from=2027-03-11&to=2027-03-12"))!);
         await _client.DeleteAsync($"/api/plantings/{created.Id}", Ct);
     }
 

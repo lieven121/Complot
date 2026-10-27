@@ -14,10 +14,12 @@ public static class VarietyMapping
         v.Germination.ToDto(), v.DaysToFirstHarvest, v.HarvestWeeks, v.MaxYearsInBed, v.Notes,
         v.Actions.ToDtos(),
         v.Suppliers.OrderBy(s => s.Price)
-            .Select(s => new VarietySupplierDto(s.SupplierId, s.Supplier.Name, s.Supplier.IsOwnSource, s.Price, s.Unit, s.Url)).ToArray(),
+            .Select(s => new VarietySupplierDto(
+                s.SupplierId, s.Supplier.Name, s.Supplier.IsOwnSource, s.Price, s.Unit, s.Url, s.PiecesPerUnit, s.PiecesWith(v.SeedsPerGram))).ToArray(),
         lots.Select(l => new StockDto(l.Id, l.Quantity, l.Unit, l.StatusOn(today))).ToArray(),
         v.ToolNeeds.Select(n => new ToolNeedDto(n.ToolId, n.Per, n.Quantity)).ToArray(),
-        v.Pollination.ToDto());
+        v.Pollination.ToDto(),
+        v.SeedsPerGram);
 
     public static void Apply(this VarietyInput input, PlantVariety v)
     {
@@ -41,14 +43,24 @@ public static class VarietyMapping
         v.DaysToFirstHarvest = input.DaysToFirstHarvest;
         v.HarvestWeeks = input.HarvestWeeks;
         v.MaxYearsInBed = input.MaxYearsInBed;
+        v.SeedsPerGram = input.SeedsPerGram;
         v.Notes = Clean(input.Notes);
         v.Actions = input.Actions.ToDomain();
         v.Pollination = input.Pollination.ToDomain();
         // The AI/JSON import has no tool needs: leave them as they are there.
         if (input.ToolNeeds is { } needs) v.ToolNeeds = needs.Select(n => new ToolNeed { ToolId = n.ToolId, Per = n.Per, Quantity = n.Quantity }).ToList();
         v.Suppliers.SyncWith(input.Suppliers, s => s.SupplierId, s => s.SupplierId,
-            s => new VarietySupplier { VarietyId = v.Id, SupplierId = s.SupplierId, Price = s.Price, Unit = Clean(s.Unit), Url = Clean(s.Url) },
-            (s, existing) => { existing.Price = s.Price; existing.Unit = Clean(s.Unit); existing.Url = Clean(s.Url); });
+            s => new VarietySupplier
+            {
+                VarietyId = v.Id, SupplierId = s.SupplierId, Price = s.Price, Unit = Clean(s.Unit), Url = Clean(s.Url), PiecesPerUnit = s.PiecesPerUnit,
+            },
+            (s, existing) =>
+            {
+                existing.Price = s.Price;
+                existing.Unit = Clean(s.Unit);
+                existing.Url = Clean(s.Url);
+                existing.PiecesPerUnit = s.PiecesPerUnit;
+            });
     }
 
     private static string? Clean(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();

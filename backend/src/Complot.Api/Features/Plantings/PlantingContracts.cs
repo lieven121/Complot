@@ -30,11 +30,12 @@ public sealed record StockAmountDto(decimal Quantity, string Unit);
 
 /// <summary>
 /// Plants one variety needs in a period (<see cref="Uncounted"/> plantings sown broadcast have no number) against the
-/// usable stock counted in pieces (<see cref="Stock"/>, null when none) and stock in other units.
+/// usable stock counted in pieces (<see cref="Stock"/>, null when none) and stock in other units, and the budget
+/// (see <see cref="VarietyDemand"/>).
 /// </summary>
 public sealed record PlantDemandDto(
     Guid VarietyId, int Plants, int Plantings, int Uncounted, decimal? Stock, IReadOnlyList<StockAmountDto> OtherStock,
-    DemandStatus Status, IReadOnlyList<Guid> BedIds);
+    DemandStatus Status, IReadOnlyList<Guid> BedIds, decimal? CostWithoutStock, decimal? CostWithStock);
 
 public sealed record PlantingPreviewDto(PlantingDto Planting, IReadOnlyList<PlantingWarningDto> Warnings);
 
@@ -52,7 +53,7 @@ public static class PlantingMapping
 
     public static PlantDemandDto ToDto(this VarietyDemand d) => new(
         d.VarietyId, d.Plants, d.Plantings, d.Uncounted, d.Stock, d.OtherStock.Select(a => new StockAmountDto(a.Quantity, a.Unit)).ToList(),
-        d.Status, d.BedIds);
+        d.Status, d.BedIds, d.CostWithoutStock, d.CostWithStock);
 
     public static PlantingWarningDto ToDto(this PlantingWarning w) => new(w.PlantingId, w.BedId, w.Level, w.Code, w.Date, w.Params);
 }

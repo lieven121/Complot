@@ -38,9 +38,10 @@ const FORMAT_TEMPLATE = {
       harvestWeeks: 8,
       harvestMonths: [7, 9],
       maxYearsInBed: 1,
+      seedsPerGram: 800,
       notes: 'string',
       actions: [{ title: 'string', month: 2, estimatedMinutes: 30 }],
-      suppliers: [{ name: 'string', price: 2.95, unit: 'string' }],
+      suppliers: [{ name: 'string', price: 2.95, unit: 'string, e.g. zakje 5 g', piecesPerUnit: 25 }],
       pollination: { need: 'selfFertile | partner | female | male', group: 'pollination group, e.g. Apple', rangeMeters: 20 },
     },
   ],
@@ -64,6 +65,7 @@ export function buildAiPrompt(t: Translate, task: string, categories: CategoryDt
     `- ${t('catalog.exchange.prompt.ruleCategories', { list: categories.map((c) => `${c.slug}: ${c.name}`).join(', ') })}`,
     `- ${t('catalog.exchange.prompt.rulePrices')}`,
     `- ${t('catalog.exchange.prompt.rulePollination')}`,
+    `- ${t('catalog.exchange.prompt.ruleSeeds')}`,
   ].join('\n')
 }
 

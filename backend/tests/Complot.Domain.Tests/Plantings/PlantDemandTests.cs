@@ -58,4 +58,30 @@ public sealed class PlantDemandTests
         var onion = demand.Single(d => d.VarietyId == Onion.Id);
         Assert.Equal((0, 1, DemandStatus.NoStock), (onion.Plants, onion.Uncounted, onion.Status));
     }
+
+    [Fact]
+    public void Budget_buys_whole_units_of_the_cheapest_offer_for_everything_or_only_what_is_missing()
+    {
+        VarietySupplier Offer(decimal price, string unit, decimal? pieces = null) =>
+            new() { VarietyId = CherryTomato.Id, Price = price, Unit = unit, PiecesPerUnit = pieces };
+        var offers = new[] { Offer(3.10m, "zakje 25 z."), Offer(1.20m, "per plant"), Offer(2m, "zakje", 10) };
+
+        var demand = Assert.Single(PlantDemand.Calculate(
+            [Spot(SpotsBed("M1"), CherryTomato, From, 30)], [Lot(CherryTomato, 26, "zaden")], From, To, offers));
+
+        Assert.Equal(6m, demand.CostWithoutStock); // 3 packets of 10 beat 2 of 25 (6.20) and 30 plants (36)
+        Assert.Equal(2m, demand.CostWithStock); // 4 missing: one packet of 10
+    }
+
+    [Fact]
+    public void Budget_with_stock_is_unknown_while_stock_cannot_be_counted_and_free_when_it_covers_everything()
+    {
+        var offers = new[] { new VarietySupplier { VarietyId = CherryTomato.Id, Price = 3, Unit = "zakje 25 z." } };
+        var spot = Spot(SpotsBed("M1"), CherryTomato, From, 10);
+
+        var grams = Assert.Single(PlantDemand.Calculate([spot], [Lot(CherryTomato, 1, "g")], From, To, offers));
+        Assert.Equal((3m, (decimal?)null), (grams.CostWithoutStock!.Value, grams.CostWithStock));
+        var enough = Assert.Single(PlantDemand.Calculate([spot], [Lot(CherryTomato, 12, "zaden")], From, To, offers));
+        Assert.Equal(0m, enough.CostWithStock);
+    }
 }

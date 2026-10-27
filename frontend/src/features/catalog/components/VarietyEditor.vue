@@ -55,7 +55,7 @@ const unlimitedStay = computed({
 })
 
 const addAction = () => form.value.actions.push({ title: '', month: 2, estimatedMinutes: 30 })
-const addSupplier = () => form.value.suppliers.push({ supplierId: '', price: 0, unit: undefined, url: undefined })
+const addSupplier = () => form.value.suppliers.push({ supplierId: '', price: 0, unit: undefined, url: undefined, piecesPerUnit: undefined })
 const toolNeeds = computed(() => (form.value.toolNeeds ??= []))
 const addToolNeed = () => toolNeeds.value.push({ toolId: '', per: 'bed', quantity: 1 })
 const pollinationGroups = computed(() => [
@@ -190,6 +190,14 @@ const perOptions = computed(() => (['plant', 'bed'] as const).map((value) => ({ 
         <label class="row nowrap small"><input v-model="unlimitedStay" type="checkbox" /> {{ t('catalog.variety.unlimited') }}</label>
       </div>
     </FormField>
+    <FormField
+      :label="t('catalog.variety.seedsPerGram')"
+      for="v-spg"
+      :error="errors.field('seedsPerGram')"
+      :hint="t('catalog.variety.seedsPerGramHint')"
+    >
+      <InputNumber v-model="form.seedsPerGram" input-id="v-spg" :min-fraction-digits="0" :max-fraction-digits="3" />
+    </FormField>
 
     <h3 class="full">{{ t('catalog.variety.actions') }}</h3>
     <div class="full stack">
@@ -213,7 +221,7 @@ const perOptions = computed(() => (['plant', 'bed'] as const).map((value) => ({ 
     <h3 class="full">{{ t('catalog.suppliers') }}</h3>
     <div class="full stack">
       <small v-if="errors.field('suppliers')" class="error">{{ errors.field('suppliers') }}</small>
-      <div v-for="(supplier, i) in form.suppliers" :key="i" class="line">
+      <div v-for="(supplier, i) in form.suppliers" :key="i" class="line offer">
         <Select
           v-model="supplier.supplierId"
           :options="suppliers.data.value ?? []"
@@ -231,6 +239,15 @@ const perOptions = computed(() => (['plant', 'bed'] as const).map((value) => ({ 
           :aria-label="t('catalog.supplier.price')"
         />
         <InputText v-model="supplier.unit" :placeholder="t('catalog.supplier.unit')" />
+        <InputNumber
+          v-model="supplier.piecesPerUnit"
+          :placeholder="t('catalog.supplier.pieces')"
+          :aria-label="t('catalog.supplier.pieces')"
+          :invalid="!!errors.field(`suppliers[${i}].piecesPerUnit`)"
+          :max-fraction-digits="2"
+          fluid
+          v-tooltip.top="t('catalog.supplier.piecesHint')"
+        />
         <Button icon="pi pi-times" text severity="secondary" :aria-label="t('common.remove')" @click="form.suppliers.splice(i, 1)" />
       </div>
       <div><Button :label="t('catalog.supplier.add')" icon="pi pi-plus" text size="small" @click="addSupplier" /></div>
@@ -280,6 +297,9 @@ const perOptions = computed(() => (['plant', 'bed'] as const).map((value) => ({ 
   gap: 6px;
   align-items: center;
 }
+.line.offer {
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 0.8fr) auto;
+}
 .error {
   color: var(--c-warn);
 }
@@ -290,6 +310,9 @@ const perOptions = computed(() => (['plant', 'bed'] as const).map((value) => ({ 
 @media (max-width: 600px) {
   .line {
     grid-template-columns: 1fr 1fr auto;
+  }
+  .line.offer {
+    grid-template-columns: 1fr 1fr 1fr auto;
   }
   .line > :first-child {
     grid-column: 1 / -1;

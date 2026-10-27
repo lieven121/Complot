@@ -42,6 +42,7 @@ public sealed class VarietyInputValidator : AbstractValidator<VarietyInput>
         RuleFor(x => x.DaysToFirstHarvest).InclusiveBetween(1, 1000).When(x => x.DaysToFirstHarvest is not null);
         RuleFor(x => x.HarvestWeeks).InclusiveBetween(0, 104).When(x => x.HarvestWeeks is not null);
         RuleFor(x => x.MaxYearsInBed).InclusiveBetween(1, 100).When(x => x.MaxYearsInBed is not null);
+        RuleFor(x => x.SeedsPerGram).GreaterThan(0).When(x => x.SeedsPerGram is not null);
 
         RuleForEach(x => x.Actions).SetValidator(new YearlyActionDtoValidator());
         RuleFor(x => x.Pollination!).SetValidator(new PollinationDtoValidator()).When(x => x.Pollination is not null);
@@ -52,6 +53,7 @@ public sealed class VarietyInputValidator : AbstractValidator<VarietyInput>
             supplier.RuleFor(s => s.Price).GreaterThanOrEqualTo(0);
             supplier.RuleFor(s => s.Unit).MaximumLength(60);
             supplier.RuleFor(s => s.Url).MaximumLength(500);
+            supplier.RuleFor(s => s.PiecesPerUnit).GreaterThan(0).When(s => s.PiecesPerUnit is not null);
         });
         RuleFor(x => x.Suppliers)
             .Must(s => s.Select(x => x.SupplierId).Distinct().Count() == s.Count).WithErrorCode("duplicateSupplier");

@@ -4150,6 +4150,11 @@
           "url": {
             "type": "string",
             "nullable": true
+          },
+          "piecesPerUnit": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -4323,6 +4328,11 @@
                 "$ref": "#/components/schemas/ExchangePollination"
               }
             ]
+          },
+          "seedsPerGram": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -5244,7 +5254,9 @@
           "stock",
           "otherStock",
           "status",
-          "bedIds"
+          "bedIds",
+          "costWithoutStock",
+          "costWithStock"
         ],
         "type": "object",
         "properties": {
@@ -5284,6 +5296,16 @@
               "type": "string",
               "format": "uuid"
             }
+          },
+          "costWithoutStock": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "costWithStock": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -6780,6 +6802,11 @@
                 "$ref": "#/components/schemas/PollinationDto"
               }
             ]
+          },
+          "seedsPerGram": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -6971,6 +6998,11 @@
                 "$ref": "#/components/schemas/PollinationDto"
               }
             ]
+          },
+          "seedsPerGram": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -7007,6 +7039,16 @@
           "url": {
             "type": "string",
             "nullable": true
+          },
+          "piecesPerUnit": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "pieces": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -7034,6 +7076,11 @@
           },
           "url": {
             "type": "string",
+            "nullable": true
+          },
+          "piecesPerUnit": {
+            "type": "number",
+            "format": "double",
             "nullable": true
           }
         },

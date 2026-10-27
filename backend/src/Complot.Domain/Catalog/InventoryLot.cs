@@ -19,18 +19,8 @@ public sealed class InventoryLot : Entity
     public DateOnly? BestBefore { get; set; }
     public string? Notes { get; set; }
 
-    /// <summary>Units that count pieces (seeds, plants, bulbs…), so the quantity compares with a number of plants.</summary>
-    private static readonly HashSet<string> CountUnits = new(StringComparer.OrdinalIgnoreCase)
-    {
-        "", "st", "st.", "stuk", "stuks", "x", "pcs", "piece", "pieces",
-        "zaad", "zaden", "zaadjes", "seed", "seeds",
-        "plant", "planten", "plantjes", "plants", "plug", "plugs", "plugplanten",
-        "bol", "bollen", "bulb", "bulbs", "knol", "knollen", "tuber", "tubers", "pootgoed",
-        "uitloper", "uitlopers", "runner", "runners", "stek", "stekken", "cutting", "cuttings",
-    };
-
-    /// <summary>Whether <see cref="Quantity"/> is a number of pieces rather than a weight or a packet.</summary>
-    public bool CountsPieces => CountUnits.Contains(Unit.Trim());
+    /// <summary>The lot in pieces (seeds, plants…); null when its unit cannot be counted (see <see cref="Pieces"/>).</summary>
+    public decimal? PiecesWith(decimal? seedsPerGram) => Pieces.Of(Quantity, Unit, seedsPerGram);
 
     public LotStatus StatusOn(DateOnly today) => BestBefore switch
     {

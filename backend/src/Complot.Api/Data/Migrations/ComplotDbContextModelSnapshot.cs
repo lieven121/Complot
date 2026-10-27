@@ -320,6 +320,9 @@ namespace Complot.Api.Data.Migrations
                         .HasMaxLength(4000)
                         .HasColumnType("TEXT");
 
+                    b.Property<decimal?>("SeedsPerGram")
+                        .HasColumnType("TEXT");
+
                     b.Property<decimal?>("SowDepthCm")
                         .HasColumnType("TEXT");
 
@@ -1477,6 +1480,9 @@ namespace Complot.Api.Data.Migrations
                                 .HasColumnType("TEXT");
 
                             b1.Property<Guid>("SupplierId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<decimal?>("PiecesPerUnit")
                                 .HasColumnType("TEXT");
 
                             b1.Property<decimal>("Price")
