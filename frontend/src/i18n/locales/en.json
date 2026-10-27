@@ -109,6 +109,7 @@
     "attachmentType": "Only PDF, JPG, PNG, WebP or HEIC.",
     "attachmentTooLarge": "File is larger than {maxMb} MB.",
     "spotOutside": "The spot is outside the bed.",
+    "columnsTooMany": "The block is wider than there are plants.",
     "notSpotBed": "Count and spot only apply to a mixed bed.",
     "lineTooShort": "A line must be at least 10 cm long."
   },
@@ -441,8 +442,18 @@
       "harvestFrom": "Harvest from",
       "harvestTo": "Harvest until",
       "notes": "Notes",
-      "dragSpot": "Drag the spot on the map to move it.",
+      "moveSpot": "Tap the bed or drag the spot to move it.",
       "saved": "{name} updated"
+    },
+    "pattern": {
+      "shape": "Shape",
+      "circle": "Circle",
+      "block": "Block",
+      "wide": "Plants wide",
+      "size": "{length} long × {wide} wide",
+      "direction": "Rows run",
+      "horizontal": "East–west",
+      "vertical": "North–south"
     },
     "overview": {
       "title": "Overview · {site}",

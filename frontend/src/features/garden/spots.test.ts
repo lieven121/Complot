@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vite-plus/test'
 import type { BedDto, PlantingDto } from '@/shared/api'
 import { findCrop } from './cropFinder'
-import { amountLabel, layoutBounds, normalized, spotRadius, spotsOf } from './map'
+import { amountLabel, layoutBounds, normalized, spotRadius, spotShape, spotsOf } from './map'
 import { useDesigner } from './useDesigner'
 
 const bed = (id: string, code: string, kind: BedDto['kind'] = 'spots'): BedDto => ({
@@ -24,6 +24,8 @@ const planting = (bedId: string, varietyId: string, extra: Partial<PlantingDto> 
   count: undefined,
   spotX: undefined,
   spotY: undefined,
+  spotColumns: undefined,
+  spotVertical: false,
   sowOn: '2026-04-01',
   plantOutOn: undefined,
   harvestFrom: undefined,
@@ -48,6 +50,26 @@ describe('spots', () => {
     expect(spots).toHaveLength(1)
     expect(spots[0]).toMatchObject({ x: 10.3, y: 5.6 })
     expect(spotsOf(m1, [planting('b1', 'tomato')], '2026-12-01')).toEqual([])
+  })
+
+  it('lays out a block in rows of plants, turned when vertical', () => {
+    const spacing = { along: 0.15, across: 0.3 }
+    const leeks = spotShape({ count: 10, columns: 2 }, spacing)
+    expect(leeks).toMatchObject({ round: false, w: 0.75, h: 0.6 })
+    expect(leeks.plants[0]).toEqual({ x: -0.3, y: -0.15 })
+    expect(spotShape({ count: 10, columns: 2, vertical: true }, spacing)).toMatchObject({ w: 0.6, h: 0.75 })
+
+    const lettuceRow = spotShape({ count: 5, columns: 1 }, { along: 0.3, across: 0.3 })
+    expect(new Set(lettuceRow.plants.map((p) => p.y))).toEqual(new Set([0]))
+    expect(lettuceRow.w).toBeCloseTo(1.5)
+  })
+
+  it('spirals a round cluster from the centre', () => {
+    const cluster = spotShape({ count: 7 }, { along: 0.3, across: 0.3 })
+    expect(cluster.round).toBe(true)
+    expect(cluster.plants).toHaveLength(7)
+    expect(Math.max(...cluster.plants.map((p) => Math.hypot(p.x, p.y)))).toBeLessThanOrEqual(cluster.r)
+    expect(spotShape({ count: 1 }, { along: 0.3, across: 0.3 }).plants).toEqual([{ x: 0, y: 0 }])
   })
 
   it('labels amounts as a count or a share', () => {

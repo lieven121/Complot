@@ -993,6 +993,12 @@ namespace Complot.Api.Data.Migrations
                     b.Property<DateOnly>("SowOn")
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("SpotColumns")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("SpotVertical")
+                        .HasColumnType("INTEGER");
+
                     b.Property<double?>("SpotX")
                         .HasColumnType("REAL");
 

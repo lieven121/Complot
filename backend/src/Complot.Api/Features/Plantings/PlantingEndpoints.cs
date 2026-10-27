@@ -89,6 +89,7 @@ public static class PlantingEndpoints
         if (await db.Plantings.WithRuleData().FirstOrDefaultAsync(p => p.Id == id, ct) is not { } planting) return ApiProblems.NotFound();
         planting.Share = input.Share;
         (planting.Count, planting.SpotX, planting.SpotY) = (input.Count, input.SpotX, input.SpotY);
+        (planting.SpotColumns, planting.SpotVertical) = (input.SpotColumns, input.SpotVertical);
         if (SpotProblem(planting) is { } problem) return problem;
         planting.ApplyDates(new PlantingDates(input.SowOn, input.PlantOutOn, input.HarvestFrom, input.HarvestTo, input.ClearOn));
         planting.Notes = string.IsNullOrWhiteSpace(input.Notes) ? null : input.Notes.Trim();
@@ -114,7 +115,7 @@ public static class PlantingEndpoints
         var planting = new Planting
         {
             BedId = bed.Id, Bed = bed, VarietyId = variety.Id, Variety = variety, Share = input.Share,
-            Count = input.Count, SpotX = input.SpotX, SpotY = input.SpotY,
+            Count = input.Count, SpotX = input.SpotX, SpotY = input.SpotY, SpotColumns = input.SpotColumns, SpotVertical = input.SpotVertical,
             Notes = string.IsNullOrWhiteSpace(input.Notes) ? null : input.Notes.Trim(),
         };
         planting.ApplyDates(PlantingSchedule.Calculate(variety, input.SowOn, input.Direct));

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, watch, watchEffect } from 'vue'
 import Button from 'primevue/button'
 import Checkbox from 'primevue/checkbox'
 import DatePicker from 'primevue/datepicker'
@@ -15,6 +15,7 @@ import NumberInput from '@/shared/ui/NumberInput.vue'
 import { useCatalogLookups } from '@/features/catalog/queries'
 import { useCreatePlanting, usePreviewPlanting } from '../queries'
 import { useSpotPicker } from '../spotPicker'
+import SpotPatternInput from './SpotPatternInput.vue'
 import WarningList from './WarningList.vue'
 
 /**
@@ -36,12 +37,20 @@ const sowOn = ref(props.date)
 const share = ref(1)
 const direct = ref(false)
 const count = ref<number | null | undefined>(1)
+const columns = ref<number>()
+const vertical = ref(false)
 const result = ref<PlantingPreviewDto>()
 
 const spots = computed(() => props.bed.kind === 'spots')
 const picker = useSpotPicker()
 if (spots.value) picker.start(props.bed.id, { x: props.bed.shape.width / 2, y: props.bed.shape.height / 2 })
 onBeforeUnmount(picker.stop)
+/** Fewer plants than the block is wide: narrow the block. */
+const spotColumns = computed(() => (columns.value ? Math.min(columns.value, count.value ?? 1) : undefined))
+watchEffect(() => {
+  if (spots.value)
+    picker.draft.value = { varietyId: varietyId.value, count: count.value ?? 1, columns: spotColumns.value, vertical: vertical.value }
+})
 
 const groups = computed(() =>
   (categories.data.value ?? []).map((c) => ({
@@ -64,7 +73,13 @@ const input = computed<PlanPlantingInput | undefined>(() =>
         sowOn: sowOn.value,
         direct: direct.value,
         notes: undefined,
-        ...(spots.value && { count: count.value ?? undefined, spotX: picker.point.value?.x, spotY: picker.point.value?.y }),
+        ...(spots.value && {
+          count: count.value ?? undefined,
+          spotX: picker.point.value?.x,
+          spotY: picker.point.value?.y,
+          spotColumns: spotColumns.value,
+          spotVertical: vertical.value,
+        }),
       }
     : undefined,
 )
@@ -126,6 +141,7 @@ async function add() {
         <SelectButton v-model="share" :options="shares" option-label="label" option-value="value" :allow-empty="false" />
       </FormField>
     </div>
+    <SpotPatternInput v-if="spots" v-model:columns="columns" v-model:vertical="vertical" :count="count ?? 1" />
     <span v-if="spots" class="muted small">📍 {{ t('map.plan.pickSpot') }}</span>
     <label v-if="variety?.sowIndoor" class="row small">
       <Checkbox v-model="direct" binary input-id="p-direct" />

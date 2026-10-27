@@ -2,14 +2,16 @@
 import { computed, onMounted, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { BedDto, PlantingDto, PlantingPhase, ShapeDto, SiteLayoutDto } from '@/shared/api'
-import { IN_BED, layoutBounds, phaseAt, PHASE_OPACITY, type Spot, spotsOf } from '../map'
-import type { Point } from '../spotPicker'
+import { IN_BED, layoutBounds, type PlantSpacing, phaseAt, PHASE_OPACITY, type Spot, spacingOf, spotShape, spotsOf } from '../map'
+import type { Point, SpotDraft } from '../spotPicker'
 import ShapeSvg from './ShapeSvg.vue'
+import SpotSvg from './SpotSvg.vue'
 
 export interface Crop {
   icon: string
   color: string
   name: string
+  spacing?: PlantSpacing
 }
 
 /**
@@ -30,6 +32,8 @@ const props = defineProps<{
   pickBedId?: string
   /** The point picked so far (m from the bed's top-left corner), drawn as a ring. */
   pickPoint?: Point
+  /** The spot being planned or edited at the picked point, drawn live. */
+  pickDraft?: SpotDraft
   /** Spots in the selected bed can be dragged to a new place (`moveSpot`). */
   spotsEditable?: boolean
   /** When set, other beds are dimmed (crop finder). */
@@ -162,12 +166,13 @@ interface Segment {
  */
 function bedView(bed: BedDto) {
   if (bed.kind === 'spots') {
-    const spots = spotsOf(bed, props.plantings, props.date).map((s): Spot & { crop?: Crop } => {
+    const spacing = (varietyId: string) => props.cropOf(varietyId)?.spacing ?? spacingOf()
+    const spots = spotsOf(bed, withDraft(bed), props.date, spacing).map((s): Spot & { crop?: Crop } => {
       const dragged = spotDrag.value?.id === s.planting.id ? spotDrag.value : undefined
       return { ...s, ...(dragged && { x: dragged.x, y: dragged.y }), crop: props.cropOf(s.planting.varietyId) }
     })
     const indoor = props.plantings.some((p) => p.bedId === bed.id && phaseAt(p, props.date) === 'indoor')
-    return { bed, segments: [], spots, indoor }
+    return { bed, segments: [], spots, indoor, ghost: ghostOf(bed) }
   }
   const active = props.plantings
     .filter((p) => p.bedId === bed.id)
@@ -186,7 +191,26 @@ function bedView(bed: BedDto) {
     offset += len
     return { ...x, crop: props.cropOf(x.planting.varietyId), ...seg }
   })
-  return { bed, segments, spots: [], indoor: active.some((x) => x.phase === 'indoor') }
+  return { bed, segments, spots: [], indoor: active.some((x) => x.phase === 'indoor'), ghost: undefined }
+}
+
+/** The plantings, with the one being edited (if any) as it is drafted. */
+function withDraft(bed: BedDto): PlantingDto[] {
+  const d = props.pickDraft
+  if (!d?.plantingId || props.pickBedId !== bed.id || !props.pickPoint) return props.plantings
+  const { x, y } = props.pickPoint
+  return props.plantings.map((p) =>
+    p.id === d.plantingId ? { ...p, count: d.count, spotColumns: d.columns, spotVertical: d.vertical, spotX: x, spotY: y } : p,
+  )
+}
+
+/** The spot being planned, drawn at the picked point before it exists. */
+function ghostOf(bed: BedDto) {
+  const d = props.pickDraft
+  if (!d || d.plantingId || props.pickBedId !== bed.id || !props.pickPoint) return undefined
+  const crop = d.varietyId ? props.cropOf(d.varietyId) : undefined
+  const shape = spotShape(d, crop?.spacing ?? spacingOf())
+  return { x: bed.shape.x + props.pickPoint.x, y: bed.shape.y + props.pickPoint.y, shape, crop, count: d.count }
 }
 const beds = computed(() => props.layout.beds.map(bedView))
 
@@ -369,22 +393,27 @@ const scaleBar = computed(() => ({ x: bounds.value.x + bounds.value.w - 2.6, y: 
               class="spot"
               :class="{ draggable: spotsEditable && selectedId === v.bed.id }"
             >
-              <circle
-                :cx="spot.x"
-                :cy="spot.y"
-                :r="spot.r"
-                :fill="spot.crop?.color ?? '#888'"
-                :fill-opacity="Math.max(0.45, PHASE_OPACITY[spot.phase])"
-                stroke="#2a2a24"
-                :stroke-width="future ? 0.03 : 0.015"
-                :stroke-dasharray="future ? '.08 .05' : undefined"
+              <SpotSvg
+                :x="spot.x"
+                :y="spot.y"
+                :shape="spot.shape"
+                :color="spot.crop?.color ?? '#888'"
+                :icon="spot.crop?.icon"
+                :count="spot.planting.count ?? 1"
+                :phase="spot.phase"
+                :dashed="future"
               />
-              <circle v-if="spot.phase === 'harvest'" :cx="spot.x" :cy="spot.y" :r="spot.r" fill="url(#dots)" />
-              <circle v-if="spot.phase === 'clearing'" :cx="spot.x" :cy="spot.y" :r="spot.r" fill="url(#hatch)" />
-              <text class="spot-icon" :x="spot.x" :y="spot.y" :font-size="Math.min(0.3, spot.r * 1.3)">{{ spot.crop?.icon }}</text>
-              <text v-if="(spot.planting.count ?? 1) > 1" class="spot-count" :x="spot.x + spot.r * 0.7" :y="spot.y + spot.r * 0.85">
-                {{ spot.planting.count }}
-              </text>
+            </g>
+            <g v-if="v.ghost" class="ghost">
+              <SpotSvg
+                :x="v.ghost.x"
+                :y="v.ghost.y"
+                :shape="v.ghost.shape"
+                :color="v.ghost.crop?.color ?? '#888'"
+                :icon="v.ghost.crop?.icon"
+                :count="v.ghost.count"
+                dashed
+              />
             </g>
             <circle
               v-if="pickBedId === v.bed.id && pickPoint"
@@ -563,19 +592,7 @@ svg {
 .spot.draggable {
   cursor: move;
 }
-.spot-icon {
-  text-anchor: middle;
-  dominant-baseline: central;
-  pointer-events: none;
-}
-.spot-count {
-  font-size: 0.16px;
-  font-weight: 800;
-  text-anchor: middle;
-  fill: #2a2a24;
-  paint-order: stroke;
-  stroke: #fff;
-  stroke-width: 0.05px;
+.ghost {
   pointer-events: none;
 }
 .pick {

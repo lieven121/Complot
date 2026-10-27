@@ -4704,6 +4704,8 @@ export interface PlanPlantingInput {
     count?: number | undefined;
     spotX?: number | undefined;
     spotY?: number | undefined;
+    spotColumns?: number | undefined;
+    spotVertical?: boolean;
 }
 
 export interface PlantingDto {
@@ -4714,6 +4716,8 @@ export interface PlantingDto {
     count: number | undefined;
     spotX: number | undefined;
     spotY: number | undefined;
+    spotColumns: number | undefined;
+    spotVertical: boolean;
     sowOn: string;
     plantOutOn: string | undefined;
     harvestFrom: string | undefined;
@@ -4968,6 +4972,8 @@ export interface UpdatePlantingInput {
     count?: number | undefined;
     spotX?: number | undefined;
     spotY?: number | undefined;
+    spotColumns?: number | undefined;
+    spotVertical?: boolean;
 }
 
 export interface UserDto {

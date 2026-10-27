@@ -22,7 +22,7 @@ import TreePanel from './components/TreePanel.vue'
 import { type CropQuery, findCrop } from './cropFinder'
 import { harvestSummary } from './notes'
 import { addDays } from '@/shared/dates'
-import { IN_BED, phaseAt, toUpdateInput } from './map'
+import { IN_BED, phaseAt, spacingOf, toUpdateInput } from './map'
 import { mapPeriod, useLayout, useNotes, usePlantings, useSiteChecks, useSites, useUpdatePlanting } from './queries'
 import { type Point, useSpotPicker } from './spotPicker'
 import { canEditSite } from '@/shared/session'
@@ -63,7 +63,7 @@ const selectedTree = computed(() => layout.data.value?.trees.find((x) => x.id ==
 const cropOf = (varietyId: string): Crop | undefined => {
   const variety = varietyById.value.get(varietyId)
   const category = variety ? categoryById.value.get(variety.categoryId) : undefined
-  return variety && category ? { icon: category.icon, color: category.color, name: variety.name } : undefined
+  return variety && category ? { icon: category.icon, color: category.color, name: variety.name, spacing: spacingOf(variety) } : undefined
 }
 
 const whereOf = (task: TaskDto) =>
@@ -130,6 +130,8 @@ const notify = useNotify()
 const picker = useSpotPicker()
 const updatePlanting = useUpdatePlanting()
 async function moveSpot(plantingId: string, point: Point) {
+  // The spot being edited moves with the form; it is saved with it.
+  if (picker.draft.value?.plantingId === plantingId) return void (picker.point.value = point)
   const p = plantings.data.value?.find((x) => x.id === plantingId)
   if (!p) return
   try {
@@ -214,6 +216,7 @@ const center = () => map.value?.center() ?? { x: 0, y: 0 }
           :design-mode="designing"
           :pick-bed-id="designing ? undefined : picker.bedId.value"
           :pick-point="picker.point.value"
+          :pick-draft="picker.draft.value"
           :spots-editable="!designing && !readonly"
           :highlight-bed-ids="designing ? undefined : foundBedIds"
           @select="designing ? designer.select($event) : select($event)"

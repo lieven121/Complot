@@ -34,8 +34,11 @@ const { date: formatDate, decimal } = useFormat()
 const confirm = useConfirm()
 const notify = useNotify()
 const remove = useDeletePlanting()
+// One form at a time: both place a spot on the map.
 const planning = ref(false)
 const editingId = ref<string>()
+const startPlanning = () => ((planning.value = true), (editingId.value = undefined))
+const toggleEdit = (id: string) => ((editingId.value = editingId.value === id ? undefined : id), (planning.value = false))
 
 const now = computed(() =>
   props.plantings.map((p) => ({ planting: p, phase: phaseAt(p, props.date), crop: props.cropOf(p.varietyId) })).filter((x) => x.phase),
@@ -112,7 +115,7 @@ function deletePlanting(p: PlantingDto) {
     <p class="muted small">{{ t('map.bed.ganttHelp') }}</p>
 
     <PlantingForm v-if="planning" :bed="bed" :date="date" @done="planning = false" />
-    <Button v-else-if="!readonly" :label="t('map.plan.open')" icon="pi pi-plus" @click="planning = true" />
+    <Button v-else-if="!readonly" :label="t('map.plan.open')" icon="pi pi-plus" @click="startPlanning" />
 
     <h3>{{ t('map.bed.tasks') }}</h3>
     <TaskList :tasks="openTasks" :today="period.today" :where-of="whereOf" :empty-text="t('map.bed.noTasks')" :readonly="readonly" />
@@ -138,7 +141,7 @@ function deletePlanting(p: PlantingDto) {
               size="small"
               severity="secondary"
               :aria-label="t('common.edit')"
-              @click="editingId = editingId === p.id ? undefined : p.id"
+              @click="toggleEdit(p.id)"
             />
             <Button
               icon="pi pi-trash"

@@ -204,9 +204,16 @@ public sealed class GardenTests(SeededApiFactory factory) : IClassFixture<Seeded
 
         var created = await Read<PlantingDto>(await Post("/api/plantings", input));
         Assert.Equal(4, created.PlantCount);
+        static UpdatePlantingInput ToUpdate(PlantingDto p) =>
+            new(p.Share, p.SowOn, p.PlantOutOn, p.HarvestFrom, p.HarvestTo, p.ClearOn, p.Notes, p.Count, p.SpotX, p.SpotY);
         var moved = await Read<PlantingDto>(await Put($"/api/plantings/{created.Id}",
             new UpdatePlantingInput(1, created.SowOn, null, created.HarvestFrom, created.HarvestTo, created.ClearOn, null, 5, 0.9, 0.2)));
         Assert.Equal((5, 0.9, 0.2), (moved.Count!.Value, moved.SpotX!.Value, moved.SpotY!.Value));
+
+        Assert.Equal("columnsTooMany", await Code(await Post("/api/plantings/preview", input with { SpotColumns = 5 }), HttpStatusCode.BadRequest));
+        var block = await Read<PlantingDto>(await Put($"/api/plantings/{created.Id}",
+            ToUpdate(moved) with { SpotColumns = 2, SpotVertical = true }));
+        Assert.Equal((2, true), (block.SpotColumns!.Value, block.SpotVertical));
         Assert.Equal(HttpStatusCode.NoContent, (await _client.DeleteAsync($"/api/plantings/{created.Id}", Ct)).StatusCode);
     }
 

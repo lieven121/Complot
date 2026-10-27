@@ -109,6 +109,7 @@
     "attachmentType": "Enkel PDF, JPG, PNG, WebP of HEIC.",
     "attachmentTooLarge": "Bestand is groter dan {maxMb} MB.",
     "spotOutside": "De plek ligt buiten het bed.",
+    "columnsTooMany": "Het blok is breder dan er planten zijn.",
     "notSpotBed": "Aantal en plek gelden alleen in een gemengd bed.",
     "lineTooShort": "Een lijn moet minstens 10 cm lang zijn."
   },
@@ -441,8 +442,18 @@
       "harvestFrom": "Oogst vanaf",
       "harvestTo": "Oogst tot",
       "notes": "Notities",
-      "dragSpot": "Sleep de plek op de kaart om ze te verplaatsen.",
+      "moveSpot": "Tik op het bed of sleep de plek om ze te verplaatsen.",
       "saved": "{name} bijgewerkt"
+    },
+    "pattern": {
+      "shape": "Vorm",
+      "circle": "Cirkel",
+      "block": "Blok",
+      "wide": "Planten breed",
+      "size": "{length} lang × {wide} breed",
+      "direction": "Rijen lopen",
+      "horizontal": "Oost–west",
+      "vertical": "Noord–zuid"
     },
     "overview": {
       "title": "Overzicht · {site}",

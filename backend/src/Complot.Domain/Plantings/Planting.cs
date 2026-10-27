@@ -7,7 +7,8 @@ namespace Complot.Domain.Plantings;
 /// <summary>
 /// A crop in (part of) a bed. Dates are calculated from the variety when planned and can be adjusted afterwards.
 /// For perennials <see cref="ClearOn"/> may stay empty (stays until removed). In a strips bed the crop takes a
-/// <see cref="Share"/>; in a spots bed it is <see cref="Count"/> plants at (<see cref="SpotX"/>, <see cref="SpotY"/>).
+/// <see cref="Share"/>; in a spots bed it is <see cref="Count"/> plants around (<see cref="SpotX"/>, <see cref="SpotY"/>), in a
+/// circle or, with <see cref="SpotColumns"/>, in a block that many plants wide.
 /// </summary>
 public sealed class Planting : Entity
 {
@@ -29,6 +30,12 @@ public sealed class Planting : Entity
     public double? SpotX { get; set; }
 
     public double? SpotY { get; set; }
+
+    /// <summary>Plants across a block (1 = a single row); null = a round cluster (spots beds only).</summary>
+    public int? SpotColumns { get; set; }
+
+    /// <summary>A block's rows run north–south instead of east–west.</summary>
+    public bool SpotVertical { get; set; }
 
     public DateOnly SowOn { get; set; }
 
@@ -74,8 +81,9 @@ public sealed class Planting : Entity
     public (string Field, string Code)? SpotProblem()
     {
         if (Bed.Kind == BedKind.Strips)
-            return Count is null && SpotX is null && SpotY is null ? null : ("count", "notSpotBed");
+            return Count is null && SpotX is null && SpotY is null && SpotColumns is null ? null : ("count", "notSpotBed");
         if (Count is not > 0) return ("count", "notEmpty");
+        if (SpotColumns is { } columns && (columns < 1 || columns > Count)) return ("spotColumns", "columnsTooMany");
         if (SpotX is not { } x || SpotY is not { } y) return ("spotX", "notEmpty");
         return x >= 0 && x <= Bed.Shape.Width && y >= 0 && y <= Bed.Shape.Height ? null : ("spotX", "spotOutside");
     }

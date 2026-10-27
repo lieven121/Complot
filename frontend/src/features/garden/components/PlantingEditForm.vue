@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive } from 'vue'
+import { computed, onBeforeUnmount, reactive, watchEffect } from 'vue'
 import Button from 'primevue/button'
 import DatePicker from 'primevue/datepicker'
 import SelectButton from 'primevue/selectbutton'
@@ -12,8 +12,13 @@ import FormField from '@/shared/ui/FormField.vue'
 import NumberInput from '@/shared/ui/NumberInput.vue'
 import { toUpdateInput } from '../map'
 import { useUpdatePlanting } from '../queries'
+import { useSpotPicker } from '../spotPicker'
+import SpotPatternInput from './SpotPatternInput.vue'
 
-/** Adjust a planting by hand: the actual dates, the share or number of plants, notes. The spot is dragged on the map. */
+/**
+ * Adjust a planting by hand: the actual dates, the share or number of plants, notes. In a spots bed also the
+ * pattern and the place (tap or drag on the map), previewed live on the map until saved.
+ */
 const props = defineProps<{ bed: BedDto; planting: PlantingDto; name: string }>()
 const emit = defineEmits<{ done: [] }>()
 
@@ -25,6 +30,21 @@ const form = reactive(toUpdateInput(props.planting))
 const spots = computed(() => props.bed.kind === 'spots')
 const shares = [1, 0.7, 0.5, 0.3].map((value) => ({ value, label: `${value * 100}%` }))
 if (!shares.some((s) => s.value === form.share)) shares.push({ value: form.share, label: `${Math.round(form.share * 100)}%` })
+
+const picker = useSpotPicker()
+if (spots.value) picker.start(props.bed.id, { x: form.spotX ?? props.bed.shape.width / 2, y: form.spotY ?? props.bed.shape.height / 2 })
+onBeforeUnmount(picker.stop)
+/** Fewer plants than the block is wide: narrow the block. */
+const spotColumns = computed(() => (form.spotColumns ? Math.min(form.spotColumns, form.count ?? 1) : undefined))
+watchEffect(() => {
+  if (spots.value)
+    picker.draft.value = {
+      plantingId: props.planting.id,
+      count: form.count ?? 1,
+      columns: spotColumns.value,
+      vertical: form.spotVertical ?? false,
+    }
+})
 
 type DateKey = 'sowOn' | 'plantOutOn' | 'harvestFrom' | 'harvestTo' | 'clearOn'
 const dateModel = (key: DateKey) =>
@@ -45,7 +65,8 @@ const dates = {
 
 async function save() {
   try {
-    await update.mutateAsync({ id: props.planting.id, input: { ...form, notes: form.notes?.trim() || undefined } })
+    const spot = spots.value && { spotX: picker.point.value?.x, spotY: picker.point.value?.y, spotColumns: spotColumns.value }
+    await update.mutateAsync({ id: props.planting.id, input: { ...form, ...spot, notes: form.notes?.trim() || undefined } })
     notify.success('map.edit.saved', { name: props.name })
     emit('done')
   } catch (error) {
@@ -87,7 +108,8 @@ async function save() {
     <FormField :label="t('map.edit.notes')" for="e-notes">
       <Textarea id="e-notes" v-model="form.notes" rows="2" auto-resize />
     </FormField>
-    <span v-if="spots" class="muted small">📍 {{ t('map.edit.dragSpot') }}</span>
+    <SpotPatternInput v-if="spots" v-model:columns="form.spotColumns" v-model:vertical="form.spotVertical" :count="form.count ?? 1" />
+    <span v-if="spots" class="muted small">📍 {{ t('map.edit.moveSpot') }}</span>
 
     <div class="row">
       <Button
