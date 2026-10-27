@@ -218,6 +218,22 @@ public sealed class GardenTests(SeededApiFactory factory) : IClassFixture<Seeded
     }
 
     [Fact]
+    public async Task Demand_counts_the_plants_sown_in_the_period()
+    {
+        var home = await Home();
+        var m2 = (await Layout(home.Id)).Beds.Single(b => b.Code == "M2");
+        var lettuce = await Variety("Pluksla");
+        var created = await Read<PlantingDto>(await Post("/api/plantings",
+            new PlanPlantingInput(m2.Id, lettuce.Id, 1, new DateOnly(2029, 3, 10), false, null, 7, 0.5, 0.5)));
+
+        var demand = await Get<PlantDemandDto[]>($"/api/sites/{home.Id}/demand?from=2029-03-01&to=2029-03-31");
+        var row = Assert.Single(demand!);
+        Assert.Equal((lettuce.Id, 7, 1, m2.Id), (row.VarietyId, row.Plants, row.Plantings, Assert.Single(row.BedIds)));
+        Assert.Empty((await Get<PlantDemandDto[]>($"/api/sites/{home.Id}/demand?from=2029-04-01&to=2029-04-30"))!);
+        await _client.DeleteAsync($"/api/plantings/{created.Id}", Ct);
+    }
+
+    [Fact]
     public async Task Kind_of_a_bed_in_use_cannot_change()
     {
         var home = await Home();

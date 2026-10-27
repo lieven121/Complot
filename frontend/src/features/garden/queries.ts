@@ -55,6 +55,14 @@ export const usePlantings = (siteId: MaybeRefOrGetter<string | undefined>, perio
     enabled: computed(() => !!toValue(siteId)),
   })
 
+/** Plants needed per variety for the plantings started in a period, against the stock. */
+export const usePlantDemand = (siteId: MaybeRefOrGetter<string | undefined>, range: MaybeRefOrGetter<{ from: string; to: string }>) =>
+  useQuery({
+    queryKey: computed(() => [...GARDEN, 'demand', toValue(siteId), toValue(range)]),
+    queryFn: ({ signal }) => api.plantings.getPlantDemand(toValue(siteId)!, toValue(range).from, toValue(range).to, signal),
+    enabled: computed(() => !!toValue(siteId)),
+  })
+
 export const useSiteChecks = (siteId: MaybeRefOrGetter<string | undefined>) =>
   useQuery({
     queryKey: computed(() => [...GARDEN, 'checks', toValue(siteId)]),

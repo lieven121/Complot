@@ -475,6 +475,35 @@
       "placeholder": "Find a crop…",
       "allOf": "All {name}",
       "none": "Nowhere on this date."
+    },
+    "demand": {
+      "open": "Needed",
+      "title": "Plants needed",
+      "subtitle": "What you sow or plant in this period, against your stock.",
+      "days": {
+        "14": "2 weeks",
+        "31": "Month",
+        "92": "3 months"
+      },
+      "from": "From",
+      "to": "To",
+      "summary": "{varieties} varieties, {plants} plants.",
+      "shortCount": "{n} short.",
+      "none": "Nothing planned in this period.",
+      "plants": "{n} plants",
+      "uncounted": "{n} broadcast",
+      "plantings": "planned {n}×",
+      "stock": "Stock",
+      "pieces": "{n} pcs",
+      "missing": "{n} short",
+      "status": {
+        "enough": "Enough",
+        "short": "Short",
+        "unknown": "Can't compare",
+        "noStock": "No stock"
+      },
+      "toCatalog": "Variety",
+      "note": "Only stock counted in pieces (seeds, plants, bulbs…) is compared; stock in grams or packets is not. Expired lots don't count, and stock is shared by all sites."
     }
   },
   "checks": {

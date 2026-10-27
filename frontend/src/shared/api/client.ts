@@ -1909,6 +1909,60 @@ export class PlantingsClient {
     /**
      * @return OK
      */
+    getPlantDemand(siteId: string, from: string, to: string, signal?: AbortSignal): Promise<PlantDemandDto[]> {
+        let url_ = this.baseUrl + "/api/sites/{siteId}/demand?";
+        if (siteId === undefined || siteId === null)
+            throw new globalThis.Error("The parameter 'siteId' must be defined.");
+        url_ = url_.replace("{siteId}", encodeURIComponent("" + siteId));
+        if (from === undefined || from === null)
+            throw new globalThis.Error("The parameter 'from' must be defined and cannot be null.");
+        else
+            url_ += "from=" + encodeURIComponent("" + from) + "&";
+        if (to === undefined || to === null)
+            throw new globalThis.Error("The parameter 'to' must be defined and cannot be null.");
+        else
+            url_ += "to=" + encodeURIComponent("" + to) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            signal,
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetPlantDemand(_response);
+        });
+    }
+
+    protected processGetPlantDemand(response: Response): Promise<PlantDemandDto[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as PlantDemandDto[];
+            return result200;
+            });
+        } else if (status === 403) {
+            return response.text().then((_responseText) => {
+            let result403: any = null;
+            result403 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+            return throwException("Forbidden", status, _responseText, _headers, result403);
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<PlantDemandDto[]>(null as any);
+    }
+
+    /**
+     * @return OK
+     */
     getSiteChecks(siteId: string, signal?: AbortSignal): Promise<PlantingWarningDto[]> {
         let url_ = this.baseUrl + "/api/sites/{siteId}/checks";
         if (siteId === undefined || siteId === null)
@@ -4417,6 +4471,8 @@ export interface DayRangeDto {
     max: number;
 }
 
+export type DemandStatus = "enough" | "short" | "unknown" | "noStock";
+
 export interface ErrorDetail {
     code: string;
     params?: any | undefined;
@@ -4708,6 +4764,17 @@ export interface PlanPlantingInput {
     spotVertical?: boolean;
 }
 
+export interface PlantDemandDto {
+    varietyId: string;
+    plants: number;
+    plantings: number;
+    uncounted: number;
+    stock: number | undefined;
+    otherStock: StockAmountDto[];
+    status: DemandStatus;
+    bedIds: string[];
+}
+
 export interface PlantingDto {
     id: string;
     bedId: string;
@@ -4815,6 +4882,11 @@ export type SiteRole = "view" | "edit";
 export interface SiteRoleDto {
     siteId: string;
     role: SiteRole;
+}
+
+export interface StockAmountDto {
+    quantity: number;
+    unit: string;
 }
 
 export interface StockDto {

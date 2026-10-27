@@ -475,6 +475,35 @@
       "placeholder": "Zoek een gewas…",
       "allOf": "Alle {name}",
       "none": "Nergens op deze datum."
+    },
+    "demand": {
+      "open": "Benodigd",
+      "title": "Benodigde planten",
+      "subtitle": "Wat je in deze periode zaait of plant, tegenover je voorraad.",
+      "days": {
+        "14": "2 weken",
+        "31": "Maand",
+        "92": "3 maanden"
+      },
+      "from": "Van",
+      "to": "Tot",
+      "summary": "{varieties} rassen, {plants} planten.",
+      "shortCount": "{n} met tekort.",
+      "none": "Niets gepland in deze periode.",
+      "plants": "{n} planten",
+      "uncounted": "{n} breedwerpig",
+      "plantings": "{n}× gepland",
+      "stock": "Voorraad",
+      "pieces": "{n} st.",
+      "missing": "{n} te weinig",
+      "status": {
+        "enough": "Genoeg",
+        "short": "Tekort",
+        "unknown": "Niet te vergelijken",
+        "noStock": "Geen voorraad"
+      },
+      "toCatalog": "Naar ras",
+      "note": "Enkel voorraad in stuks (zaden, planten, bollen…) wordt vergeleken; voorraad in gram of zakjes niet. Vervallen loten tellen niet mee, en de voorraad is gedeeld door alle locaties."
     }
   },
   "checks": {

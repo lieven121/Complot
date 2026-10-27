@@ -26,6 +26,16 @@ public sealed record PlanPlantingInput(
     Guid BedId, Guid VarietyId, double Share, DateOnly SowOn, bool Direct, string? Notes,
     int? Count = null, double? SpotX = null, double? SpotY = null, int? SpotColumns = null, bool SpotVertical = false);
 
+public sealed record StockAmountDto(decimal Quantity, string Unit);
+
+/// <summary>
+/// Plants one variety needs in a period (<see cref="Uncounted"/> plantings sown broadcast have no number) against the
+/// usable stock counted in pieces (<see cref="Stock"/>, null when none) and stock in other units.
+/// </summary>
+public sealed record PlantDemandDto(
+    Guid VarietyId, int Plants, int Plantings, int Uncounted, decimal? Stock, IReadOnlyList<StockAmountDto> OtherStock,
+    DemandStatus Status, IReadOnlyList<Guid> BedIds);
+
 public sealed record PlantingPreviewDto(PlantingDto Planting, IReadOnlyList<PlantingWarningDto> Warnings);
 
 /// <summary>Adjust a planting by hand (e.g. the actual planting-out or harvest dates).</summary>
@@ -39,6 +49,10 @@ public static class PlantingMapping
         p.Id, p.BedId, p.VarietyId, p.Share, p.Count, p.SpotX, p.SpotY, p.SpotColumns, p.SpotVertical,
         p.SowOn, p.PlantOutOn, p.HarvestFrom, p.HarvestTo, p.ClearOn, p.Notes, p.PlantCount(), Math.Round(p.UsedArea(), 3),
         PlantingPhases.Segments(p, from, to).Select(s => new PhaseSegmentDto(s.Phase, s.From, s.To)).ToList());
+
+    public static PlantDemandDto ToDto(this VarietyDemand d) => new(
+        d.VarietyId, d.Plants, d.Plantings, d.Uncounted, d.Stock, d.OtherStock.Select(a => new StockAmountDto(a.Quantity, a.Unit)).ToList(),
+        d.Status, d.BedIds);
 
     public static PlantingWarningDto ToDto(this PlantingWarning w) => new(w.PlantingId, w.BedId, w.Level, w.Code, w.Date, w.Params);
 }

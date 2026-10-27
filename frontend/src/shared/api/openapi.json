@@ -1462,6 +1462,68 @@
         }
       }
     },
+    "/api/sites/{siteId}/demand": {
+      "get": {
+        "tags": [
+          "Plantings"
+        ],
+        "operationId": "GetPlantDemand",
+        "parameters": [
+          {
+            "name": "siteId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PlantDemandDto"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/sites/{siteId}/checks": {
       "get": {
         "tags": [
@@ -3909,6 +3971,14 @@
         },
         "additionalProperties": false
       },
+      "DemandStatus": {
+        "enum": [
+          "enough",
+          "short",
+          "unknown",
+          "noStock"
+        ]
+      },
       "ErrorDetail": {
         "required": [
           "code"
@@ -5165,6 +5235,59 @@
         },
         "additionalProperties": false
       },
+      "PlantDemandDto": {
+        "required": [
+          "varietyId",
+          "plants",
+          "plantings",
+          "uncounted",
+          "stock",
+          "otherStock",
+          "status",
+          "bedIds"
+        ],
+        "type": "object",
+        "properties": {
+          "varietyId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "plants": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "plantings": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "uncounted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stock": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "otherStock": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StockAmountDto"
+            }
+          },
+          "status": {
+            "$ref": "#/components/schemas/DemandStatus"
+          },
+          "bedIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
       "PlantingDto": {
         "required": [
           "id",
@@ -5612,6 +5735,23 @@
           },
           "role": {
             "$ref": "#/components/schemas/SiteRole"
+          }
+        },
+        "additionalProperties": false
+      },
+      "StockAmountDto": {
+        "required": [
+          "quantity",
+          "unit"
+        ],
+        "type": "object",
+        "properties": {
+          "quantity": {
+            "type": "number",
+            "format": "double"
+          },
+          "unit": {
+            "type": "string"
           }
         },
         "additionalProperties": false

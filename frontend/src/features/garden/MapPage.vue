@@ -11,6 +11,7 @@ import { useNotify } from '@/shared/composables/useNotify'
 import { useCatalogLookups } from '@/features/catalog/queries'
 import { useTasks } from '@/features/tasks/queries'
 import BedPanel from './components/BedPanel.vue'
+import DemandPanel from './components/DemandPanel.vue'
 import DesignerPanel from './components/DesignerPanel.vue'
 import DimensionOverlay from './components/DimensionOverlay.vue'
 import GardenMap, { type Crop } from './components/GardenMap.vue'
@@ -171,6 +172,11 @@ const found = computed(() =>
 )
 const foundBedIds = computed(() => (found.value ? new Set(found.value.map((h) => h.bed.id)) : undefined))
 
+// Plants needed in a period: the panel lists them and highlights their beds (the crop finder takes precedence).
+const showDemand = ref(false)
+const demandBedIds = ref<Set<string>>()
+const highlightBedIds = computed(() => foundBedIds.value ?? (showDemand.value ? demandBedIds.value : undefined))
+
 // Design mode: the map shows the designer's working copy; nothing is saved until "Save".
 const confirm = useConfirm()
 const designer = useDesigner()
@@ -218,7 +224,7 @@ const center = () => map.value?.center() ?? { x: 0, y: 0 }
           :pick-point="picker.point.value"
           :pick-draft="picker.draft.value"
           :spots-editable="!designing && !readonly"
-          :highlight-bed-ids="designing ? undefined : foundBedIds"
+          :highlight-bed-ids="designing ? undefined : highlightBedIds"
           @select="designing ? designer.select($event) : select($event)"
           @pick="picker.point.value = $event"
           @move-spot="moveSpot"
@@ -255,6 +261,15 @@ const center = () => map.value?.center() ?? { x: 0, y: 0 }
               <span class="designing">✏️ {{ t('design.active') }}</span>
               <Button :label="t('design.stop')" icon="pi pi-times" size="small" severity="secondary" outlined @click="stopDesign" />
             </template>
+            <Button
+              v-if="!designing"
+              :label="t('map.demand.open')"
+              icon="pi pi-shopping-bag"
+              size="small"
+              :severity="showDemand ? 'contrast' : 'secondary'"
+              :aria-pressed="showDemand"
+              @click="showDemand = !showDemand"
+            />
             <Select
               v-if="!designing"
               v-model="findValue"
@@ -338,6 +353,16 @@ const center = () => map.value?.center() ?? { x: 0, y: 0 }
             <NoteLog :site-id="siteId!" :tree-id="selectedTree.id" :date="date" :readonly="readonly" />
           </template>
         </TreePanel>
+        <DemandPanel
+          v-else-if="showDemand && siteId && layout.data.value"
+          :site-id="siteId"
+          :beds="layout.data.value.beds"
+          :date="date"
+          :crop-of="cropOf"
+          @close="showDemand = false"
+          @select="selectedId = $event"
+          @highlight="demandBedIds = $event"
+        />
         <OverviewPanel
           v-else-if="layout.data.value && site"
           :site-name="site.name"
