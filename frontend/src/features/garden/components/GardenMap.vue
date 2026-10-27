@@ -301,6 +301,12 @@ const scaleBar = computed(() => ({ x: bounds.value.x + bounds.value.w - 2.6, y: 
           />
         </g>
 
+        <!-- Plots are the bottom layer: everything else lies on or around them. -->
+        <g v-for="pl in layout.plots" :key="pl.id" :data-id="pl.id" class="item">
+          <ShapeSvg :shape="pl.shape" :rx="0.3" :class="`plot-${pl.type}`" />
+          <text class="plot-label" :x="pl.shape.x + 0.1" :y="pl.shape.y - 0.16">{{ plotIcon[pl.type] }} {{ pl.name }}</text>
+        </g>
+
         <g v-for="m in layout.markers" :key="m.id" :data-id="m.id" class="item marker">
           <template v-if="m.kind === 'line'">
             <line
@@ -352,11 +358,6 @@ const scaleBar = computed(() => ({ x: bounds.value.x + bounds.value.w - 2.6, y: 
           <text class="feature-label" :x="f.shape.x + f.shape.width / 2" :y="f.shape.y + f.shape.height + 0.4">
             {{ featureStyle[f.type].icon }} {{ f.name }}
           </text>
-        </g>
-
-        <g v-for="pl in layout.plots" :key="pl.id" :data-id="pl.id" class="item">
-          <ShapeSvg :shape="pl.shape" :rx="0.3" :class="`plot-${pl.type}`" />
-          <text class="plot-label" :x="pl.shape.x + 0.1" :y="pl.shape.y - 0.16">{{ plotIcon[pl.type] }} {{ pl.name }}</text>
         </g>
 
         <g
