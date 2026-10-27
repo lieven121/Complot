@@ -321,7 +321,8 @@
         "ruleFamily": "family is the botanical family in Latin (e.g. Solanaceae, Brassicaceae); crop rotation is checked per family.",
         "ruleNames": "Use Dutch (Flemish) common names.",
         "ruleCategories": "Only add categories when no existing category fits. Existing categories (code: name): {list}.",
-        "rulePrices": "Prices in euro. Leave suppliers empty if you are not sure; never invent web addresses."
+        "rulePrices": "Prices in euro. Leave suppliers empty if you are not sure; never invent web addresses.",
+        "rulePollination": "Fill pollination only when it matters: need 'partner' for plants that need another plant of their group (most apples, pears, sweet cherries, tomatillo), 'female'/'male' for plants with separate sexes (kiwi, sea buckthorn), 'selfFertile' for self-fertile plants that still pollinate their group. Otherwise leave it out. rangeMeters: how close a partner has to be (usually 15–30)."
       }
     }
   },
@@ -404,7 +405,12 @@
       },
       "crown": "Crown",
       "planted": "Planted",
-      "actions": "Yearly actions"
+      "actions": "Yearly actions",
+      "pollination": "Pollination",
+      "pollinatedBy": "Pollinated by",
+      "noPollinator": "No pollinator of the group \"{group}\" within {range} m.",
+      "noMale": "No male of the group \"{group}\" within {range} m.",
+      "pollinatorAt": "{name} · {distance} m"
     },
     "plan": {
       "open": "Plan a planting",
@@ -469,6 +475,8 @@
     "sun": "{variety} wants more sun; this bed is in {bedSun}.",
     "renewBy": "{variety}: renew or move by {date} (max {years} yr in one place).",
     "stayTooLong": "{variety} stays longer than {years} yr (until {until}).",
+    "noPollinator": "{variety} needs a pollinator of the group \"{group}\" within {range} m: plant a second one nearby.",
+    "noMalePollinator": "{variety} is female: plant a male of the group \"{group}\" within {range} m.",
     "badNeighbours": "Bad neighbours: {a} ({bedA}) and {b} ({bedB}).",
     "outsideWindow": "Outside the recommended window ({from}–{to})."
   },
@@ -542,6 +550,21 @@
       "color": "Colour"
     },
     "unschedule": "Remove from calendar"
+  },
+  "pollination": {
+    "title": "Pollination",
+    "none": "Not tracked",
+    "hint": "Set this for plants that need a partner (apple, tomatillo) or come as male and female (kiwi).",
+    "group": "Pollination group",
+    "groupHint": "Plants of the same group pollinate each other, e.g. Apple or Kiwi.",
+    "range": "Within",
+    "summary": "{need} · group {group} · within {range} m",
+    "need": {
+      "selfFertile": "Self-fertile (pollinates others)",
+      "partner": "Needs a partner",
+      "female": "Female (needs a male)",
+      "male": "Male (pollinator)"
+    }
   },
   "design": {
     "start": "Design",

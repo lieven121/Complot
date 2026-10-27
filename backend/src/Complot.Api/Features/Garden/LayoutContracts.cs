@@ -26,9 +26,16 @@ public sealed record FeatureDto(Guid Id, string Name, FeatureType Type, ShapeDto
 /// </summary>
 public sealed record MarkerDto(Guid Id, MarkerKind Kind, string? Label, string Color, ShapeDto Shape, double Thickness);
 
+/// <summary>
+/// A tree or shrub. <see cref="Pollinators"/> is calculated (ignored on save): the trees and plantings within range
+/// that can pollinate it from today on, nearest first; null when it needs none, empty when it lacks one.
+/// </summary>
 public sealed record TreeDto(
     Guid Id, string Name, string? Cultivar, TreeKind Kind, double X, double Y, double CrownDiameter, DateOnly? PlantedOn,
-    List<YearlyActionDto> Actions);
+    List<YearlyActionDto> Actions, PollinationDto? Pollination = null, List<PollinatorDto>? Pollinators = null);
+
+/// <summary>A tree or planting that pollinates another one, <see cref="Distance"/> m away.</summary>
+public sealed record PollinatorDto(Guid Id, string Name, double Distance);
 
 /// <summary>
 /// Everything drawn on a site's map. The designer edits a local copy (with undo/redo) and saves the whole layout at
@@ -49,6 +56,6 @@ public static class LayoutMapping
     public static FeatureDto ToDto(this GardenFeature f) => new(f.Id, f.Name, f.Type, f.Shape.ToDto());
     public static MarkerDto ToDto(this MapMarker m) =>
         new(m.Id, m.Kind, m.Label, m.Color, new ShapeDto(m.Outline, m.X, m.Y, m.Width, m.Height), m.Thickness);
-    public static TreeDto ToDto(this Tree t) =>
-        new(t.Id, t.Name, t.Cultivar, t.Kind, t.X, t.Y, t.CrownDiameter, t.PlantedOn, [.. t.Actions.ToDtos()]);
+    public static TreeDto ToDto(this Tree t, List<PollinatorDto>? pollinators = null) =>
+        new(t.Id, t.Name, t.Cultivar, t.Kind, t.X, t.Y, t.CrownDiameter, t.PlantedOn, [.. t.Actions.ToDtos()], t.Pollination.ToDto(), pollinators);
 }

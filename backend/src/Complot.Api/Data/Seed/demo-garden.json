@@ -399,6 +399,7 @@
           "x": 17.2,
           "y": 2.6,
           "crownDiameter": 3.6,
+          "pollination": { "need": "partner", "group": "Appel", "rangeMeters": 20 },
           "plantedOn": "2022-12-01",
           "actions": [
             {
@@ -430,6 +431,7 @@
           "x": 17.2,
           "y": 7.6,
           "crownDiameter": 3,
+          "pollination": { "need": "selfFertile", "group": "Peer", "rangeMeters": 20 },
           "plantedOn": "2023-11-20",
           "actions": [
             {
@@ -587,6 +589,7 @@
           "x": 12,
           "y": 4.8,
           "crownDiameter": 3.4,
+          "pollination": { "need": "selfFertile", "group": "Kers", "rangeMeters": 20 },
           "plantedOn": "2021-11-15",
           "actions": [
             {

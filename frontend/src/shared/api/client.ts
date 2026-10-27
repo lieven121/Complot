@@ -4447,6 +4447,12 @@ export interface ExchangeCategory {
     badNeighbours: string[] | undefined;
 }
 
+export interface ExchangePollination {
+    need: string | undefined;
+    group: string | undefined;
+    rangeMeters: number | undefined;
+}
+
 export interface ExchangeSupplier {
     name: string;
     price: number | undefined;
@@ -4478,6 +4484,7 @@ export interface ExchangeVariety {
     notes: string | undefined;
     actions: ExchangeAction[] | undefined;
     suppliers: ExchangeSupplier[] | undefined;
+    pollination?: ExchangePollination | undefined;
 }
 
 export interface FamilyDto {
@@ -4743,6 +4750,20 @@ export interface PlotDto {
 
 export type PlotType = "open" | "greenhouse" | "orchard";
 
+export interface PollinationDto {
+    need: PollinationNeed;
+    group: string;
+    rangeMeters: number;
+}
+
+export type PollinationNeed = "selfFertile" | "partner" | "female" | "male";
+
+export interface PollinatorDto {
+    id: string;
+    name: string;
+    distance: number;
+}
+
 export interface ProblemDetails {
     type?: string | undefined;
     title?: string | undefined;
@@ -4930,6 +4951,8 @@ export interface TreeDto {
     crownDiameter: number;
     plantedOn: string | undefined;
     actions: YearlyActionDto[];
+    pollination?: PollinationDto | undefined;
+    pollinators?: PollinatorDto[] | undefined;
 }
 
 export type TreeKind = "tree" | "shrub";
@@ -4997,6 +5020,7 @@ export interface VarietyDto {
     suppliers: VarietySupplierDto[];
     stock: StockDto[];
     toolNeeds: ToolNeedDto[];
+    pollination: PollinationDto | undefined;
 }
 
 export interface VarietyInput {
@@ -5024,6 +5048,7 @@ export interface VarietyInput {
     actions: YearlyActionDto[];
     suppliers: VarietySupplierInput[];
     toolNeeds?: ToolNeedDto[] | undefined;
+    pollination?: PollinationDto | undefined;
 }
 
 export interface VarietySupplierDto {

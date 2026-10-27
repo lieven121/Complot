@@ -1,4 +1,5 @@
 using Complot.Domain.Catalog;
+using Complot.Domain.Garden;
 
 namespace Complot.Domain.Plantings;
 
@@ -14,12 +15,13 @@ public sealed record PlantingWarning(
 
 /// <summary>
 /// Checks plantings against each other and against the beds: crop rotation per botanical family, bad neighbours
-/// (same bed or neighbouring beds at the same time), sun, and how long perennials may stay.
+/// (same bed or neighbouring beds at the same time), sun, how long perennials may stay, and whether a crop that needs
+/// a pollinator has one within range (another planting or one of the site's trees).
 /// Plantings must have Bed, Variety, Variety.Category, Variety.Family and Category.DefaultFamily loaded.
 /// </summary>
 public static class PlantingChecks
 {
-    public static List<PlantingWarning> Check(IReadOnlyList<Planting> plantings)
+    public static List<PlantingWarning> Check(IReadOnlyList<Planting> plantings, IReadOnlyList<Tree>? trees = null)
     {
         var warnings = new List<PlantingWarning>();
         foreach (var planting in plantings)
@@ -28,6 +30,7 @@ public static class PlantingChecks
             warnings.AddRange(SunAndStay(planting));
         }
         warnings.AddRange(BadNeighbours(plantings));
+        warnings.AddRange(MissingPollinators(plantings, trees ?? []));
         return warnings.OrderBy(w => w.Date).ToList();
     }
 
@@ -95,6 +98,19 @@ public static class PlantingChecks
             };
             yield return new PlantingWarning(a.Id, a.BedId, WarningLevel.Warning, "badNeighbours", date, parameters);
             if (b.BedId != a.BedId) yield return new PlantingWarning(b.Id, b.BedId, WarningLevel.Warning, "badNeighbours", date, parameters);
+        }
+    }
+
+    private static IEnumerable<PlantingWarning> MissingPollinators(IReadOnlyList<Planting> plantings, IReadOnlyList<Tree> trees)
+    {
+        var all = PollinationCheck.Collect(trees, plantings);
+        foreach (var planting in plantings)
+        {
+            if (Flowering.Of(planting) is not { } subject || PollinationCheck.PollinatorsOf(subject, all) is not []) continue;
+            var p = subject.Pollination;
+            yield return new PlantingWarning(planting.Id, planting.BedId, WarningLevel.Warning,
+                p.Need == PollinationNeed.Female ? "noMalePollinator" : "noPollinator", planting.StartInBed,
+                new Dictionary<string, object?> { ["variety"] = planting.Variety.Name, ["group"] = p.Group, ["range"] = p.RangeMeters });
         }
     }
 

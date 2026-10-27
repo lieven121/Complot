@@ -42,6 +42,34 @@ const openTasks = computed(() => props.tasks.filter((task) => !task.done).slice(
       >
     </div>
 
+    <template v-if="tree.pollination">
+      <h3>{{ t('map.tree.pollination') }}</h3>
+      <div class="muted small">
+        {{
+          t('pollination.summary', {
+            need: t(`pollination.need.${tree.pollination.need}`),
+            group: tree.pollination.group,
+            range: decimal(tree.pollination.rangeMeters),
+          })
+        }}
+      </div>
+      <div v-if="tree.pollinators?.length" class="stack">
+        <span class="small">{{ t('map.tree.pollinatedBy') }}</span>
+        <div v-for="p in tree.pollinators" :key="p.id" class="item">
+          🐝 {{ t('map.tree.pollinatorAt', { name: p.name, distance: decimal(p.distance) }) }}
+        </div>
+      </div>
+      <div v-else-if="tree.pollinators" class="warn small" role="alert">
+        ❗
+        {{
+          t(tree.pollination.need === 'female' ? 'map.tree.noMale' : 'map.tree.noPollinator', {
+            group: tree.pollination.group,
+            range: decimal(tree.pollination.rangeMeters),
+          })
+        }}
+      </div>
+    </template>
+
     <h3>{{ t('map.tree.actions') }}</h3>
     <div class="stack">
       <div v-for="(a, i) in tree.actions" :key="i" class="item">
@@ -56,3 +84,10 @@ const openTasks = computed(() => props.tasks.filter((task) => !task.done).slice(
     <slot name="log" />
   </section>
 </template>
+
+<style scoped>
+.warn {
+  color: var(--c-warn);
+  font-weight: 600;
+}
+</style>

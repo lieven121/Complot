@@ -1,8 +1,10 @@
 using Complot.Api.Auth;
 using Complot.Api.Common;
 using Complot.Api.Data;
+using Complot.Api.Features.Plantings;
 using Complot.Domain.Access;
 using Complot.Domain.Garden;
+using Complot.Domain.Plantings;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
@@ -89,11 +91,12 @@ public static class SiteEndpoints
         return TypedResults.NoContent();
     }
 
-    private static async Task<Results<Ok<SiteLayoutDto>, ProblemHttpResult>> GetLayout(Guid id, ComplotDbContext db, CancellationToken ct) =>
-        await db.Sites.AnyAsync(s => s.Id == id, ct) ? TypedResults.Ok(await LoadLayout(id, db, ct)) : ApiProblems.NotFound();
+    private static async Task<Results<Ok<SiteLayoutDto>, ProblemHttpResult>> GetLayout(
+        Guid id, ComplotDbContext db, TimeProvider time, CancellationToken ct) =>
+        await db.Sites.AnyAsync(s => s.Id == id, ct) ? TypedResults.Ok(await LoadLayout(id, db, time, ct)) : ApiProblems.NotFound();
 
     private static async Task<Results<Ok<SiteLayoutDto>, ProblemHttpResult>> SaveLayout(
-        Guid id, SiteLayoutDto layout, ComplotDbContext db, CancellationToken ct)
+        Guid id, SiteLayoutDto layout, ComplotDbContext db, TimeProvider time, CancellationToken ct)
     {
         if (!await db.Sites.AnyAsync(s => s.Id == id, ct)) return ApiProblems.NotFound();
 
@@ -134,6 +137,7 @@ public static class SiteEndpoints
                 e.CrownDiameter = t.CrownDiameter;
                 e.PlantedOn = t.PlantedOn;
                 e.Actions = t.Actions.ToDomain();
+                e.Pollination = t.Pollination.ToDomain();
             });
         db.Markers.SyncById(markers, layout.Markers, m => m.Id,
             m => new MapMarker { Id = m.Id, SiteId = id, Color = m.Color },
@@ -147,16 +151,30 @@ public static class SiteEndpoints
             });
 
         if (await db.SaveOrConflictAsync("bed.duplicateCode", ct) is { } conflict) return conflict;
-        return TypedResults.Ok(await LoadLayout(id, db, ct));
+        return TypedResults.Ok(await LoadLayout(id, db, time, ct));
     }
 
-    public static async Task<SiteLayoutDto> LoadLayout(Guid siteId, ComplotDbContext db, CancellationToken ct) => new(
+    public static async Task<SiteLayoutDto> LoadLayout(Guid siteId, ComplotDbContext db, TimeProvider time, CancellationToken ct) => new(
         (await db.Plots.AsNoTracking().Where(x => x.SiteId == siteId).OrderBy(x => x.Name).ToListAsync(ct)).Select(x => x.ToDto()).ToList(),
         (await db.Beds.AsNoTracking().Where(x => x.SiteId == siteId).OrderBy(x => x.Code).ToListAsync(ct)).Select(x => x.ToDto()).ToList(),
         (await db.Paths.AsNoTracking().Where(x => x.SiteId == siteId).OrderBy(x => x.Name).ToListAsync(ct)).Select(x => x.ToDto()).ToList(),
         (await db.Features.AsNoTracking().Where(x => x.SiteId == siteId).OrderBy(x => x.Name).ToListAsync(ct)).Select(x => x.ToDto()).ToList(),
-        (await db.Trees.AsNoTracking().Where(x => x.SiteId == siteId).OrderBy(x => x.Name).ToListAsync(ct)).Select(x => x.ToDto()).ToList(),
+        await LoadTrees(siteId, db, time, ct),
         (await db.Markers.AsNoTracking().Where(x => x.SiteId == siteId).OrderBy(x => x.Label).ToListAsync(ct)).Select(x => x.ToDto()).ToList());
+
+    /// <summary>The site's trees with the trees and plantings (from today on) that pollinate them.</summary>
+    private static async Task<List<TreeDto>> LoadTrees(Guid siteId, ComplotDbContext db, TimeProvider time, CancellationToken ct)
+    {
+        var trees = await db.Trees.AsNoTracking().Where(x => x.SiteId == siteId).OrderBy(x => x.Name).ToListAsync(ct);
+        if (trees.All(t => t.Pollination is null)) return trees.Select(t => t.ToDto()).ToList();
+
+        var today = time.Today();
+        var plantings = (await db.ForSiteAsync(siteId, ct)).Where(p => p.EndInBed >= today);
+        var all = PollinationCheck.Collect(trees, plantings);
+        return trees.Select(t => t.ToDto(Flowering.Of(t) is { } f
+            ? PollinationCheck.PollinatorsOf(f, all)?.Select(x => new PollinatorDto(x.Partner.Id, x.Partner.Name, Math.Round(x.Distance, 1))).ToList()
+            : null)).ToList();
+    }
 
     private static async Task<bool> UsesIdsOfOtherSitesAsync(Guid siteId, SiteLayoutDto layout, ComplotDbContext db, CancellationToken ct)
     {

@@ -455,6 +455,20 @@ const scaleBar = computed(() => ({ x: bounds.value.x + bounds.value.w - 2.6, y: 
           <text v-if="alertIds?.has(tree.id)" :x="tree.x + tree.crownDiameter * 0.35" :y="tree.y - tree.crownDiameter * 0.3" font-size=".4">
             🦠
           </text>
+          <!-- needs a pollinator but has none within range -->
+          <g v-if="!designMode && tree.pollinators?.length === 0">
+            <circle :cx="tree.x + tree.crownDiameter * 0.35" :cy="tree.y + tree.crownDiameter * 0.3" r=".15" fill="#b9502c" />
+            <text
+              :x="tree.x + tree.crownDiameter * 0.35"
+              :y="tree.y + tree.crownDiameter * 0.3 + 0.07"
+              text-anchor="middle"
+              font-size=".22"
+              font-weight="800"
+              fill="#fff"
+            >
+              !
+            </text>
+          </g>
         </g>
 
         <slot name="overlay" :view="view" />

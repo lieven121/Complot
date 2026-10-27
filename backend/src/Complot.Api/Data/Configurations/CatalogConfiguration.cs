@@ -54,6 +54,7 @@ internal sealed class PlantVarietyConfiguration : IEntityTypeConfiguration<Plant
         b.ComplexProperty(v => v.PlantOut);
         b.ComplexProperty(v => v.Harvest);
         b.ComplexProperty(v => v.Germination);
+        b.ComplexProperty(v => v.Pollination, p => p.Property(x => x.Group).HasMaxLength(60));
 
         b.OwnsMany(v => v.Actions, a => a.ToJson());
         b.OwnsMany(v => v.ToolNeeds, n => n.ToJson());

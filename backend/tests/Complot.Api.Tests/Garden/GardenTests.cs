@@ -1,10 +1,12 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
+using Complot.Api.Common;
 using Complot.Api.Features.Catalog.Varieties;
 using Complot.Api.Features.Garden;
 using Complot.Api.Features.Plantings;
 using Complot.Api.Tests.Infrastructure;
+using Complot.Domain.Catalog;
 using Complot.Domain.Garden;
 using Complot.Domain.Plantings;
 
@@ -39,6 +41,7 @@ public sealed class GardenTests(SeededApiFactory factory) : IClassFixture<Seeded
         var layout = await Layout(sites![0].Id);
         Assert.Contains(layout.Beds, b => b.Code == "S1" && b.Shape.Kind == ShapeKind.Ellipse);
         Assert.Equal(3, layout.Trees.Count);
+        Assert.Empty(layout.Trees.Single(t => t.Name == "Appelboom").Pollinators!); // the only apple: no partner
         Assert.Contains(layout.Markers, m => m.Kind == MarkerKind.Line && m.Shape.Height == 0);
         Assert.Equal(4.8, layout.Beds.Single(b => b.Code == "A1").Area);
     }
@@ -62,6 +65,30 @@ public sealed class GardenTests(SeededApiFactory factory) : IClassFixture<Seeded
         Assert.Equal(1.5, Assert.Single(saved.Beds).Shape.X);
         Assert.Empty(saved.Paths);
         Assert.Empty(saved.Markers);
+    }
+
+    [Fact]
+    public async Task Trees_list_their_pollinators_within_range()
+    {
+        var site = await Read<SiteDto>(await Post("/api/sites", new SiteInput("Kiwituin", null)));
+        TreeDto Kiwi(string name, double x, PollinationNeed need) =>
+            new(Guid.NewGuid(), name, null, TreeKind.Shrub, x, 0, 2, null, [], new PollinationDto(need, "Kiwi", 15));
+        var female = Kiwi("Kiwi ♀", 0, PollinationNeed.Female);
+        var layout = new SiteLayoutDto([], [], [], [], [female, Kiwi("Kiwi ♂ ver", 40, PollinationNeed.Male)], []);
+
+        var saved = await Read<SiteLayoutDto>(await Put($"/api/sites/{site.Id}/layout", layout));
+        var lonely = saved.Trees.Single(t => t.Id == female.Id);
+        Assert.Equal(PollinationNeed.Female, lonely.Pollination!.Need);
+        Assert.Empty(lonely.Pollinators!);
+        Assert.Null(saved.Trees.Single(t => t.Id != female.Id).Pollinators);
+
+        saved = await Read<SiteLayoutDto>(await Put($"/api/sites/{site.Id}/layout",
+            layout with { Trees = [.. saved.Trees, Kiwi("Kiwi ♂", 6, PollinationNeed.Male)] }));
+        var pollinator = Assert.Single(saved.Trees.Single(t => t.Id == female.Id).Pollinators!);
+        Assert.Equal(("Kiwi ♂", 6.0), (pollinator.Name, pollinator.Distance));
+
+        var noRange = layout with { Trees = [female with { Pollination = female.Pollination! with { RangeMeters = 0 } }] };
+        Assert.Equal("inclusiveBetween", await Code(await Put($"/api/sites/{site.Id}/layout", noRange), HttpStatusCode.BadRequest));
     }
 
     [Fact]

@@ -321,7 +321,8 @@
         "ruleFamily": "family is de botanische familie in het Latijn (bv. Solanaceae, Brassicaceae); de vruchtwisseling wordt per familie berekend.",
         "ruleNames": "Gebruik Nederlandse (Vlaamse) gewasnamen.",
         "ruleCategories": "Voeg enkel categories toe als geen bestaande categorie past. Bestaande categorieën (code: naam): {list}.",
-        "rulePrices": "Prijzen in euro. Laat suppliers leeg als je het niet zeker weet; verzin nooit webadressen."
+        "rulePrices": "Prijzen in euro. Laat suppliers leeg als je het niet zeker weet; verzin nooit webadressen.",
+        "rulePollination": "Vul pollination alleen in als het ertoe doet: need 'partner' voor planten die een andere plant van hun groep nodig hebben (de meeste appels, peren, zoete kersen, tomatillo), 'female'/'male' voor planten met aparte geslachten (kiwi, duindoorn), 'selfFertile' voor zelfbestuivende planten die hun groep wel bestuiven. Laat het anders weg. rangeMeters: hoe dichtbij een partner moet staan (meestal 15–30)."
       }
     }
   },
@@ -404,7 +405,12 @@
       },
       "crown": "Kroon",
       "planted": "Geplant",
-      "actions": "Jaarlijkse acties"
+      "actions": "Jaarlijkse acties",
+      "pollination": "Bestuiving",
+      "pollinatedBy": "Bestoven door",
+      "noPollinator": "Geen bestuiver van de groep \"{group}\" binnen {range} m.",
+      "noMale": "Geen mannelijke plant van de groep \"{group}\" binnen {range} m.",
+      "pollinatorAt": "{name} · {distance} m"
     },
     "plan": {
       "open": "Teelt plannen",
@@ -469,6 +475,8 @@
     "sun": "{variety} wil meer zon; dit bed ligt in {bedSun}.",
     "renewBy": "{variety}: vernieuwen of verplaatsen tegen {date} (max. {years} jaar op dezelfde plek).",
     "stayTooLong": "{variety} blijft langer dan {years} jaar staan (tot {until}).",
+    "noPollinator": "{variety} heeft een bestuiver van de groep \"{group}\" nodig binnen {range} m: zet er een tweede in de buurt.",
+    "noMalePollinator": "{variety} is vrouwelijk: zet een mannelijke plant van de groep \"{group}\" binnen {range} m.",
     "badNeighbours": "Slechte buren: {a} ({bedA}) en {b} ({bedB}).",
     "outsideWindow": "Buiten het aanbevolen venster ({from}–{to})."
   },
@@ -542,6 +550,21 @@
       "color": "Kleur"
     },
     "unschedule": "Uit agenda halen"
+  },
+  "pollination": {
+    "title": "Bestuiving",
+    "none": "Niet opgevolgd",
+    "hint": "Vul dit in voor planten die een partner nodig hebben (appel, tomatillo) of mannelijk en vrouwelijk bestaan (kiwi).",
+    "group": "Bestuivingsgroep",
+    "groupHint": "Planten van dezelfde groep bestuiven elkaar, bv. Appel of Kiwi.",
+    "range": "Binnen",
+    "summary": "{need} · groep {group} · binnen {range} m",
+    "need": {
+      "selfFertile": "Zelfbestuivend (bestuift anderen)",
+      "partner": "Heeft een partner nodig",
+      "female": "Vrouwelijk (heeft een mannetje nodig)",
+      "male": "Mannelijk (bestuiver)"
+    }
   },
   "design": {
     "start": "Ontwerpen",

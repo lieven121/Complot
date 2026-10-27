@@ -110,6 +110,9 @@ public sealed class Tree : Entity
     public double CrownDiameter { get; set; }
     public DateOnly? PlantedOn { get; set; }
     public List<YearlyAction> Actions { get; set; } = [];
+
+    /// <summary>Null when it needs no pollinator and pollinates nothing (e.g. most ornamentals).</summary>
+    public Pollination? Pollination { get; set; }
 }
 
 public enum MarkerKind

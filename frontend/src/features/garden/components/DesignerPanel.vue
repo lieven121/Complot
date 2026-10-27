@@ -6,12 +6,25 @@ import InputNumber from '@/shared/ui/NumberInput.vue'
 import InputText from 'primevue/inputtext'
 import Select from 'primevue/select'
 import { useI18n } from 'vue-i18n'
-import type { BedDto, BedKind, FeatureDto, MarkerKind, PathDto, PlotDto, ShapeDto, TreeDto, YearlyActionDto } from '@/shared/api'
+import type {
+  BedDto,
+  BedKind,
+  FeatureDto,
+  MarkerKind,
+  PathDto,
+  PlotDto,
+  PollinationDto,
+  ShapeDto,
+  TreeDto,
+  YearlyActionDto,
+} from '@/shared/api'
 import { fromIsoDate, toIsoDate } from '@/shared/dates'
 import { useFormat } from '@/shared/composables/useFormat'
 import { useNotify } from '@/shared/composables/useNotify'
 import ColorInput from '@/shared/ui/ColorInput.vue'
 import FormField from '@/shared/ui/FormField.vue'
+import PollinationInput from '@/shared/ui/PollinationInput.vue'
+import { useCatalogLookups } from '@/features/catalog/queries'
 import { useSaveLayout } from '../queries'
 import type { ItemKind, useDesigner } from '../useDesigner'
 
@@ -30,6 +43,7 @@ const { month } = useFormat()
 const notify = useNotify()
 const saveLayout = useSaveLayout()
 const d = props.designer
+const { varieties } = useCatalogLookups()
 
 onMounted(() => document.addEventListener('keydown', d.handleKey))
 onBeforeUnmount(() => document.removeEventListener('keydown', d.handleKey))
@@ -68,6 +82,7 @@ interface EditableItem {
   cultivar?: string
   plantedOn?: string
   actions?: YearlyActionDto[]
+  pollination?: PollinationDto
 }
 const item = computed(() => d.selected.value as EditableItem | undefined)
 
@@ -111,6 +126,13 @@ const setAction = (index: number, field: keyof YearlyActionDto, value: unknown) 
   d.edit(`action${index}.${field}`, () => (item.value!.actions![index] = { ...item.value!.actions![index]!, [field]: value }))
 const addAction = () =>
   d.edit(`actions+${actions.value.length}`, () => item.value!.actions!.push({ title: t('design.pruning'), month: 2, estimatedMinutes: 60 }))
+const pollinationGroups = computed(() => [
+  ...new Set(
+    [...(d.draft.value?.trees ?? []).map((x) => x.pollination), ...(varieties.data.value ?? []).map((v) => v.pollination)].flatMap((p) =>
+      p?.group.trim() ? [p.group.trim()] : [],
+    ),
+  ),
+])
 const removeAction = (index: number) => d.edit(`actions-${index}`, () => item.value!.actions!.splice(index, 1))
 
 const add = (kind: ItemKind, variant?: BedKind | MarkerKind) =>
@@ -320,6 +342,12 @@ async function save() {
         <FormField :label="t('map.tree.planted')" for="d-planted"
           ><DatePicker v-model="plantedOn" input-id="d-planted" show-icon date-format="dd/mm/yy"
         /></FormField>
+        <PollinationInput
+          class="full"
+          :model-value="item.pollination"
+          :groups="pollinationGroups"
+          @update:model-value="set('pollination', $event)"
+        />
         <div class="full stack">
           <b class="small">{{ t('design.actions') }}</b>
           <div v-for="(a, i) in actions" :key="i" class="action">

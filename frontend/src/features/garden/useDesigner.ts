@@ -162,6 +162,8 @@ export function useDesigner() {
         crownDiameter: 3,
         plantedOn: undefined,
         actions: [],
+        pollination: undefined,
+        pollinators: undefined,
       } satisfies TreeDto)
     }
     selection.value = { kind, id }

@@ -181,7 +181,18 @@ public sealed class CatalogImporter(
             row.Notes,
             (row.Actions ?? []).Select(a => new YearlyActionDto(a.Title, a.Month, a.EstimatedMinutes)).ToList(),
             (row.Suppliers ?? []).Where(s => !string.IsNullOrWhiteSpace(s.Name)).DistinctBy(s => s.Name.Trim(), StringComparer.OrdinalIgnoreCase)
-                .Select(s => new VarietySupplierInput(ResolveSupplier(s.Name, warnings), s.Price ?? 0, s.Unit, s.Url)).ToList());
+                .Select(s => new VarietySupplierInput(ResolveSupplier(s.Name, warnings), s.Price ?? 0, s.Unit, s.Url)).ToList(),
+            Pollination: ToPollination(row.Pollination, errors));
+    }
+
+    /// <summary>Null when the row has none; the group and range are checked by the variety validator.</summary>
+    private static PollinationDto? ToPollination(ExchangePollination? row, Dictionary<string, List<ErrorDetail>> errors)
+    {
+        if (row is null) return null;
+        var need = PollinationNeed.SelfFertile;
+        if (row.Need is not null && !Enum.TryParse(row.Need, ignoreCase: true, out need))
+            AddError(errors, "pollination", new ErrorDetail("invalidValue", Params(("value", row.Need))));
+        return new PollinationDto(need, row.Group?.Trim() ?? "", row.RangeMeters ?? Pollination.DefaultRangeMeters);
     }
 
     private Guid? ResolveFamily(string? latinName, List<ErrorDetail> warnings)

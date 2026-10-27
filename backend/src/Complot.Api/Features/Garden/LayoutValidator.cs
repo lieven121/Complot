@@ -86,6 +86,7 @@ public sealed class SiteLayoutValidator : AbstractValidator<SiteLayoutDto>
             t.RuleFor(x => x.Y).InclusiveBetween(-10_000, 10_000);
             t.RuleFor(x => x.CrownDiameter).InclusiveBetween(0.1, 100);
             t.RuleForEach(x => x.Actions).SetValidator(new YearlyActionDtoValidator());
+            t.RuleFor(x => x.Pollination!).SetValidator(new PollinationDtoValidator()).When(x => x.Pollination is not null);
         });
         RuleForEach(x => x.Markers).ChildRules(m =>
         {

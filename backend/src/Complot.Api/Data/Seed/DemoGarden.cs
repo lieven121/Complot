@@ -23,7 +23,7 @@ internal static class DemoGarden
     private sealed record SeedBed(string Code, string Plot, SeedShape Shape, SunExposure Sun, string? Soil, BedKind Kind = BedKind.Strips);
     private sealed record SeedPath(string Name, PathMaterial Material, SeedShape Shape);
     private sealed record SeedFeature(string Name, FeatureType Type, SeedShape Shape);
-    private sealed record SeedTree(string Name, string? Cultivar, TreeKind Kind, double X, double Y, double CrownDiameter, DateOnly? PlantedOn, List<YearlyAction> Actions);
+    private sealed record SeedTree(string Name, string? Cultivar, TreeKind Kind, double X, double Y, double CrownDiameter, DateOnly? PlantedOn, List<YearlyAction> Actions, Pollination? Pollination = null);
     private sealed record SeedMarker(MarkerKind Kind, string? Label, string Color, ShapeKind Outline, double X, double Y, double Width, double Height, double Thickness = 0.2);
     private sealed record SeedSite(
         string Name, List<SeedPlot> Plots, List<SeedBed> Beds, List<SeedPath> Paths, List<SeedFeature> Features, List<SeedTree> Trees,
@@ -92,7 +92,7 @@ internal static class DemoGarden
                 trees[t.Name] = new Tree
                 {
                     SiteId = site.Id, Name = t.Name, Cultivar = t.Cultivar, Kind = t.Kind, X = t.X, Y = t.Y,
-                    CrownDiameter = t.CrownDiameter, PlantedOn = t.PlantedOn, Actions = t.Actions,
+                    CrownDiameter = t.CrownDiameter, PlantedOn = t.PlantedOn, Actions = t.Actions, Pollination = t.Pollination,
                 };
                 db.Trees.Add(trees[t.Name]);
             }

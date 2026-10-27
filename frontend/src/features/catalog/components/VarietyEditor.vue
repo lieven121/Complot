@@ -13,13 +13,14 @@ import { useFormat } from '@/shared/composables/useFormat'
 import EditDialog from '@/shared/ui/EditDialog.vue'
 import FormField from '@/shared/ui/FormField.vue'
 import MonthWindowInput from '@/shared/ui/MonthWindowInput.vue'
+import PollinationInput from '@/shared/ui/PollinationInput.vue'
 import { useTools } from '@/features/tools/queries'
 import { useCatalogLookups, useDeleteVariety, useSaveVariety } from '../queries'
 import { newVarietyInput, varietyInputFrom } from '../varietyForm'
 
 const { t } = useI18n()
 const { monthLong } = useFormat()
-const { categories, families, suppliers, familyById, categoryById } = useCatalogLookups()
+const { categories, families, suppliers, varieties, familyById, categoryById } = useCatalogLookups()
 const tools = useTools()
 
 const editor = useEditor({
@@ -57,6 +58,9 @@ const addAction = () => form.value.actions.push({ title: '', month: 2, estimated
 const addSupplier = () => form.value.suppliers.push({ supplierId: '', price: 0, unit: undefined, url: undefined })
 const toolNeeds = computed(() => (form.value.toolNeeds ??= []))
 const addToolNeed = () => toolNeeds.value.push({ toolId: '', per: 'bed', quantity: 1 })
+const pollinationGroups = computed(() => [
+  ...new Set((varieties.data.value ?? []).flatMap((v) => (v.pollination ? [v.pollination.group] : []))),
+])
 const perOptions = computed(() => (['plant', 'bed'] as const).map((value) => ({ value, label: t(`tools.per.${value}`) })))
 </script>
 
@@ -128,6 +132,12 @@ const perOptions = computed(() => (['plant', 'bed'] as const).map((value) => ({ 
     <FormField :label="t('catalog.variety.sun')" :error="errors.field('sun')" full>
       <SelectButton v-model="form.sun" :options="sunOptions" option-label="label" option-value="value" multiple />
     </FormField>
+    <PollinationInput
+      v-model="form.pollination"
+      class="full"
+      :groups="pollinationGroups"
+      :error="errors.field('pollination.group') ?? errors.field('pollination.rangeMeters') ?? errors.field('pollination')"
+    />
 
     <h3 class="full">{{ t('catalog.variety.sectionCalendar') }}</h3>
     <FormField :label="t('catalog.variety.sowIndoor')" :error="errors.field('sowIndoor')">

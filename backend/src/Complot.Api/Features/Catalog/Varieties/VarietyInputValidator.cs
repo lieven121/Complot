@@ -44,6 +44,7 @@ public sealed class VarietyInputValidator : AbstractValidator<VarietyInput>
         RuleFor(x => x.MaxYearsInBed).InclusiveBetween(1, 100).When(x => x.MaxYearsInBed is not null);
 
         RuleForEach(x => x.Actions).SetValidator(new YearlyActionDtoValidator());
+        RuleFor(x => x.Pollination!).SetValidator(new PollinationDtoValidator()).When(x => x.Pollination is not null);
 
         RuleForEach(x => x.Suppliers).ChildRules(supplier =>
         {

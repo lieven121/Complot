@@ -38,6 +38,9 @@ public sealed class PlantVariety : Entity
 
     public string? Notes { get; set; }
 
+    /// <summary>Null when it needs no pollinator and pollinates nothing that is tracked.</summary>
+    public Pollination? Pollination { get; set; }
+
     public List<YearlyAction> Actions { get; set; } = [];
     public List<VarietySupplier> Suppliers { get; set; } = [];
 

@@ -1,6 +1,7 @@
 using Complot.Api.Auth;
 using Complot.Api.Common;
 using Complot.Api.Data;
+using Complot.Domain.Garden;
 using Complot.Domain.Plantings;
 using Complot.Domain.Access;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -53,7 +54,10 @@ public static class PlantingEndpoints
     }
 
     private static async Task<PlantingWarningDto[]> Checks(Guid siteId, ComplotDbContext db, CancellationToken ct) =>
-        PlantingChecks.Check(await db.ForSiteAsync(siteId, ct)).Select(w => w.ToDto()).ToArray();
+        PlantingChecks.Check(await db.ForSiteAsync(siteId, ct), await db.TreesOfSiteAsync(siteId, ct)).Select(w => w.ToDto()).ToArray();
+
+    private static Task<List<Tree>> TreesOfSiteAsync(this ComplotDbContext db, Guid siteId, CancellationToken ct) =>
+        db.Trees.AsNoTracking().Where(t => t.SiteId == siteId).ToListAsync(ct);
 
     private static async Task<Results<Ok<PlantingPreviewDto>, ProblemHttpResult>> Preview(
         PlanPlantingInput input, ComplotDbContext db, TimeProvider time, CancellationToken ct)
@@ -62,7 +66,7 @@ public static class PlantingEndpoints
         if (SpotProblem(planting) is { } problem) return problem;
         var siteId = planting.Bed.SiteId;
         var all = (await db.ForSiteAsync(siteId, ct)).Append(planting).ToList();
-        var warnings = PlantingChecks.Check(all).Where(w => w.PlantingId == planting.Id).ToList();
+        var warnings = PlantingChecks.Check(all, await db.TreesOfSiteAsync(siteId, ct)).Where(w => w.PlantingId == planting.Id).ToList();
         if (PlantingChecks.OutsideSowingWindow(planting) is { } window) warnings.Insert(0, window);
         var (from, to) = Period(null, null, time);
         return TypedResults.Ok(new PlantingPreviewDto(planting.ToDto(from, to), warnings.Select(w => w.ToDto()).ToList()));

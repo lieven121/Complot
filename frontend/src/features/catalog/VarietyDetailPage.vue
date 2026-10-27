@@ -51,6 +51,16 @@ const tiles = computed(() => {
           ? t('common.years', { n: x.maxYearsInBed })
           : t('catalog.unlimited'),
     ],
+    [
+      t('pollination.title'),
+      x.pollination
+        ? t('pollination.summary', {
+            need: t(`pollination.need.${x.pollination.need}`),
+            group: x.pollination.group,
+            range: decimal(x.pollination.rangeMeters),
+          })
+        : '—',
+    ],
   ]
 })
 const calendar = computed(() => [

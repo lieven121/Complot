@@ -41,6 +41,7 @@ const FORMAT_TEMPLATE = {
       notes: 'string',
       actions: [{ title: 'string', month: 2, estimatedMinutes: 30 }],
       suppliers: [{ name: 'string', price: 2.95, unit: 'string' }],
+      pollination: { need: 'selfFertile | partner | female | male', group: 'pollination group, e.g. Apple', rangeMeters: 20 },
     },
   ],
 }
@@ -62,6 +63,7 @@ export function buildAiPrompt(t: Translate, task: string, categories: CategoryDt
     `- ${t('catalog.exchange.prompt.ruleNames')}`,
     `- ${t('catalog.exchange.prompt.ruleCategories', { list: categories.map((c) => `${c.slug}: ${c.name}`).join(', ') })}`,
     `- ${t('catalog.exchange.prompt.rulePrices')}`,
+    `- ${t('catalog.exchange.prompt.rulePollination')}`,
   ].join('\n')
 }
 

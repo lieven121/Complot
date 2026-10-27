@@ -77,6 +77,7 @@ internal sealed class TreeConfiguration : IEntityTypeConfiguration<Tree>
         b.Property(t => t.Name).HasMaxLength(100);
         b.Property(t => t.Cultivar).HasMaxLength(120);
         b.OwnsMany(t => t.Actions, a => a.ToJson());
+        b.ComplexProperty(t => t.Pollination, p => p.Property(x => x.Group).HasMaxLength(60));
         b.HasOne<Site>().WithMany().HasForeignKey(t => t.SiteId).OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -40,7 +40,8 @@ public sealed record VarietyDto(
     IReadOnlyList<YearlyActionDto> Actions,
     IReadOnlyList<VarietySupplierDto> Suppliers,
     IReadOnlyList<StockDto> Stock,
-    IReadOnlyList<ToolNeedDto> ToolNeeds);
+    IReadOnlyList<ToolNeedDto> ToolNeeds,
+    PollinationDto? Pollination);
 
 public sealed record VarietySupplierInput(Guid SupplierId, decimal Price, string? Unit, string? Url);
 
@@ -68,4 +69,5 @@ public sealed record VarietyInput(
     string? Notes,
     List<YearlyActionDto> Actions,
     List<VarietySupplierInput> Suppliers,
-    List<ToolNeedDto>? ToolNeeds = null);
+    List<ToolNeedDto>? ToolNeeds = null,
+    PollinationDto? Pollination = null);

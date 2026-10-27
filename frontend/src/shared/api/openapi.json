@@ -4032,6 +4032,30 @@
         },
         "additionalProperties": false
       },
+      "ExchangePollination": {
+        "required": [
+          "need",
+          "group",
+          "rangeMeters"
+        ],
+        "type": "object",
+        "properties": {
+          "need": {
+            "type": "string",
+            "nullable": true
+          },
+          "group": {
+            "type": "string",
+            "nullable": true
+          },
+          "rangeMeters": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ExchangeSupplier": {
         "required": [
           "name",
@@ -4216,6 +4240,19 @@
               "$ref": "#/components/schemas/ExchangeSupplier"
             },
             "nullable": true
+          },
+          "pollination": {
+            "oneOf": [
+              {
+                "enum": [
+                  null
+                ],
+                "nullable": true
+              },
+              {
+                "$ref": "#/components/schemas/ExchangePollination"
+              }
+            ]
           }
         },
         "additionalProperties": false
@@ -5313,6 +5350,57 @@
           "orchard"
         ]
       },
+      "PollinationDto": {
+        "required": [
+          "need",
+          "group",
+          "rangeMeters"
+        ],
+        "type": "object",
+        "properties": {
+          "need": {
+            "$ref": "#/components/schemas/PollinationNeed"
+          },
+          "group": {
+            "type": "string"
+          },
+          "rangeMeters": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PollinationNeed": {
+        "enum": [
+          "selfFertile",
+          "partner",
+          "female",
+          "male"
+        ]
+      },
+      "PollinatorDto": {
+        "required": [
+          "id",
+          "name",
+          "distance"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "distance": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
       "ProblemDetails": {
         "type": "object",
         "properties": {
@@ -6130,6 +6218,26 @@
             "items": {
               "$ref": "#/components/schemas/YearlyActionDto"
             }
+          },
+          "pollination": {
+            "oneOf": [
+              {
+                "enum": [
+                  null
+                ],
+                "nullable": true
+              },
+              {
+                "$ref": "#/components/schemas/PollinationDto"
+              }
+            ]
+          },
+          "pollinators": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PollinatorDto"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -6322,7 +6430,8 @@
           "actions",
           "suppliers",
           "stock",
-          "toolNeeds"
+          "toolNeeds",
+          "pollination"
         ],
         "type": "object",
         "properties": {
@@ -6490,6 +6599,19 @@
             "items": {
               "$ref": "#/components/schemas/ToolNeedDto"
             }
+          },
+          "pollination": {
+            "oneOf": [
+              {
+                "enum": [
+                  null
+                ],
+                "nullable": true
+              },
+              {
+                "$ref": "#/components/schemas/PollinationDto"
+              }
+            ]
           }
         },
         "additionalProperties": false
@@ -6668,6 +6790,19 @@
               "$ref": "#/components/schemas/ToolNeedDto"
             },
             "nullable": true
+          },
+          "pollination": {
+            "oneOf": [
+              {
+                "enum": [
+                  null
+                ],
+                "nullable": true
+              },
+              {
+                "$ref": "#/components/schemas/PollinationDto"
+              }
+            ]
           }
         },
         "additionalProperties": false

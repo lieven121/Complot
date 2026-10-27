@@ -368,6 +368,20 @@ namespace Complot.Api.Data.Migrations
                                 .HasColumnType("INTEGER");
                         });
 
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Pollination", "Complot.Domain.Catalog.PlantVariety.Pollination#Pollination", b1 =>
+                        {
+                            b1.Property<string>("Group")
+                                .IsRequired()
+                                .HasMaxLength(60)
+                                .HasColumnType("TEXT");
+
+                            b1.Property<int>("Need")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<double>("RangeMeters")
+                                .HasColumnType("REAL");
+                        });
+
                     b.ComplexProperty(typeof(Dictionary<string, object>), "SowIndoor", "Complot.Domain.Catalog.PlantVariety.SowIndoor#MonthWindow", b1 =>
                         {
                             b1.Property<int>("From")
@@ -887,6 +901,20 @@ namespace Complot.Api.Data.Migrations
 
                     b.Property<double>("Y")
                         .HasColumnType("REAL");
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Pollination", "Complot.Domain.Garden.Tree.Pollination#Pollination", b1 =>
+                        {
+                            b1.Property<string>("Group")
+                                .IsRequired()
+                                .HasMaxLength(60)
+                                .HasColumnType("TEXT");
+
+                            b1.Property<int>("Need")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<double>("RangeMeters")
+                                .HasColumnType("REAL");
+                        });
 
                     b.HasKey("Id");
 

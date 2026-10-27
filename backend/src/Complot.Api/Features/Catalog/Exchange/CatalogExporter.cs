@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Complot.Api.Data;
 using Complot.Api.Features.Catalog.Varieties;
 using Complot.Domain.Catalog;
@@ -27,7 +28,9 @@ public static class CatalogExporter
                 v.Germination is null ? null : [v.Germination.Min, v.Germination.Max],
                 v.DaysToFirstHarvest, v.HarvestWeeks, Months(v.Harvest), v.MaxYearsInBed, v.Notes,
                 v.Actions.Select(a => new ExchangeAction(a.Title, a.Month, a.EstimatedMinutes)).ToList(),
-                v.Suppliers.Select(s => new ExchangeSupplier(s.Supplier.Name, s.Price, s.Unit, s.Url)).ToList())).ToList());
+                v.Suppliers.Select(s => new ExchangeSupplier(s.Supplier.Name, s.Price, s.Unit, s.Url)).ToList(),
+                v.Pollination is { } p ? new ExchangePollination(JsonNamingPolicy.CamelCase.ConvertName(p.Need.ToString()), p.Group, p.RangeMeters) : null))
+                .ToList());
     }
 
     private static int[]? Months(MonthWindow? window) => window is null ? null : [window.From, window.To];
