@@ -43,7 +43,7 @@ internal sealed class GardenPathConfiguration : IEntityTypeConfiguration<GardenP
     {
         b.ToTable("Paths");
         b.Property(p => p.Name).HasMaxLength(100);
-        b.ComplexProperty(p => p.Shape);
+        b.OwnsMany(p => p.Points, p => p.ToJson());
         b.HasOne<Site>().WithMany().HasForeignKey(p => p.SiteId).OnDelete(DeleteBehavior.Cascade);
     }
 }
@@ -66,6 +66,7 @@ internal sealed class MapMarkerConfiguration : IEntityTypeConfiguration<MapMarke
         b.ToTable("Markers");
         b.Property(m => m.Label).HasMaxLength(100);
         b.Property(m => m.Color).HasMaxLength(7);
+        b.OwnsMany(m => m.Points, p => p.ToJson());
         b.HasOne<Site>().WithMany().HasForeignKey(m => m.SiteId).OnDelete(DeleteBehavior.Cascade);
     }
 }
@@ -78,6 +79,9 @@ internal sealed class TreeConfiguration : IEntityTypeConfiguration<Tree>
         b.Property(t => t.Cultivar).HasMaxLength(120);
         b.OwnsMany(t => t.Actions, a => a.ToJson());
         b.ComplexProperty(t => t.Pollination, p => p.Property(x => x.Group).HasMaxLength(60));
+        b.Ignore(t => t.AllActions);
+        b.Ignore(t => t.EffectivePollination);
+        b.HasOne(t => t.Variety).WithMany().HasForeignKey(t => t.VarietyId).OnDelete(DeleteBehavior.Restrict);
         b.HasOne<Site>().WithMany().HasForeignKey(t => t.SiteId).OnDelete(DeleteBehavior.Cascade);
     }
 }

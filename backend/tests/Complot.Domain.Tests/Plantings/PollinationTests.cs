@@ -32,6 +32,16 @@ public sealed class PollinationTests
     }
 
     [Fact]
+    public void A_tree_of_a_variety_pollinates_as_that_variety()
+    {
+        var kiwi = new PlantVariety { Name = "Kiwi", Cultivar = "Hayward", Category = Tomatoes, Harvest = new MonthWindow(10, 11),
+            Pollination = new Pollination(PollinationNeed.Male, "Kiwi", 15) };
+        var male = new Tree { Name = "Kiwi ♂", X = 5, Variety = kiwi };
+        Assert.Equal("Kiwi ♂", Assert.Single(PollinatorsOf(Tree("Kiwi ♀", 0, PollinationNeed.Female), male)!).Partner.Name);
+        Assert.Equal("hayward", Flowering.Of(male)!.CloneOf);
+    }
+
+    [Fact]
     public void Apple_needs_another_cultivar_of_its_group()
     {
         var elstar = Tree("Appel", 0, PollinationNeed.Partner, "Apple", "Elstar");

@@ -50,9 +50,12 @@ The clickable prototype from stage 0 is still in `demo/index.html`.
 - **Overview panel**: beds in use, tasks for the next 14 days (check off directly), harvest now, harvested this year, checks.
 
 ### 3.2 Designer (on the map)
-- Toggle design mode → grid (1 m / 5 m), drag to move (10 cm snap), **exact X/Y/width/length** fields, dimension lines and coordinates on the selected item.
-- Item types: **plot** (rect/oval, type open/greenhouse/orchard), **bed** (rect/oval/keyhole, plot, sun, soil), **path** (material: wood chips, grass, pavers, gravel), **tree/shrub** (crown diameter, cultivar, planting date, **yearly actions with month and duration → tasks**), **feature** (compost, rain water, pond, hedge, shed).
-- Later: polygons, rotation, copy/paste, layers, background image (aerial photo/plan) for tracing, shade cast by trees affecting the sun setting of beds.
+- Toggle design mode → grid (1 m / 5 m), drag to move: edges and centres **line up** with other items (guide lines), else 10 cm snap; **Alt** drags freely. **Exact X/Y/width/length** fields, dimension lines and coordinates on the selected item. The middle mouse button always pans.
+- **Paths and lines (walls, fences) are polylines**: drag a point, drag a midpoint to add a corner, double-click to remove.
+- **Copy/paste** (Ctrl+C / Ctrl+V, Ctrl+D duplicates), **layers** (bring to front / send to back; plots always at the bottom).
+- **Measuring tape** on the map, in both modes.
+- Item types: **plot** (rect/oval, type open/greenhouse/orchard), **bed** (rect/oval/keyhole, plot, sun, soil), **path** (material: wood chips, grass, pavers, gravel), **tree/shrub** (round crown or a rectangle for espaliers, optional **catalog variety** whose yearly actions and pollination apply, cultivar, planting date, own **yearly actions with month and duration → tasks**), **feature** (compost, rain water, pond, hedge, shed).
+- Later: polygons, rotation, background image (aerial photo/plan) for tracing, shade cast by trees affecting the sun setting of beds.
 
 ### 3.3 Tasks (todo)
 - Sources: plantings (indoor sowing, sowing/planting out, start of harvest, clearing; green manure = mow/dig in), perennial/tree actions (yearly), tool maintenance (interval), manual tasks.

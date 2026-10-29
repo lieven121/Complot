@@ -1,6 +1,8 @@
 using Complot.Api.Common;
+using Complot.Api.Data;
 using Complot.Domain.Garden;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 
 namespace Complot.Api.Features.Garden;
 
@@ -25,25 +27,29 @@ public sealed class ShapeDtoValidator : AbstractValidator<ShapeDto>
     }
 }
 
-/// <summary>A line from (X, Y) by (Width, Height): either direction, at least 10 cm long.</summary>
-public sealed class LineShapeValidator : AbstractValidator<ShapeDto>
+/// <summary>A line through 2–200 points on the map, at least 10 cm long.</summary>
+public sealed class PolylineValidator : AbstractValidator<List<PointDto>>
 {
-    public LineShapeValidator()
+    public PolylineValidator()
     {
-        RuleFor(s => s.X).InclusiveBetween(-10_000, 10_000);
-        RuleFor(s => s.Y).InclusiveBetween(-10_000, 10_000);
-        RuleFor(s => s.Width).InclusiveBetween(-1_000, 1_000);
-        RuleFor(s => s.Height).InclusiveBetween(-1_000, 1_000);
-        RuleFor(s => s).Must(s => Math.Sqrt(s.Width * s.Width + s.Height * s.Height) >= 0.1).WithErrorCode("lineTooShort")
-            .OverridePropertyName("width");
+        RuleFor(p => p.Count).InclusiveBetween(2, 200).OverridePropertyName("points");
+        RuleForEach(p => p).ChildRules(p =>
+        {
+            p.RuleFor(x => x.X).InclusiveBetween(-10_000, 10_000);
+            p.RuleFor(x => x.Y).InclusiveBetween(-10_000, 10_000);
+        }).OverridePropertyName("points");
+        RuleFor(p => p).Must(p => Length(p) >= 0.1).WithErrorCode("lineTooShort").OverridePropertyName("points");
     }
+
+    private static double Length(List<PointDto> p) => p.Zip(p.Skip(1), (a, b) => Math.Sqrt(Math.Pow(b.X - a.X, 2) + Math.Pow(b.Y - a.Y, 2))).Sum();
 }
 
 public sealed class SiteLayoutValidator : AbstractValidator<SiteLayoutDto>
 {
-    public SiteLayoutValidator()
+    public SiteLayoutValidator(ComplotDbContext db)
     {
         var shape = new ShapeDtoValidator();
+        var line = new PolylineValidator();
 
         RuleForEach(x => x.Plots).ChildRules(p =>
         {
@@ -69,7 +75,8 @@ public sealed class SiteLayoutValidator : AbstractValidator<SiteLayoutDto>
         {
             p.RuleFor(x => x.Name).NotEmpty().MaximumLength(100);
             p.RuleFor(x => x.Material).IsInEnum();
-            p.RuleFor(x => x.Shape).NotNull().SetValidator(shape);
+            p.RuleFor(x => x.Points).NotNull().SetValidator(line);
+            p.RuleFor(x => x.Width).InclusiveBetween(0.1, 20);
         });
         RuleForEach(x => x.Features).ChildRules(f =>
         {
@@ -84,7 +91,12 @@ public sealed class SiteLayoutValidator : AbstractValidator<SiteLayoutDto>
             t.RuleFor(x => x.Kind).IsInEnum();
             t.RuleFor(x => x.X).InclusiveBetween(-10_000, 10_000);
             t.RuleFor(x => x.Y).InclusiveBetween(-10_000, 10_000);
-            t.RuleFor(x => x.CrownDiameter).InclusiveBetween(0.1, 100);
+            t.RuleFor(x => x.Outline).Must(k => k is ShapeKind.Ellipse or ShapeKind.Rect).WithErrorCode("isInEnum");
+            t.RuleFor(x => x.CrownWidth).InclusiveBetween(0.1, 100);
+            t.RuleFor(x => x.CrownDepth).InclusiveBetween(0.1, 100);
+            t.RuleFor(x => x.VarietyId)
+                .MustAsync((id, ct) => db.Varieties.AnyAsync(v => v.Id == id, ct)).WithErrorCode("unknownVariety")
+                .When(x => x.VarietyId is not null);
             t.RuleForEach(x => x.Actions).SetValidator(new YearlyActionDtoValidator());
             t.RuleFor(x => x.Pollination!).SetValidator(new PollinationDtoValidator()).When(x => x.Pollination is not null);
         });
@@ -93,10 +105,10 @@ public sealed class SiteLayoutValidator : AbstractValidator<SiteLayoutDto>
             m.RuleFor(x => x.Kind).IsInEnum();
             m.RuleFor(x => x.Label).MaximumLength(100);
             m.RuleFor(x => x.Color).HexColor();
-            m.RuleFor(x => x.Shape).NotNull().SetValidator(shape).When(x => x.Kind == MarkerKind.Area);
-            m.RuleFor(x => x.Shape.Kind).Must(k => k is ShapeKind.Rect or ShapeKind.Ellipse).WithErrorCode("isInEnum")
+            m.RuleFor(x => x.Shape!).NotNull().SetValidator(shape).When(x => x.Kind == MarkerKind.Area);
+            m.RuleFor(x => x.Shape!.Kind).Must(k => k is ShapeKind.Rect or ShapeKind.Ellipse).WithErrorCode("isInEnum")
                 .When(x => x.Kind == MarkerKind.Area && x.Shape is not null);
-            m.RuleFor(x => x.Shape).NotNull().SetValidator(new LineShapeValidator()).When(x => x.Kind == MarkerKind.Line);
+            m.RuleFor(x => x.Points!).NotNull().SetValidator(line).When(x => x.Kind == MarkerKind.Line);
             m.RuleFor(x => x.Thickness).InclusiveBetween(0.02, 5);
         });
         RuleFor(x => x)

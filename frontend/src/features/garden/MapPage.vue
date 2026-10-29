@@ -201,6 +201,9 @@ function stopDesign() {
   })
 }
 const center = () => map.value?.center() ?? { x: 0, y: 0 }
+
+/** Measuring tape on the map (in both modes): clicks set its points. */
+const measuring = ref(false)
 </script>
 
 <template>
@@ -228,9 +231,15 @@ const center = () => map.value?.center() ?? { x: 0, y: 0 }
           @select="designing ? designer.select($event) : select($event)"
           @pick="picker.point.value = $event"
           @move-spot="moveSpot"
+          :guides="designing ? designer.guides.value : undefined"
+          :measuring="measuring"
           @move-start="designer.moveStart"
           @move="designer.move"
           @move-end="designer.moveEnd"
+          @vertex-start="designer.vertexStart"
+          @vertex="designer.moveVertex"
+          @vertex-end="designer.moveEnd"
+          @remove-vertex="designer.removeVertex"
         >
           <template #overlay>
             <DimensionOverlay v-if="designing && designer.selected.value" :item="designer.selected.value" />
@@ -305,7 +314,16 @@ const center = () => map.value?.center() ?? { x: 0, y: 0 }
           <Button icon="pi pi-plus" severity="secondary" :aria-label="t('map.zoomIn')" @click="map?.zoom(1.3)" />
           <Button icon="pi pi-minus" severity="secondary" :aria-label="t('map.zoomOut')" @click="map?.zoom(1 / 1.3)" />
           <Button icon="pi pi-expand" severity="secondary" :aria-label="t('map.fit')" @click="map?.fit()" />
+          <Button
+            icon="pi pi-arrows-h"
+            :severity="measuring ? 'contrast' : 'secondary'"
+            :aria-label="t('map.measure.label')"
+            :aria-pressed="measuring"
+            v-tooltip.left="t('map.measure.label')"
+            @click="measuring = !measuring"
+          />
         </div>
+        <div v-if="measuring" class="measure-hint small" role="status">📏 {{ t('map.measure.help') }}</div>
         <MapLegend :crops="cropsOnMap" />
       </div>
 
@@ -450,6 +468,16 @@ const center = () => map.value?.center() ?? { x: 0, y: 0 }
   font-weight: 700;
   font-size: 12px;
   box-shadow: var(--shadow);
+}
+.measure-hint {
+  position: absolute;
+  top: 12px;
+  right: 60px;
+  background: var(--c-panel);
+  border-radius: 8px;
+  padding: 5px 10px;
+  box-shadow: var(--shadow);
+  white-space: nowrap;
 }
 .zoom {
   position: absolute;

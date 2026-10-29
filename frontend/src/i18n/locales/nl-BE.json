@@ -417,7 +417,8 @@
       "pollinatedBy": "Bestoven door",
       "noPollinator": "Geen bestuiver van de groep \"{group}\" binnen {range} m.",
       "noMale": "Geen mannelijke plant van de groep \"{group}\" binnen {range} m.",
-      "pollinatorAt": "{name} · {distance} m"
+      "pollinatorAt": "{name} · {distance} m",
+      "fromVariety": "van de soort"
     },
     "plan": {
       "open": "Teelt plannen",
@@ -520,6 +521,10 @@
         "rowWith": "Bijkopen {amount}",
         "rowUnknown": "Bijkopen: onbekend"
       }
+    },
+    "measure": {
+      "label": "Meetlint",
+      "help": "Klik punten aan om te meten (Alt: zonder uitlijnen) · Esc wist"
     }
   },
   "checks": {
@@ -627,7 +632,7 @@
     "active": "Ontwerpmodus",
     "stop": "Ontwerpen stoppen",
     "title": "Ontwerp",
-    "help": "Sleep elementen om ze te verplaatsen (raster 10 cm) of geef de maten exact in. Ctrl+Z maakt ongedaan, Ctrl+Y doet opnieuw.",
+    "help": "Sleep elementen om ze te verplaatsen: ze lijnen uit op randen en middens van andere elementen, anders op een raster van 10 cm; houd Alt ingedrukt om vrij te slepen. De middelste muisknop verschuift altijd de kaart. Ctrl+Z maakt ongedaan, Ctrl+Y doet opnieuw, Ctrl+C / Ctrl+V kopieert en plakt, Ctrl+D dupliceert, Delete verwijdert.",
     "undo": "Ongedaan maken",
     "redo": "Opnieuw",
     "save": "Bewaren",
@@ -702,20 +707,27 @@
     },
     "markerKind": {
       "area": "Vlak",
-      "line": "Lijn / muur"
+      "line": "Lijn / muur / hek"
     },
-    "markerHelp": "Vlakken en lijnen zijn enkel referentiepunten (terras, muur, afsluiting): ze tellen niet mee in de planning.",
+    "markerHelp": "Vlakken en lijnen zijn enkel referentiepunten (terras, muur, hek): ze tellen niet mee in de planning.",
     "label": "Label",
     "color": "Kleur",
     "thickness": "Dikte",
-    "lineStart": {
-      "x": "Begin X (oost)",
-      "y": "Begin Y (zuid)"
+    "duplicate": "Dupliceren",
+    "toFront": "Naar voren",
+    "toBack": "Naar achteren",
+    "lineLength": "Lengte",
+    "points": "Punten",
+    "pointsHelp": "Sleep een punt op de kaart, sleep een middenpunt om een hoek toe te voegen, dubbelklik een punt om het te verwijderen.",
+    "addPoint": "Punt toevoegen",
+    "variety": "Soort uit de catalogus",
+    "varietyHelp": "De jaarlijkse acties en de bestuiving komen dan van de soort.",
+    "noVariety": "Geen (alles zelf ingeven)",
+    "treeOutline": {
+      "ellipse": "Rond (kroon)",
+      "rect": "Rechthoek (leiboom, haagstruik)"
     },
-    "lineEnd": {
-      "x": "Einde X (oost)",
-      "y": "Einde Y (zuid)"
-    }
+    "ownActionsHelp": "Eigen acties komen erbij; een eigen actie met dezelfde naam vervangt die van de soort."
   },
   "notes": {
     "title": "Logboek",

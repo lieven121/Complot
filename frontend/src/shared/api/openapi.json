@@ -3620,6 +3620,11 @@
           "area": {
             "type": "number",
             "format": "double"
+          },
+          "layer": {
+            "type": "integer",
+            "format": "int32",
+            "default": 0
           }
         },
         "additionalProperties": false
@@ -4413,6 +4418,11 @@
           },
           "shape": {
             "$ref": "#/components/schemas/ShapeDto"
+          },
+          "layer": {
+            "type": "integer",
+            "format": "int32",
+            "default": 0
           }
         },
         "additionalProperties": false
@@ -4801,6 +4811,7 @@
           "label",
           "color",
           "shape",
+          "points",
           "thickness"
         ],
         "type": "object",
@@ -4820,11 +4831,33 @@
             "type": "string"
           },
           "shape": {
-            "$ref": "#/components/schemas/ShapeDto"
+            "oneOf": [
+              {
+                "enum": [
+                  null
+                ],
+                "nullable": true
+              },
+              {
+                "$ref": "#/components/schemas/ShapeDto"
+              }
+            ]
+          },
+          "points": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PointDto"
+            },
+            "nullable": true
           },
           "thickness": {
             "type": "number",
             "format": "double"
+          },
+          "layer": {
+            "type": "integer",
+            "format": "int32",
+            "default": 0
           }
         },
         "additionalProperties": false
@@ -5054,7 +5087,8 @@
           "id",
           "name",
           "material",
-          "shape"
+          "points",
+          "width"
         ],
         "type": "object",
         "properties": {
@@ -5068,8 +5102,20 @@
           "material": {
             "$ref": "#/components/schemas/PathMaterial"
           },
-          "shape": {
-            "$ref": "#/components/schemas/ShapeDto"
+          "points": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PointDto"
+            }
+          },
+          "width": {
+            "type": "number",
+            "format": "double"
+          },
+          "layer": {
+            "type": "integer",
+            "format": "int32",
+            "default": 0
           }
         },
         "additionalProperties": false
@@ -5503,6 +5549,11 @@
           },
           "shape": {
             "$ref": "#/components/schemas/ShapeDto"
+          },
+          "layer": {
+            "type": "integer",
+            "format": "int32",
+            "default": 0
           }
         },
         "additionalProperties": false
@@ -5513,6 +5564,24 @@
           "greenhouse",
           "orchard"
         ]
+      },
+      "PointDto": {
+        "required": [
+          "x",
+          "y"
+        ],
+        "type": "object",
+        "properties": {
+          "x": {
+            "type": "number",
+            "format": "double"
+          },
+          "y": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
       },
       "PollinationDto": {
         "required": [
@@ -6355,9 +6424,12 @@
           "name",
           "cultivar",
           "kind",
+          "varietyId",
           "x",
           "y",
-          "crownDiameter",
+          "outline",
+          "crownWidth",
+          "crownDepth",
           "plantedOn",
           "actions"
         ],
@@ -6377,6 +6449,11 @@
           "kind": {
             "$ref": "#/components/schemas/TreeKind"
           },
+          "varietyId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
           "x": {
             "type": "number",
             "format": "double"
@@ -6385,7 +6462,14 @@
             "type": "number",
             "format": "double"
           },
-          "crownDiameter": {
+          "outline": {
+            "$ref": "#/components/schemas/ShapeKind"
+          },
+          "crownWidth": {
+            "type": "number",
+            "format": "double"
+          },
+          "crownDepth": {
             "type": "number",
             "format": "double"
           },
@@ -6419,6 +6503,11 @@
               "$ref": "#/components/schemas/PollinatorDto"
             },
             "nullable": true
+          },
+          "layer": {
+            "type": "integer",
+            "format": "int32",
+            "default": 0
           }
         },
         "additionalProperties": false

@@ -11,9 +11,10 @@ namespace Complot.Domain.Plantings;
 public sealed record Flowering(
     Guid Id, string Name, Pollination Pollination, double X, double Y, DateOnly From, DateOnly To, int? Plants, string? CloneOf)
 {
-    public static Flowering? Of(Tree tree) => tree.Pollination is not { } p ? null
+    /// <summary>Needs the tree's Variety loaded (when it has one).</summary>
+    public static Flowering? Of(Tree tree) => tree.EffectivePollination is not { } p ? null
         : new(tree.Id, tree.Name, p, tree.X, tree.Y, tree.PlantedOn ?? DateOnly.MinValue, DateOnly.MaxValue, 1,
-            tree.Cultivar?.Trim().ToLowerInvariant());
+            tree.EffectiveCultivar?.Trim().ToLowerInvariant());
 
     /// <summary>Needs Bed and Variety loaded; a spot sits at its point, a strip at the middle of the bed.</summary>
     public static Flowering? Of(Planting planting)

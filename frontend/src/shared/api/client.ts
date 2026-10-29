@@ -4390,6 +4390,7 @@ export interface BedDto {
     soil: string | undefined;
     notes: string | undefined;
     area: number;
+    layer?: number;
 }
 
 export type BedKind = "strips" | "spots";
@@ -4565,6 +4566,7 @@ export interface FeatureDto {
     name: string;
     type: FeatureType;
     shape: ShapeDto;
+    layer?: number;
 }
 
 export type FeatureType = "compost" | "water" | "pond" | "hedge" | "shed";
@@ -4659,8 +4661,10 @@ export interface MarkerDto {
     kind: MarkerKind;
     label: string | undefined;
     color: string;
-    shape: ShapeDto;
+    shape: ShapeDto | undefined;
+    points: PointDto[] | undefined;
     thickness: number;
+    layer?: number;
 }
 
 export type MarkerKind = "area" | "line";
@@ -4718,7 +4722,9 @@ export interface PathDto {
     id: string;
     name: string;
     material: PathMaterial;
-    shape: ShapeDto;
+    points: PointDto[];
+    width: number;
+    layer?: number;
 }
 
 export type PathMaterial = "woodChips" | "grass" | "pavers" | "gravel";
@@ -4821,9 +4827,15 @@ export interface PlotDto {
     name: string;
     type: PlotType;
     shape: ShapeDto;
+    layer?: number;
 }
 
 export type PlotType = "open" | "greenhouse" | "orchard";
+
+export interface PointDto {
+    x: number;
+    y: number;
+}
 
 export interface PollinationDto {
     need: PollinationNeed;
@@ -5026,13 +5038,17 @@ export interface TreeDto {
     name: string;
     cultivar: string | undefined;
     kind: TreeKind;
+    varietyId: string | undefined;
     x: number;
     y: number;
-    crownDiameter: number;
+    outline: ShapeKind;
+    crownWidth: number;
+    crownDepth: number;
     plantedOn: string | undefined;
     actions: YearlyActionDto[];
     pollination?: PollinationDto | undefined;
     pollinators?: PollinatorDto[] | undefined;
+    layer?: number;
 }
 
 export type TreeKind = "tree" | "shrub";

@@ -282,11 +282,21 @@
           "label": "Tuinmuur",
           "color": "#8a7560",
           "outline": "rect",
-          "x": -1.5,
-          "y": 16.3,
-          "width": 18,
+          "x": 0,
+          "y": 0,
+          "width": 0,
           "height": 0,
-          "thickness": 0.3
+          "thickness": 0.3,
+          "points": [
+            {
+              "x": -1.5,
+              "y": 16.3
+            },
+            {
+              "x": 16.5,
+              "y": 16.3
+            }
+          ]
         },
         {
           "kind": "area",
@@ -303,35 +313,47 @@
         {
           "name": "Hoofdpad",
           "material": "woodChips",
-          "shape": {
-            "kind": "rect",
-            "x": 7.5,
-            "y": -0.6,
-            "width": 0.85,
-            "height": 14.6
-          }
+          "points": [
+            {
+              "x": 7.925,
+              "y": -0.6
+            },
+            {
+              "x": 7.925,
+              "y": 14.0
+            }
+          ],
+          "width": 0.85
         },
         {
           "name": "Dwarspad",
           "material": "woodChips",
-          "shape": {
-            "kind": "rect",
-            "x": -0.5,
-            "y": 9.65,
-            "width": 8,
-            "height": 0.55
-          }
+          "points": [
+            {
+              "x": -0.5,
+              "y": 9.925
+            },
+            {
+              "x": 7.5,
+              "y": 9.925
+            }
+          ],
+          "width": 0.55
         },
         {
           "name": "Pad serre",
           "material": "pavers",
-          "shape": {
-            "kind": "rect",
-            "x": 8.35,
-            "y": 6.62,
-            "width": 6.3,
-            "height": 0.75
-          }
+          "points": [
+            {
+              "x": 8.35,
+              "y": 6.995
+            },
+            {
+              "x": 14.65,
+              "y": 6.995
+            }
+          ],
+          "width": 0.75
         }
       ],
       "features": [
@@ -398,8 +420,12 @@
           "kind": "tree",
           "x": 17.2,
           "y": 2.6,
-          "crownDiameter": 3.6,
-          "pollination": { "need": "partner", "group": "Appel", "rangeMeters": 20 },
+          "crownWidth": 3.6,
+          "pollination": {
+            "need": "partner",
+            "group": "Appel",
+            "rangeMeters": 20
+          },
           "plantedOn": "2022-12-01",
           "actions": [
             {
@@ -430,8 +456,12 @@
           "kind": "tree",
           "x": 17.2,
           "y": 7.6,
-          "crownDiameter": 3,
-          "pollination": { "need": "selfFertile", "group": "Peer", "rangeMeters": 20 },
+          "crownWidth": 3,
+          "pollination": {
+            "need": "selfFertile",
+            "group": "Peer",
+            "rangeMeters": 20
+          },
           "plantedOn": "2023-11-20",
           "actions": [
             {
@@ -452,7 +482,7 @@
           "kind": "shrub",
           "x": 17,
           "y": 12,
-          "crownDiameter": 2.2,
+          "crownWidth": 2.2,
           "plantedOn": "2024-03-10",
           "actions": [
             {
@@ -548,13 +578,17 @@
         {
           "name": "Graspad",
           "material": "grass",
-          "shape": {
-            "kind": "rect",
-            "x": -0.5,
-            "y": 6.2,
-            "width": 14,
-            "height": 0.9
-          }
+          "points": [
+            {
+              "x": -0.5,
+              "y": 6.65
+            },
+            {
+              "x": 13.5,
+              "y": 6.65
+            }
+          ],
+          "width": 0.9
         }
       ],
       "features": [
@@ -588,8 +622,12 @@
           "kind": "tree",
           "x": 12,
           "y": 4.8,
-          "crownDiameter": 3.4,
-          "pollination": { "need": "selfFertile", "group": "Kers", "rangeMeters": 20 },
+          "crownWidth": 3.4,
+          "pollination": {
+            "need": "selfFertile",
+            "group": "Kers",
+            "rangeMeters": 20
+          },
           "plantedOn": "2021-11-15",
           "actions": [
             {

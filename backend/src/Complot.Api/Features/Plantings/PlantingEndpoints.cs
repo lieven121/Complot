@@ -68,7 +68,7 @@ public static class PlantingEndpoints
     }
 
     private static Task<List<Tree>> TreesOfSiteAsync(this ComplotDbContext db, Guid siteId, CancellationToken ct) =>
-        db.Trees.AsNoTracking().Where(t => t.SiteId == siteId).ToListAsync(ct);
+        db.Trees.AsNoTracking().Include(t => t.Variety).Where(t => t.SiteId == siteId).ToListAsync(ct);
 
     private static async Task<Results<Ok<PlantingPreviewDto>, ProblemHttpResult>> Preview(
         PlanPlantingInput input, ComplotDbContext db, TimeProvider time, CancellationToken ct)

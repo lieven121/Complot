@@ -1,31 +1,40 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { ShapeDto } from '@/shared/api'
+import type { TreeDto } from '@/shared/api'
 import { useFormat } from '@/shared/composables/useFormat'
+import { alongLine, crownShape, type Geometry, lineLength, polyline } from '../map'
 import ShapeSvg from './ShapeSvg.vue'
 
 /** Dimension lines and coordinates of the item selected in the designer (map units are meters). */
-const props = defineProps<{ item: { shape?: ShapeDto; x?: number; y?: number; crownDiameter?: number; kind?: string } }>()
+const props = defineProps<{ item: Geometry }>()
 const { decimal } = useFormat()
 const GAP = 0.35
 const TICK = 0.12
-const shape = computed(() => props.item.shape)
-/** A line marker: its length, and both ends. */
+const isTree = computed(() => !props.item.shape && !props.item.points && props.item.crownWidth !== undefined)
+const shape = computed(() => props.item.shape ?? (isTree.value ? crownShape(props.item as TreeDto) : undefined))
+/** Where the coordinates point: a tree's trunk, else the top-left corner. */
+const origin = computed(() => (isTree.value ? { x: props.item.x!, y: props.item.y! } : { x: shape.value?.x ?? 0, y: shape.value?.y ?? 0 }))
+/** A line (path, wall, fence): the length of each part and in total, and its ends. */
 const line = computed(() => {
-  const s = shape.value
-  return props.item.kind === 'line' && s
-    ? { x1: s.x, y1: s.y, x2: s.x + s.width, y2: s.y + s.height, length: Math.hypot(s.width, s.height) }
-    : undefined
+  const points = props.item.points
+  if (!points?.length) return undefined
+  const parts = points.slice(1).map((b, i) => ({ points: [points[i]!, b], length: lineLength([points[i]!, b]) }))
+  return { points, parts, length: lineLength(points), first: points[0]!, last: points.at(-1)! }
 })
 </script>
 
 <template>
   <g class="dims">
     <template v-if="line">
-      <line :x1="line.x1" :y1="line.y1" :x2="line.x2" :y2="line.y2" class="outline" />
-      <text :x="(line.x1 + line.x2) / 2" :y="(line.y1 + line.y2) / 2 - 0.3">{{ decimal(line.length) }} m</text>
-      <text class="coords" :x="line.x1" :y="line.y1 + 0.4">({{ decimal(line.x1) }}; {{ decimal(line.y1) }})</text>
-      <text class="coords" :x="line.x2" :y="line.y2 + 0.4">({{ decimal(line.x2) }}; {{ decimal(line.y2) }})</text>
+      <path :d="polyline(line.points)" class="outline" />
+      <template v-if="line.parts.length > 1">
+        <text v-for="(part, i) in line.parts" :key="i" class="part" :transform="alongLine(part.points, 0.3)"
+          >{{ decimal(part.length) }} m</text
+        >
+      </template>
+      <text class="total" :x="line.last.x + 0.2" :y="line.last.y - 0.2">Σ {{ decimal(line.length) }} m</text>
+      <text class="coords" :x="line.first.x" :y="line.first.y + 0.4">({{ decimal(line.first.x) }}; {{ decimal(line.first.y) }})</text>
+      <text class="coords" :x="line.last.x" :y="line.last.y + 0.4">({{ decimal(line.last.x) }}; {{ decimal(line.last.y) }})</text>
     </template>
     <template v-else-if="shape">
       <ShapeSvg :shape="shape" class="outline" />
@@ -37,12 +46,7 @@ const line = computed(() => {
       <line :x1="shape.x - GAP - TICK" :y1="shape.y" :x2="shape.x - GAP + TICK" :y2="shape.y" />
       <line :x1="shape.x - GAP - TICK" :y1="shape.y + shape.height" :x2="shape.x - GAP + TICK" :y2="shape.y + shape.height" />
       <text :transform="`translate(${shape.x - GAP - 0.1} ${shape.y + shape.height / 2}) rotate(-90)`">{{ decimal(shape.height) }} m</text>
-      <text class="coords" :x="shape.x" :y="shape.y + shape.height + 0.35">({{ decimal(shape.x) }}; {{ decimal(shape.y) }})</text>
-    </template>
-    <template v-else-if="item.crownDiameter">
-      <circle :cx="item.x" :cy="item.y" :r="item.crownDiameter / 2" class="outline" />
-      <line :x1="item.x! - item.crownDiameter / 2" :y1="item.y" :x2="item.x! + item.crownDiameter / 2" :y2="item.y" />
-      <text :x="item.x" :y="item.y! - 0.12">⌀ {{ decimal(item.crownDiameter) }} m</text>
+      <text class="coords" :x="shape.x" :y="shape.y + shape.height + 0.35">({{ decimal(origin.x) }}; {{ decimal(origin.y) }})</text>
     </template>
   </g>
 </template>
@@ -70,6 +74,10 @@ text {
   stroke: #fff;
   stroke-width: 0.07px;
 }
+.part {
+  font-size: 0.22px;
+}
+.total,
 .coords {
   font-size: 0.22px;
   text-anchor: start;

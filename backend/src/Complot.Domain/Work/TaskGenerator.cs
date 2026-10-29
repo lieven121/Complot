@@ -56,10 +56,11 @@ public static class TaskGenerator
         if (p.ClearOn is { } clear) yield return Task(TaskKind.Clear, clear);
     }
 
+    /// <summary>Needs the tree's Variety loaded (when it has one).</summary>
     public static IEnumerable<GardenTask> ForTree(Tree tree, int fromYear, int toYear)
     {
         for (var year = fromYear; year <= toYear; year++)
-        foreach (var care in CareDates(tree.Actions, year, tree.PlantedOn ?? DateOnly.MinValue, DateOnly.MaxValue))
+        foreach (var care in CareDates(tree.AllActions, year, tree.PlantedOn ?? DateOnly.MinValue, DateOnly.MaxValue))
             yield return new GardenTask(TaskKeys.TreeCare(tree.Id, care.Action.Title, year), TaskKind.Care, care.Date,
                 tree.SiteId, null, tree.Id, null, tree.Name, care.Action.Title, care.Action.EstimatedMinutes);
     }

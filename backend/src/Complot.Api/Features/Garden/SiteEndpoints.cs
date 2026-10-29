@@ -115,16 +115,16 @@ public static class SiteEndpoints
 
         db.Plots.SyncById(plots, layout.Plots, p => p.Id,
             p => new Plot { Id = p.Id, SiteId = id, Name = "", Shape = p.Shape.ToDomain() },
-            (p, e) => { e.Name = p.Name.Trim(); e.Type = p.Type; e.Shape = p.Shape.ToDomain(); });
+            (p, e) => { e.Name = p.Name.Trim(); e.Type = p.Type; e.Shape = p.Shape.ToDomain(); e.Layer = p.Layer; });
         db.Beds.SyncById(beds, layout.Beds, b => b.Id,
             b => new Bed { Id = b.Id, SiteId = id, Code = "", Shape = b.Shape.ToDomain() },
-            (b, e) => { e.PlotId = b.PlotId; e.Code = b.Code.Trim(); e.Kind = b.Kind; e.Shape = b.Shape.ToDomain(); e.Sun = b.Sun; e.Soil = Clean(b.Soil); e.Notes = Clean(b.Notes); });
+            (b, e) => { e.PlotId = b.PlotId; e.Code = b.Code.Trim(); e.Kind = b.Kind; e.Shape = b.Shape.ToDomain(); e.Sun = b.Sun; e.Soil = Clean(b.Soil); e.Notes = Clean(b.Notes); e.Layer = b.Layer; });
         db.Paths.SyncById(paths, layout.Paths, p => p.Id,
-            p => new GardenPath { Id = p.Id, SiteId = id, Name = "", Shape = p.Shape.ToDomain() },
-            (p, e) => { e.Name = p.Name.Trim(); e.Material = p.Material; e.Shape = p.Shape.ToDomain(); });
+            p => new GardenPath { Id = p.Id, SiteId = id, Name = "" },
+            (p, e) => { e.Name = p.Name.Trim(); e.Material = p.Material; e.Points = p.Points.ToDomain(); e.Width = p.Width; e.Layer = p.Layer; });
         db.Features.SyncById(features, layout.Features, f => f.Id,
             f => new GardenFeature { Id = f.Id, SiteId = id, Name = "", Shape = f.Shape.ToDomain() },
-            (f, e) => { e.Name = f.Name.Trim(); e.Type = f.Type; e.Shape = f.Shape.ToDomain(); });
+            (f, e) => { e.Name = f.Name.Trim(); e.Type = f.Type; e.Shape = f.Shape.ToDomain(); e.Layer = f.Layer; });
         db.Trees.SyncById(trees, layout.Trees, t => t.Id,
             t => new Tree { Id = t.Id, SiteId = id, Name = "" },
             (t, e) =>
@@ -132,12 +132,16 @@ public static class SiteEndpoints
                 e.Name = t.Name.Trim();
                 e.Cultivar = Clean(t.Cultivar);
                 e.Kind = t.Kind;
+                e.VarietyId = t.VarietyId;
                 e.X = t.X;
                 e.Y = t.Y;
-                e.CrownDiameter = t.CrownDiameter;
+                e.Outline = t.Outline;
+                e.CrownWidth = t.CrownWidth;
+                e.CrownDepth = t.CrownDepth;
                 e.PlantedOn = t.PlantedOn;
                 e.Actions = t.Actions.ToDomain();
                 e.Pollination = t.Pollination.ToDomain();
+                e.Layer = t.Layer;
             });
         db.Markers.SyncById(markers, layout.Markers, m => m.Id,
             m => new MapMarker { Id = m.Id, SiteId = id, Color = m.Color },
@@ -146,8 +150,11 @@ public static class SiteEndpoints
                 e.Kind = m.Kind;
                 e.Label = Clean(m.Label);
                 e.Color = m.Color;
-                (e.Outline, e.X, e.Y, e.Width, e.Height) = (m.Shape.Kind, m.Shape.X, m.Shape.Y, m.Shape.Width, m.Shape.Height);
+                var area = m.Kind == MarkerKind.Area ? m.Shape! : new ShapeDto(ShapeKind.Rect, 0, 0, 0, 0);
+                (e.Outline, e.X, e.Y, e.Width, e.Height) = (area.Kind, area.X, area.Y, area.Width, area.Height);
+                e.Points = m.Kind == MarkerKind.Line ? m.Points!.ToDomain() : [];
                 e.Thickness = m.Thickness;
+                e.Layer = m.Layer;
             });
 
         if (await db.SaveOrConflictAsync("bed.duplicateCode", ct) is { } conflict) return conflict;
@@ -165,8 +172,8 @@ public static class SiteEndpoints
     /// <summary>The site's trees with the trees and plantings (from today on) that pollinate them.</summary>
     private static async Task<List<TreeDto>> LoadTrees(Guid siteId, ComplotDbContext db, TimeProvider time, CancellationToken ct)
     {
-        var trees = await db.Trees.AsNoTracking().Where(x => x.SiteId == siteId).OrderBy(x => x.Name).ToListAsync(ct);
-        if (trees.All(t => t.Pollination is null)) return trees.Select(t => t.ToDto()).ToList();
+        var trees = await db.Trees.AsNoTracking().Include(t => t.Variety).Where(x => x.SiteId == siteId).OrderBy(x => x.Name).ToListAsync(ct);
+        if (trees.All(t => t.EffectivePollination is null)) return trees.Select(t => t.ToDto()).ToList();
 
         var today = time.Today();
         var plantings = (await db.ForSiteAsync(siteId, ct)).Where(p => p.EndInBed >= today);

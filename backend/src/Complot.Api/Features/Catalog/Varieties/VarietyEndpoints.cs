@@ -66,7 +66,8 @@ public static class VarietyEndpoints
     {
         if (await db.Varieties.FindAsync([id], ct) is not { } variety) return ApiProblems.NotFound();
         if (await db.InventoryLots.AnyAsync(l => l.VarietyId == id, ct)) return ApiProblems.Conflict("variety.hasInventory");
-        if (await db.Plantings.AnyAsync(p => p.VarietyId == id, ct)) return ApiProblems.Conflict("variety.inUse");
+        if (await db.Plantings.AnyAsync(p => p.VarietyId == id, ct) || await db.Trees.AnyAsync(t => t.VarietyId == id, ct))
+            return ApiProblems.Conflict("variety.inUse");
         db.Varieties.Remove(variety);
         await db.SaveChangesAsync(ct);
         return TypedResults.NoContent();

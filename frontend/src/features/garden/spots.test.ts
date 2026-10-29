@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vite-plus/test'
 import type { BedDto, PlantingDto } from '@/shared/api'
 import { findCrop } from './cropFinder'
-import { amountLabel, layoutBounds, normalized, spotRadius, spotShape, spotsOf } from './map'
+import { amountLabel, layoutBounds, spotRadius, spotShape, spotsOf } from './map'
 import { useDesigner } from './useDesigner'
 
 const bed = (id: string, code: string, kind: BedDto['kind'] = 'spots'): BedDto => ({
@@ -130,12 +130,20 @@ describe('markers', () => {
     d.start({ plots: [], beds: [], paths: [], features: [], trees: [], markers: [] })
     d.add('marker', { x: 2, y: 3 }, { path: '', tree: '', plot: '', feature: '' }, 'line')
     const wall = d.draft.value!.markers[0]!
-    expect(wall).toMatchObject({ kind: 'line', shape: { x: 2, y: 3, width: 3, height: 0 } })
+    expect(wall).toMatchObject({
+      kind: 'line',
+      points: [
+        { x: 2, y: 3 },
+        { x: 5, y: 3 },
+      ],
+    })
     d.moveStart(wall.id)
     d.move(wall.id, 1, 1)
     d.moveEnd()
-    expect(d.draft.value!.markers[0]!.shape).toMatchObject({ x: 3, y: 4, width: 3, height: 0 })
-    expect(normalized({ kind: 'rect', x: 5, y: 1, width: -2, height: 0 })).toMatchObject({ x: 3, width: 2 })
+    expect(d.draft.value!.markers[0]!.points).toEqual([
+      { x: 3, y: 4 },
+      { x: 6, y: 4 },
+    ])
     expect(layoutBounds(d.draft.value!).w).toBeGreaterThan(3)
   })
 })

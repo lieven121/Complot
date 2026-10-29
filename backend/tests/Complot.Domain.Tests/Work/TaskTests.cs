@@ -1,3 +1,4 @@
+using Complot.Domain.Catalog;
 using Complot.Domain.Common;
 using Complot.Domain.Garden;
 using Complot.Domain.Work;
@@ -52,6 +53,23 @@ public sealed class TaskGeneratorTests
         var tasks = TaskGenerator.ForTree(tree, 2025, 2027).ToList();
         Assert.Equal([2026, 2027], tasks.Select(t => t.Date.Year));
         Assert.Equal(tasks[0].Key, TaskKeys.TreeCare(tree.Id, " wintersnoei ", 2026));
+    }
+
+    [Fact]
+    public void A_tree_of_a_variety_follows_its_care_and_its_own_action_replaces_one_of_the_same_title()
+    {
+        var variety = new PlantVariety
+        {
+            Name = "Appel", Category = new PlantCategory { Slug = "fruit", Name = "Fruitbomen" }, Harvest = new MonthWindow(9, 10),
+            Actions = [new YearlyAction { Title = "Wintersnoei", Month = 2, EstimatedMinutes = 90 }, new YearlyAction { Title = "Dunnen", Month = 6, EstimatedMinutes = 30 }],
+        };
+        var tree = new Tree
+        {
+            Name = "Leiappel", Variety = variety,
+            Actions = [new YearlyAction { Title = "wintersnoei", Month = 3, EstimatedMinutes = 45 }, new YearlyAction { Title = "Zomersnoei", Month = 8, EstimatedMinutes = 40 }],
+        };
+        var tasks = TaskGenerator.ForTree(tree, 2027, 2027).OrderBy(t => t.Date).ToList();
+        Assert.Equal([("wintersnoei", 3), ("Dunnen", 6), ("Zomersnoei", 8)], tasks.Select(t => (t.Title!, t.Date.Month)));
     }
 
     [Fact]

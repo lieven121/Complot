@@ -1,4 +1,15 @@
-import type { BedDto, PlantingDto, PlantingPhase, ShapeDto, SiteLayoutDto, UpdatePlantingInput } from '@/shared/api'
+import type {
+  BedDto,
+  PlantingDto,
+  PlantingPhase,
+  PointDto,
+  ShapeDto,
+  ShapeKind,
+  SiteLayoutDto,
+  TreeDto,
+  UpdatePlantingInput,
+  YearlyActionDto,
+} from '@/shared/api'
 import type { Point } from './spotPicker'
 
 /** Drawing only: the planted area and neighbour rules are calculated by the API. */
@@ -18,26 +29,88 @@ export interface Box {
   h: number
 }
 
-/** A box with a positive size: a line marker's shape runs from (x, y) by (width, height), either way. */
-export const normalized = (s: ShapeDto): ShapeDto => ({
-  ...s,
-  x: Math.min(s.x, s.x + s.width),
-  y: Math.min(s.y, s.y + s.height),
-  width: Math.abs(s.width),
-  height: Math.abs(s.height),
+/** What a map item's geometry can be: a shape, a line through points (path, wall), or a tree's crown around (x, y). */
+export interface Geometry {
+  shape?: ShapeDto
+  points?: PointDto[]
+  x?: number
+  y?: number
+  outline?: ShapeKind
+  crownWidth?: number
+  crownDepth?: number
+}
+
+/** A tree's crown as a shape around its trunk: an ellipse, or a rect for an espalier. */
+export const crownShape = (t: Pick<TreeDto, 'x' | 'y' | 'outline' | 'crownWidth' | 'crownDepth'>): ShapeDto => ({
+  kind: t.outline,
+  x: t.x - t.crownWidth / 2,
+  y: t.y - t.crownDepth / 2,
+  width: t.crownWidth,
+  height: t.crownDepth,
 })
 
-/** Everything drawn on the site, with a margin for labels. */
+/**
+ * A tree's yearly care: its variety's actions, except those it has its own action of the same title for (as the API
+ * makes tasks), then its own.
+ */
+export function treeCare(tree: Pick<TreeDto, 'actions'>, variety?: { actions: YearlyActionDto[] }) {
+  const same = (a: string, b: string) => a.trim().toLowerCase() === b.trim().toLowerCase()
+  const inherited = (variety?.actions ?? []).filter((v) => !tree.actions.some((a) => same(a.title, v.title)))
+  return [...inherited.map((action) => ({ action, inherited: true })), ...tree.actions.map((action) => ({ action, inherited: false }))]
+}
+
+/** Bounding box of a map item (m): a line's box runs through its points (its width not included). */
+export function boxOf(item: Geometry): Box {
+  if (item.points?.length) {
+    const xs = item.points.map((p) => p.x)
+    const ys = item.points.map((p) => p.y)
+    const [x, y] = [Math.min(...xs), Math.min(...ys)]
+    return { x, y, w: Math.max(...xs) - x, h: Math.max(...ys) - y }
+  }
+  const s = item.shape ?? crownShape(item as TreeDto)
+  return { x: s.x, y: s.y, w: s.width, h: s.height }
+}
+
+/** Every item drawn on the site, in no particular order. */
+export const layoutItems = (layout: SiteLayoutDto): (Geometry & { id: string })[] => [
+  ...layout.plots,
+  ...layout.beds,
+  ...layout.paths,
+  ...layout.features,
+  ...layout.trees,
+  ...layout.markers,
+]
+
+/** What can be lined up with: every item's box, and each point of a line on its own (except `exclude`). */
+export const snapTargets = (layout: SiteLayoutDto, exclude?: string): Box[] =>
+  layoutItems(layout)
+    .filter((i) => i.id !== exclude)
+    .flatMap((i) => [boxOf(i), ...(i.points ?? []).map((p) => ({ x: p.x, y: p.y, w: 0, h: 0 }))])
+
+/** Everything drawn on the site, with a margin for labels and path widths. */
 export function layoutBounds(layout: SiteLayoutDto): Box {
-  const boxes = [...layout.plots, ...layout.beds, ...layout.paths, ...layout.features, ...layout.markers].map((i) => normalized(i.shape))
-  const xs = [...boxes.map((b) => b.x), ...layout.trees.map((t) => t.x - t.crownDiameter / 2)]
-  const ys = [...boxes.map((b) => b.y), ...layout.trees.map((t) => t.y - t.crownDiameter / 2)]
-  const xe = [...boxes.map((b) => b.x + b.width), ...layout.trees.map((t) => t.x + t.crownDiameter / 2)]
-  const ye = [...boxes.map((b) => b.y + b.height), ...layout.trees.map((t) => t.y + t.crownDiameter / 2 + 0.5)]
-  if (!xs.length) return { x: -1, y: -1, w: 12, h: 10 }
-  const x = Math.min(...xs) - 0.8
-  const y = Math.min(...ys) - 1
-  return { x, y, w: Math.max(...xe) - x + 0.8, h: Math.max(...ye) - y + 0.8 }
+  const boxes = layoutItems(layout).map(boxOf)
+  if (!boxes.length) return { x: -1, y: -1, w: 12, h: 10 }
+  const x = Math.min(...boxes.map((b) => b.x)) - 0.8
+  const y = Math.min(...boxes.map((b) => b.y)) - 1
+  return { x, y, w: Math.max(...boxes.map((b) => b.x + b.w)) - x + 0.8, h: Math.max(...boxes.map((b) => b.y + b.h)) - y + 1.3 }
+}
+
+/** SVG path data of a line through points. */
+export const polyline = (points: PointDto[]) => points.map((p, i) => `${i ? 'L' : 'M'}${p.x} ${p.y}`).join(' ')
+
+/** Length of a line through points (m). */
+export const lineLength = (points: PointDto[]) =>
+  points.slice(1).reduce((sum, p, i) => sum + Math.hypot(p.x - points[i]!.x, p.y - points[i]!.y), 0)
+
+/** A label along the longest segment of a line, in its middle and never upside down, `lift` m above it. */
+export function alongLine(points: PointDto[], lift = 0): string {
+  const segments = points.slice(1).map((b, i) => ({ a: points[i]!, b }))
+  const { a, b } = segments.reduce((l, s) => (Math.hypot(s.b.x - s.a.x, s.b.y - s.a.y) > Math.hypot(l.b.x - l.a.x, l.b.y - l.a.y) ? s : l))
+  let angle = (Math.atan2(b.y - a.y, b.x - a.x) * 180) / Math.PI
+  if (angle > 90) angle -= 180
+  if (angle < -90) angle += 180
+  return `translate(${(a.x + b.x) / 2} ${(a.y + b.y) / 2}) rotate(${angle}) translate(0 ${-lift})`
 }
 
 /** The phase a planting is in on a date: a lookup in the segments the API calculated. */

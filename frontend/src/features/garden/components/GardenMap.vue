@@ -1,8 +1,25 @@
 <script setup lang="ts">
 import { computed, onMounted, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { BedDto, PlantingDto, PlantingPhase, ShapeDto, SiteLayoutDto } from '@/shared/api'
-import { IN_BED, layoutBounds, type PlantSpacing, phaseAt, PHASE_OPACITY, type Spot, spacingOf, spotShape, spotsOf } from '../map'
+import type { BedDto, FeatureDto, MarkerDto, PathDto, PlantingDto, PlantingPhase, SiteLayoutDto, TreeDto } from '@/shared/api'
+import { useFormat } from '@/shared/composables/useFormat'
+import {
+  alongLine,
+  crownShape,
+  IN_BED,
+  layoutBounds,
+  lineLength,
+  type PlantSpacing,
+  phaseAt,
+  PHASE_OPACITY,
+  polyline,
+  snapTargets,
+  type Spot,
+  spacingOf,
+  spotShape,
+  spotsOf,
+} from '../map'
+import { alignBox, type Guide, type SnapOptions } from '../snapping'
 import type { Point, SpotDraft } from '../spotPicker'
 import ShapeSvg from './ShapeSvg.vue'
 import SpotSvg from './SpotSvg.vue'
@@ -15,8 +32,9 @@ export interface Crop {
 }
 
 /**
- * The site map in meters (x → east, y → south). Shows what is in each bed on `date`; in design mode items can be
- * dragged (the parent applies the move, snapping and undo history).
+ * The site map in meters (x → east, y → south). Shows what is in each bed on `date`; in design mode items and the
+ * points of lines can be dragged (the parent applies the move, snapping and undo history). The middle mouse button
+ * always pans. With `measuring`, clicks set the points of a measuring tape.
  */
 const props = defineProps<{
   layout: SiteLayoutDto
@@ -38,17 +56,26 @@ const props = defineProps<{
   spotsEditable?: boolean
   /** When set, other beds are dimmed (crop finder). */
   highlightBedIds?: ReadonlySet<string>
+  /** Lines the dragged item lines up with (design mode). */
+  guides?: Guide[]
+  measuring?: boolean
 }>()
 const emit = defineEmits<{
   select: [id: string | undefined]
   moveStart: [id: string]
-  move: [id: string, dx: number, dy: number]
+  move: [id: string, dx: number, dy: number, snap: SnapOptions]
   moveEnd: [id: string]
+  /** Dragging a point of the selected line starts; with `insert` a new point is added at `index` first. */
+  vertexStart: [id: string, index: number, insert?: Point]
+  vertex: [id: string, index: number, at: Point, snap: SnapOptions]
+  vertexEnd: []
+  removeVertex: [id: string, index: number]
   pick: [point: Point]
   moveSpot: [plantingId: string, point: Point]
 }>()
 
 const { t } = useI18n()
+const { decimal } = useFormat()
 const svg = ref<SVGSVGElement>()
 const view = reactive({ k: 40, tx: 0, ty: 0 })
 const bounds = computed(() => layoutBounds(props.layout))
@@ -96,28 +123,66 @@ const inBed = (bed: BedDto, p: Point): Point => {
 }
 const bedById = (id: string | undefined) => props.layout.beds.find((b) => b.id === id)
 
-// Pointer: drag on empty space pans; in design mode drag on an item moves it; a click without movement selects.
-// Outside design mode a spot of the selected bed can be dragged. The item is taken from pointerdown: after
-// setPointerCapture, pointerup targets the <svg> itself.
-type Gesture = { kind: 'pan' | 'move' | 'spot'; id?: string; spotId?: string; x: number; y: number; tx: number; ty: number; moved: boolean }
+// Pointer: drag on empty space pans; in design mode drag on an item moves it, on a point of the selected line moves
+// that point (or, on a midpoint, adds one); a click without movement selects. The middle button always pans and never
+// selects or moves. Outside design mode a spot of the selected bed can be dragged; while measuring a click sets a
+// point of the tape. The item is taken from pointerdown: after setPointerCapture, pointerup targets the <svg> itself.
+type Gesture = {
+  kind: 'pan' | 'move' | 'spot' | 'vertex'
+  id?: string
+  spotId?: string
+  /** The point of the line being dragged; `insert` adds it there first. */
+  vertex?: { index: number; insert?: Point }
+  middle?: boolean
+  x: number
+  y: number
+  tx: number
+  ty: number
+  moved: boolean
+}
 let gesture: Gesture | undefined
 /** Where the dragged spot is drawn until the parent has saved it. */
 const spotDrag = ref<{ id: string; x: number; y: number }>()
+/** Lining up reaches a few pixels, whatever the zoom; Alt switches snapping off. */
+const SNAP_PIXELS = 8
+const snapOf = (e: PointerEvent): SnapOptions => ({ free: e.altKey, tolerance: SNAP_PIXELS / view.k })
 function onDown(e: PointerEvent) {
+  if (e.button === 2) return
   const target = e.target as Element
+  const base = { x: e.clientX, y: e.clientY, tx: view.tx, ty: view.ty, moved: false }
+  svg.value!.setPointerCapture(e.pointerId)
+  if (e.button === 1) {
+    e.preventDefault()
+    gesture = { kind: 'pan', middle: true, ...base }
+    return
+  }
   const id = target.closest<SVGElement>('[data-id]')?.dataset.id
   const spotId = target.closest<SVGElement>('[data-spot]')?.dataset.spot
-  const kind = props.designMode && id ? 'move' : spotId && props.spotsEditable && id === props.selectedId ? 'spot' : 'pan'
-  gesture = { kind, id, spotId, x: e.clientX, y: e.clientY, tx: view.tx, ty: view.ty, moved: false }
-  svg.value!.setPointerCapture(e.pointerId)
+  const vertex = target.closest<SVGElement>('[data-vertex]')?.dataset.vertex
+  const insert = target.closest<SVGElement>('[data-insert]')?.dataset.insert
+  if (props.designMode && props.selectedId && (vertex ?? insert) !== undefined) {
+    const index = Number(vertex ?? insert)
+    gesture = { kind: 'vertex', id: props.selectedId, vertex: insert !== undefined ? { index, insert: toMap(e) } : { index }, ...base }
+    return
+  }
+  const kind = props.measuring
+    ? 'pan'
+    : props.designMode && id
+      ? 'move'
+      : spotId && props.spotsEditable && id === props.selectedId
+        ? 'spot'
+        : 'pan'
+  gesture = { kind, id, spotId, ...base }
 }
 function onMove(e: PointerEvent) {
+  if (props.measuring && !gesture) hover.value = tapePoint(e)
   if (!gesture) return
   const dx = e.clientX - gesture.x
   const dy = e.clientY - gesture.y
   if (!gesture.moved && Math.abs(dx) + Math.abs(dy) > 4) {
     gesture.moved = true
     if (gesture.kind === 'move') emit('moveStart', gesture.id!)
+    if (gesture.kind === 'vertex') emit('vertexStart', gesture.id!, gesture.vertex!.index, gesture.vertex!.insert)
   }
   if (!gesture.moved) return
   if (gesture.kind === 'pan') {
@@ -127,19 +192,49 @@ function onMove(e: PointerEvent) {
     const bed = bedById(gesture.id)!
     const p = inBed(bed, toMap(e))
     spotDrag.value = { id: gesture.spotId!, x: bed.shape.x + p.x, y: bed.shape.y + p.y }
-  } else emit('move', gesture.id!, dx / view.k, dy / view.k)
+  } else if (gesture.kind === 'vertex') emit('vertex', gesture.id!, gesture.vertex!.index, toMap(e), snapOf(e))
+  else emit('move', gesture.id!, dx / view.k, dy / view.k, snapOf(e))
 }
 function onUp(e: PointerEvent) {
   const g = gesture
   gesture = undefined
-  if (!g) return
+  if (!g || g.middle) return
   if (g.moved && g.kind === 'move') emit('moveEnd', g.id!)
+  else if (g.moved && g.kind === 'vertex') emit('vertexEnd')
   else if (g.moved && g.kind === 'spot' && spotDrag.value) {
     const bed = bedById(g.id)!
     emit('moveSpot', g.spotId!, { x: spotDrag.value.x - bed.shape.x, y: spotDrag.value.y - bed.shape.y })
-  } else if (!g.moved && props.pickBedId && g.id === props.pickBedId) emit('pick', inBed(bedById(g.id)!, toMap(e)))
-  else if (!g.moved) emit('select', g.id)
+  } else if (g.moved || g.kind === 'vertex') return
+  else if (props.measuring) tape.value = [...tape.value, tapePoint(e)]
+  else if (props.pickBedId && g.id === props.pickBedId) emit('pick', inBed(bedById(g.id)!, toMap(e)))
+  else emit('select', g.id)
 }
+/** A double click on a point of the selected line removes it. */
+function onDoubleClick(e: MouseEvent) {
+  const vertex = (e.target as Element).closest<SVGElement>('[data-vertex]')?.dataset.vertex
+  if (props.designMode && props.selectedId && vertex !== undefined) emit('removeVertex', props.selectedId, Number(vertex))
+}
+
+// Measuring tape: each click adds a point, lined up with the items like in the designer (Alt: free); Esc clears it.
+const tape = ref<Point[]>([])
+const hover = ref<Point>()
+function tapePoint(e: PointerEvent): Point {
+  const p = toMap(e)
+  const fit = alignBox({ ...p, w: 0, h: 0 }, snapTargets(props.layout), { ...snapOf(e), grid: false })
+  return { x: p.x + fit.dx, y: p.y + fit.dy }
+}
+const tapeLine = computed(() => (hover.value && tape.value.length ? [...tape.value, hover.value] : tape.value))
+const tapeSegments = computed(() =>
+  tapeLine.value.slice(1).map((b, i) => ({ a: tapeLine.value[i]!, b, length: lineLength([tapeLine.value[i]!, b]) })),
+)
+const clearTape = () => {
+  tape.value = []
+  hover.value = undefined
+}
+const onKey = (e: KeyboardEvent) => e.key === 'Escape' && props.measuring && clearTape()
+onMounted(() => document.addEventListener('keydown', onKey))
+onBeforeUnmount(() => document.removeEventListener('keydown', onKey))
+watch(() => props.measuring, clearTape)
 // Keep the dragged spot where it was dropped until the saved planting comes back.
 watch(
   () => props.plantings,
@@ -212,7 +307,38 @@ function ghostOf(bed: BedDto) {
   const shape = spotShape(d, crop?.spacing ?? spacingOf())
   return { x: bed.shape.x + props.pickPoint.x, y: bed.shape.y + props.pickPoint.y, shape, crop, count: d.count }
 }
-const beds = computed(() => props.layout.beds.map(bedView))
+type StackEntry =
+  | { kind: 'marker'; item: MarkerDto }
+  | { kind: 'path'; item: PathDto }
+  | { kind: 'feature'; item: FeatureDto }
+  | { kind: 'bed'; item: BedDto; view: ReturnType<typeof bedView> }
+  | { kind: 'tree'; item: TreeDto }
+/**
+ * Everything above the plots, bottom first: by layer, and on the same layer markers, paths, features, beds and trees.
+ * Plots are always below (sorted among each other by layer).
+ */
+const stack = computed(() => {
+  const l = props.layout
+  const entries: StackEntry[] = [
+    ...l.markers.map((item) => ({ kind: 'marker' as const, item })),
+    ...l.paths.map((item) => ({ kind: 'path' as const, item })),
+    ...l.features.map((item) => ({ kind: 'feature' as const, item })),
+    ...l.beds.map((item) => ({ kind: 'bed' as const, item, view: bedView(item) })),
+    ...l.trees.map((item) => ({ kind: 'tree' as const, item })),
+  ]
+  // Array.sort is stable: items on the same layer keep the order above.
+  return entries.sort((a, b) => (a.item.layer ?? 0) - (b.item.layer ?? 0))
+})
+const plots = computed(() => [...props.layout.plots].sort((a, b) => (a.layer ?? 0) - (b.layer ?? 0)))
+
+/** The selected line (path or wall) in the designer: its points can be dragged. */
+const selectedLine = computed(() => {
+  if (!props.designMode || !props.selectedId) return undefined
+  const line = [...props.layout.paths, ...props.layout.markers].find((x) => x.id === props.selectedId)
+  return line?.points
+})
+/** Handles keep their size on screen. */
+const handle = computed(() => 6 / view.k)
 
 const label = (seg: Segment) => {
   const long = Math.max(seg.w, seg.h)
@@ -220,14 +346,6 @@ const label = (seg: Segment) => {
   const cx = seg.x + seg.w / 2
   const cy = seg.y + seg.h / 2
   return { text, cx, cy, rotate: seg.h > seg.w * 1.3 ? `rotate(-90 ${cx} ${cy})` : undefined }
-}
-
-/** A line's label sits in the middle, along the line but never upside down. */
-const lineLabel = (s: ShapeDto) => {
-  let angle = (Math.atan2(s.height, s.width) * 180) / Math.PI
-  if (angle > 90) angle -= 180
-  if (angle < -90) angle += 180
-  return `translate(${s.x + s.width / 2} ${s.y + s.height / 2}) rotate(${angle}) translate(0 -0.22)`
 }
 
 const plotIcon = { open: '🌾', greenhouse: '🏡', orchard: '🍎' } as const
@@ -248,9 +366,12 @@ const scaleBar = computed(() => ({ x: bounds.value.x + bounds.value.w - 2.6, y: 
       ref="svg"
       :aria-label="t('map.label')"
       role="img"
+      :class="{ measuring }"
       @pointerdown="onDown"
       @pointermove="onMove"
       @pointerup="onUp"
+      @dblclick="onDoubleClick"
+      @mousedown.middle.prevent
       @wheel.prevent="onWheel"
     >
       <defs>
@@ -302,203 +423,267 @@ const scaleBar = computed(() => ({ x: bounds.value.x + bounds.value.w - 2.6, y: 
         </g>
 
         <!-- Plots are the bottom layer: everything else lies on or around them. -->
-        <g v-for="pl in layout.plots" :key="pl.id" :data-id="pl.id" class="item">
+        <g v-for="pl in plots" :key="pl.id" :data-id="pl.id" class="item">
           <ShapeSvg :shape="pl.shape" :rx="0.3" :class="`plot-${pl.type}`" />
           <text class="plot-label" :x="pl.shape.x + 0.1" :y="pl.shape.y - 0.16">{{ plotIcon[pl.type] }} {{ pl.name }}</text>
         </g>
 
-        <g v-for="m in layout.markers" :key="m.id" :data-id="m.id" class="item marker">
-          <template v-if="m.kind === 'line'">
-            <line
-              :x1="m.shape.x"
-              :y1="m.shape.y"
-              :x2="m.shape.x + m.shape.width"
-              :y2="m.shape.y + m.shape.height"
-              :stroke="m.color"
-              :stroke-width="m.thickness"
-              stroke-linecap="square"
-            />
-            <!-- A wider invisible line, so a thin wall is easy to grab in the designer. -->
-            <line
-              v-if="designMode"
-              :x1="m.shape.x"
-              :y1="m.shape.y"
-              :x2="m.shape.x + m.shape.width"
-              :y2="m.shape.y + m.shape.height"
-              stroke="transparent"
-              :stroke-width="Math.max(m.thickness, 0.4)"
-            />
-            <text v-if="m.label" class="marker-label" :transform="lineLabel(m.shape)">{{ m.label }}</text>
-          </template>
-          <template v-else>
-            <ShapeSvg :shape="m.shape" :fill="m.color" fill-opacity=".7" :stroke="m.color" stroke-width=".04" />
-            <text v-if="m.label" class="marker-label" :x="m.shape.x + m.shape.width / 2" :y="m.shape.y + m.shape.height / 2">
-              {{ m.label }}
-            </text>
-          </template>
-        </g>
-
-        <g v-for="p in layout.paths" :key="p.id" :data-id="p.id" class="item">
-          <rect :x="p.shape.x" :y="p.shape.y" :width="p.shape.width" :height="p.shape.height" :fill="pathFill[p.material]" opacity=".9" />
-          <text
-            class="path-label"
-            :transform="`translate(${p.shape.x + p.shape.width / 2} ${p.shape.y + p.shape.height / 2})${p.shape.height > p.shape.width ? ' rotate(-90)' : ''}`"
-          >
-            {{ p.name }}
-          </text>
-        </g>
-
-        <g v-for="f in layout.features" :key="f.id" :data-id="f.id" class="item">
-          <ShapeSvg
-            :shape="f.type === 'pond' ? { ...f.shape, kind: 'ellipse' } : f.shape"
-            :fill="featureStyle[f.type].fill"
-            :stroke="featureStyle[f.type].stroke"
-            stroke-width=".05"
-          />
-          <text class="feature-label" :x="f.shape.x + f.shape.width / 2" :y="f.shape.y + f.shape.height + 0.4">
-            {{ featureStyle[f.type].icon }} {{ f.name }}
-          </text>
-        </g>
-
-        <g
-          v-for="v in beds"
-          :key="v.bed.id"
-          :data-id="v.bed.id"
-          class="item bed"
-          :class="{ dimmed: highlightBedIds && !highlightBedIds.has(v.bed.id), picking: pickBedId === v.bed.id }"
-          :aria-label="v.bed.code"
-        >
-          <clipPath :id="`clip-${v.bed.id}`"><ShapeSvg :shape="v.bed.shape" /></clipPath>
-          <ShapeSvg :shape="v.bed.shape" fill="url(#soil)" />
-          <g :clip-path="`url(#clip-${v.bed.id})`">
-            <template v-for="seg in v.segments" :key="seg.planting.id">
-              <rect
-                :x="seg.x"
-                :y="seg.y"
-                :width="seg.w"
-                :height="seg.h"
-                :fill="seg.crop?.color ?? '#888'"
-                :fill-opacity="PHASE_OPACITY[seg.phase]"
-                :stroke="future ? '#333' : undefined"
-                :stroke-width="future ? 0.05 : undefined"
-                :stroke-dasharray="future ? '.18 .12' : undefined"
+        <template v-for="e in stack" :key="e.item.id">
+          <g v-if="e.kind === 'marker'" :data-id="e.item.id" class="item marker">
+            <template v-if="e.item.kind === 'line' && e.item.points">
+              <path
+                :d="polyline(e.item.points)"
+                fill="none"
+                :stroke="e.item.color"
+                :stroke-width="e.item.thickness"
+                stroke-linecap="square"
+                stroke-linejoin="miter"
               />
-              <rect v-if="seg.phase === 'harvest'" :x="seg.x" :y="seg.y" :width="seg.w" :height="seg.h" fill="url(#dots)" />
-              <rect v-if="seg.phase === 'clearing'" :x="seg.x" :y="seg.y" :width="seg.w" :height="seg.h" fill="url(#hatch)" />
-              <text class="crop-label" :x="label(seg).cx" :y="label(seg).cy" :transform="label(seg).rotate">{{ label(seg).text }}</text>
+              <!-- A wider invisible line, so a thin wall or fence is easy to grab in the designer. -->
+              <path
+                v-if="designMode"
+                :d="polyline(e.item.points)"
+                fill="none"
+                stroke="transparent"
+                :stroke-width="Math.max(e.item.thickness, 0.4)"
+              />
+              <text v-if="e.item.label" class="marker-label" :transform="alongLine(e.item.points, 0.22)">{{ e.item.label }}</text>
             </template>
-            <g
-              v-for="spot in v.spots"
-              :key="spot.planting.id"
-              :data-spot="spot.planting.id"
-              class="spot"
-              :class="{ draggable: spotsEditable && selectedId === v.bed.id }"
-            >
-              <SpotSvg
-                :x="spot.x"
-                :y="spot.y"
-                :shape="spot.shape"
-                :color="spot.crop?.color ?? '#888'"
-                :icon="spot.crop?.icon"
-                :count="spot.planting.count ?? 1"
-                :phase="spot.phase"
-                :dashed="future"
-              />
-            </g>
-            <g v-if="v.ghost" class="ghost">
-              <SpotSvg
-                :x="v.ghost.x"
-                :y="v.ghost.y"
-                :shape="v.ghost.shape"
-                :color="v.ghost.crop?.color ?? '#888'"
-                :icon="v.ghost.crop?.icon"
-                :count="v.ghost.count"
-                dashed
+            <template v-else-if="e.item.shape">
+              <ShapeSvg :shape="e.item.shape" :fill="e.item.color" fill-opacity=".7" :stroke="e.item.color" stroke-width=".04" />
+              <text
+                v-if="e.item.label"
+                class="marker-label"
+                :x="e.item.shape.x + e.item.shape.width / 2"
+                :y="e.item.shape.y + e.item.shape.height / 2"
+              >
+                {{ e.item.label }}
+              </text>
+            </template>
+          </g>
+
+          <g v-else-if="e.kind === 'path'" :data-id="e.item.id" class="item">
+            <path
+              :d="polyline(e.item.points)"
+              fill="none"
+              :stroke="pathFill[e.item.material]"
+              :stroke-width="e.item.width"
+              stroke-linejoin="miter"
+              opacity=".9"
+            />
+            <text class="path-label" :transform="alongLine(e.item.points)">{{ e.item.name }}</text>
+          </g>
+
+          <g v-else-if="e.kind === 'feature'" :data-id="e.item.id" class="item">
+            <ShapeSvg
+              :shape="e.item.type === 'pond' ? { ...e.item.shape, kind: 'ellipse' } : e.item.shape"
+              :fill="featureStyle[e.item.type].fill"
+              :stroke="featureStyle[e.item.type].stroke"
+              stroke-width=".05"
+            />
+            <text class="feature-label" :x="e.item.shape.x + e.item.shape.width / 2" :y="e.item.shape.y + e.item.shape.height + 0.4">
+              {{ featureStyle[e.item.type].icon }} {{ e.item.name }}
+            </text>
+          </g>
+
+          <g
+            v-else-if="e.kind === 'bed'"
+            :data-id="e.view.bed.id"
+            class="item bed"
+            :class="{ dimmed: highlightBedIds && !highlightBedIds.has(e.view.bed.id), picking: pickBedId === e.view.bed.id }"
+            :aria-label="e.view.bed.code"
+          >
+            <clipPath :id="`clip-${e.view.bed.id}`"><ShapeSvg :shape="e.view.bed.shape" /></clipPath>
+            <ShapeSvg :shape="e.view.bed.shape" fill="url(#soil)" />
+            <g :clip-path="`url(#clip-${e.view.bed.id})`">
+              <template v-for="seg in e.view.segments" :key="seg.planting.id">
+                <rect
+                  :x="seg.x"
+                  :y="seg.y"
+                  :width="seg.w"
+                  :height="seg.h"
+                  :fill="seg.crop?.color ?? '#888'"
+                  :fill-opacity="PHASE_OPACITY[seg.phase]"
+                  :stroke="future ? '#333' : undefined"
+                  :stroke-width="future ? 0.05 : undefined"
+                  :stroke-dasharray="future ? '.18 .12' : undefined"
+                />
+                <rect v-if="seg.phase === 'harvest'" :x="seg.x" :y="seg.y" :width="seg.w" :height="seg.h" fill="url(#dots)" />
+                <rect v-if="seg.phase === 'clearing'" :x="seg.x" :y="seg.y" :width="seg.w" :height="seg.h" fill="url(#hatch)" />
+                <text class="crop-label" :x="label(seg).cx" :y="label(seg).cy" :transform="label(seg).rotate">{{ label(seg).text }}</text>
+              </template>
+              <g
+                v-for="spot in e.view.spots"
+                :key="spot.planting.id"
+                :data-spot="spot.planting.id"
+                class="spot"
+                :class="{ draggable: spotsEditable && selectedId === e.view.bed.id }"
+              >
+                <SpotSvg
+                  :x="spot.x"
+                  :y="spot.y"
+                  :shape="spot.shape"
+                  :color="spot.crop?.color ?? '#888'"
+                  :icon="spot.crop?.icon"
+                  :count="spot.planting.count ?? 1"
+                  :phase="spot.phase"
+                  :dashed="future"
+                />
+              </g>
+              <g v-if="e.view.ghost" class="ghost">
+                <SpotSvg
+                  :x="e.view.ghost.x"
+                  :y="e.view.ghost.y"
+                  :shape="e.view.ghost.shape"
+                  :color="e.view.ghost.crop?.color ?? '#888'"
+                  :icon="e.view.ghost.crop?.icon"
+                  :count="e.view.ghost.count"
+                  dashed
+                />
+              </g>
+              <circle
+                v-if="pickBedId === e.view.bed.id && pickPoint"
+                class="pick"
+                :cx="e.view.bed.shape.x + pickPoint.x"
+                :cy="e.view.bed.shape.y + pickPoint.y"
+                r=".12"
               />
             </g>
             <circle
-              v-if="pickBedId === v.bed.id && pickPoint"
-              class="pick"
-              :cx="v.bed.shape.x + pickPoint.x"
-              :cy="v.bed.shape.y + pickPoint.y"
-              r=".12"
+              v-if="e.view.bed.shape.kind === 'keyhole'"
+              :cx="e.view.bed.shape.x + e.view.bed.shape.width / 2"
+              :cy="e.view.bed.shape.y + e.view.bed.shape.height / 2"
+              r=".3"
+              fill="#6b4e31"
             />
-          </g>
-          <circle
-            v-if="v.bed.shape.kind === 'keyhole'"
-            :cx="v.bed.shape.x + v.bed.shape.width / 2"
-            :cy="v.bed.shape.y + v.bed.shape.height / 2"
-            r=".3"
-            fill="#6b4e31"
-          />
-          <ShapeSvg :shape="v.bed.shape" class="outline" :class="{ selected: selectedId === v.bed.id }" />
-          <text
-            class="bed-code"
-            :x="v.bed.shape.x + (v.bed.shape.kind === 'rect' ? 0.07 : v.bed.shape.width / 2)"
-            :y="v.bed.shape.y + 0.27"
-            :text-anchor="v.bed.shape.kind === 'rect' ? 'start' : 'middle'"
-          >
-            {{ v.bed.code }}
-          </text>
-          <text
-            v-if="v.indoor"
-            :x="v.bed.shape.x + v.bed.shape.width - 0.08"
-            :y="v.bed.shape.y + v.bed.shape.height - 0.1"
-            text-anchor="end"
-            font-size=".34"
-          >
-            🏠
-          </text>
-          <text v-if="alertIds?.has(v.bed.id)" :x="v.bed.shape.x + 0.06" :y="v.bed.shape.y + v.bed.shape.height - 0.1" font-size=".34">
-            🦠
-          </text>
-          <g v-if="!designMode && warningBedIds?.has(v.bed.id)">
-            <circle :cx="v.bed.shape.x + v.bed.shape.width - 0.2" :cy="v.bed.shape.y + 0.2" r=".15" fill="#b9502c" />
+            <ShapeSvg :shape="e.view.bed.shape" class="outline" :class="{ selected: selectedId === e.view.bed.id }" />
             <text
-              :x="v.bed.shape.x + v.bed.shape.width - 0.2"
-              :y="v.bed.shape.y + 0.27"
-              text-anchor="middle"
-              font-size=".22"
-              font-weight="800"
-              fill="#fff"
+              class="bed-code"
+              :x="e.view.bed.shape.x + (e.view.bed.shape.kind === 'rect' ? 0.07 : e.view.bed.shape.width / 2)"
+              :y="e.view.bed.shape.y + 0.27"
+              :text-anchor="e.view.bed.shape.kind === 'rect' ? 'start' : 'middle'"
             >
-              !
+              {{ e.view.bed.code }}
             </text>
+            <text
+              v-if="e.view.indoor"
+              :x="e.view.bed.shape.x + e.view.bed.shape.width - 0.08"
+              :y="e.view.bed.shape.y + e.view.bed.shape.height - 0.1"
+              text-anchor="end"
+              font-size=".34"
+            >
+              🏠
+            </text>
+            <text
+              v-if="alertIds?.has(e.view.bed.id)"
+              :x="e.view.bed.shape.x + 0.06"
+              :y="e.view.bed.shape.y + e.view.bed.shape.height - 0.1"
+              font-size=".34"
+            >
+              🦠
+            </text>
+            <g v-if="!designMode && warningBedIds?.has(e.view.bed.id)">
+              <circle :cx="e.view.bed.shape.x + e.view.bed.shape.width - 0.2" :cy="e.view.bed.shape.y + 0.2" r=".15" fill="#b9502c" />
+              <text
+                :x="e.view.bed.shape.x + e.view.bed.shape.width - 0.2"
+                :y="e.view.bed.shape.y + 0.27"
+                text-anchor="middle"
+                font-size=".22"
+                font-weight="800"
+                fill="#fff"
+              >
+                !
+              </text>
+            </g>
           </g>
+
+          <g v-else-if="e.kind === 'tree'" :data-id="e.item.id" class="item tree">
+            <ShapeSvg
+              :shape="crownShape(e.item)"
+              :rx="0.15"
+              :fill="e.item.kind === 'shrub' ? '#7f9d59' : '#5f8f4a'"
+              fill-opacity=".42"
+              :stroke="selectedId === e.item.id ? '#2a2a24' : '#4d7339'"
+              :stroke-width="selectedId === e.item.id ? 0.12 : 0.05"
+              :stroke-dasharray="e.item.kind === 'shrub' ? '.2 .12' : undefined"
+            />
+            <circle :cx="e.item.x" :cy="e.item.y" r=".14" fill="#6b4a2b" />
+            <text class="feature-label" :x="e.item.x" :y="e.item.y + e.item.crownDepth / 2 + 0.38">
+              {{ e.item.kind === 'shrub' ? '🌿' : '🌳' }} {{ e.item.name }}
+            </text>
+            <text
+              v-if="alertIds?.has(e.item.id)"
+              :x="e.item.x + e.item.crownWidth * 0.35"
+              :y="e.item.y - e.item.crownDepth * 0.3"
+              font-size=".4"
+            >
+              🦠
+            </text>
+            <!-- needs a pollinator but has none within range -->
+            <g v-if="!designMode && e.item.pollinators?.length === 0">
+              <circle :cx="e.item.x + e.item.crownWidth * 0.35" :cy="e.item.y + e.item.crownDepth * 0.3" r=".15" fill="#b9502c" />
+              <text
+                :x="e.item.x + e.item.crownWidth * 0.35"
+                :y="e.item.y + e.item.crownDepth * 0.3 + 0.07"
+                text-anchor="middle"
+                font-size=".22"
+                font-weight="800"
+                fill="#fff"
+              >
+                !
+              </text>
+            </g>
+          </g>
+        </template>
+
+        <!-- Points of the selected line: drag to move, drag a midpoint to add one, double-click to remove. -->
+        <g v-if="selectedLine" class="handles">
+          <circle
+            v-for="(p, i) in selectedLine.slice(1)"
+            :key="`m${i}`"
+            :data-insert="i + 1"
+            class="insert"
+            :cx="(selectedLine[i]!.x + p.x) / 2"
+            :cy="(selectedLine[i]!.y + p.y) / 2"
+            :r="handle * 0.75"
+            :stroke-width="handle / 4"
+          />
+          <circle
+            v-for="(p, i) in selectedLine"
+            :key="`v${i}`"
+            :data-vertex="i"
+            class="vertex"
+            :cx="p.x"
+            :cy="p.y"
+            :r="handle"
+            :stroke-width="handle / 3"
+          />
         </g>
 
-        <g v-for="tree in layout.trees" :key="tree.id" :data-id="tree.id" class="item tree">
-          <circle
-            :cx="tree.x"
-            :cy="tree.y"
-            :r="tree.crownDiameter / 2"
-            :fill="tree.kind === 'shrub' ? '#7f9d59' : '#5f8f4a'"
-            fill-opacity=".42"
-            :stroke="selectedId === tree.id ? '#2a2a24' : '#4d7339'"
-            :stroke-width="selectedId === tree.id ? 0.12 : 0.05"
-            :stroke-dasharray="tree.kind === 'shrub' ? '.2 .12' : undefined"
+        <g v-if="guides?.length" class="guides">
+          <line
+            v-for="(g, i) in guides"
+            :key="i"
+            :x1="g.x1"
+            :y1="g.y1"
+            :x2="g.x2"
+            :y2="g.y2"
+            :stroke-width="1.5 / view.k"
+            :stroke-dasharray="`${6 / view.k} ${4 / view.k}`"
           />
-          <circle :cx="tree.x" :cy="tree.y" r=".14" fill="#6b4a2b" />
-          <text class="feature-label" :x="tree.x" :y="tree.y + tree.crownDiameter / 2 + 0.38">
-            {{ tree.kind === 'shrub' ? '🌿' : '🌳' }} {{ tree.name }}
-          </text>
-          <text v-if="alertIds?.has(tree.id)" :x="tree.x + tree.crownDiameter * 0.35" :y="tree.y - tree.crownDiameter * 0.3" font-size=".4">
-            🦠
-          </text>
-          <!-- needs a pollinator but has none within range -->
-          <g v-if="!designMode && tree.pollinators?.length === 0">
-            <circle :cx="tree.x + tree.crownDiameter * 0.35" :cy="tree.y + tree.crownDiameter * 0.3" r=".15" fill="#b9502c" />
-            <text
-              :x="tree.x + tree.crownDiameter * 0.35"
-              :y="tree.y + tree.crownDiameter * 0.3 + 0.07"
-              text-anchor="middle"
-              font-size=".22"
-              font-weight="800"
-              fill="#fff"
-            >
-              !
+        </g>
+
+        <g v-if="measuring && tapeLine.length" class="tape">
+          <path :d="polyline(tapeLine)" :stroke-width="2.5 / view.k" />
+          <circle v-for="(p, i) in tape" :key="i" :cx="p.x" :cy="p.y" :r="handle * 0.7" />
+          <template v-if="tapeSegments.length > 1">
+            <text v-for="(seg, i) in tapeSegments" :key="`s${i}`" class="tape-part" :transform="alongLine([seg.a, seg.b], 0.12)">
+              {{ decimal(seg.length) }} m
             </text>
-          </g>
+          </template>
+          <text v-if="tapeSegments.length" class="tape-total" :x="tapeLine.at(-1)!.x + 0.15" :y="tapeLine.at(-1)!.y - 0.15">
+            📏 {{ decimal(lineLength(tapeLine)) }} m
+          </text>
         </g>
 
         <slot name="overlay" :view="view" />
@@ -530,6 +715,47 @@ svg {
 }
 .design .item {
   cursor: move;
+}
+svg.measuring,
+svg.measuring .item {
+  cursor: crosshair;
+}
+.handles .vertex {
+  fill: #fff;
+  stroke: #3f7d4e;
+  cursor: grab;
+}
+.handles .insert {
+  fill: rgba(63, 125, 78, 0.35);
+  stroke: #fff;
+  cursor: copy;
+}
+.guides line {
+  stroke: #d2338b;
+  pointer-events: none;
+}
+.tape {
+  pointer-events: none;
+}
+.tape path {
+  fill: none;
+  stroke: #d2338b;
+}
+.tape circle {
+  fill: #d2338b;
+}
+.tape-total,
+.tape-part {
+  font-size: 0.3px;
+  font-weight: 800;
+  fill: #8a1f5a;
+  paint-order: stroke;
+  stroke: #fff;
+  stroke-width: 0.08px;
+}
+.tape-part {
+  font-size: 0.22px;
+  text-anchor: middle;
 }
 .bed,
 .tree {

@@ -37,12 +37,13 @@ public sealed class GardenTests(SeededApiFactory factory) : IClassFixture<Seeded
     public async Task Demo_sites_and_layout_are_seeded()
     {
         var sites = await Get<SiteDto[]>("/api/sites");
-        Assert.Equal(["Thuis", "Volkstuin"], sites!.Select(s => s.Name));
+        Assert.Equal(["Thuis", "Volkstuin"], sites!.Select(s => s.Name).Take(2)); // other tests add sites after them
         var layout = await Layout(sites![0].Id);
         Assert.Contains(layout.Beds, b => b.Code == "S1" && b.Shape.Kind == ShapeKind.Ellipse);
         Assert.Equal(3, layout.Trees.Count);
         Assert.Empty(layout.Trees.Single(t => t.Name == "Appelboom").Pollinators!); // the only apple: no partner
-        Assert.Contains(layout.Markers, m => m.Kind == MarkerKind.Line && m.Shape.Height == 0);
+        Assert.Contains(layout.Markers, m => m.Kind == MarkerKind.Line && m.Points!.Count == 2 && m.Shape is null);
+        Assert.All(layout.Paths, p => Assert.True(p.Points.Count >= 2 && p.Width > 0));
         Assert.Equal(4.8, layout.Beds.Single(b => b.Code == "A1").Area);
     }
 
@@ -52,13 +53,18 @@ public sealed class GardenTests(SeededApiFactory factory) : IClassFixture<Seeded
         var site = await Read<SiteDto>(await Post("/api/sites", new SiteInput("Testtuin", null)));
         var plot = new PlotDto(Guid.NewGuid(), "Perceel", PlotType.Open, new ShapeDto(ShapeKind.Rect, 0, 0, 5, 5));
         var bed = new BedDto(Guid.NewGuid(), plot.Id, "T1", BedKind.Strips, new ShapeDto(ShapeKind.Keyhole, 1, 1, 3, 3), Domain.Catalog.SunExposure.Full, null, null, 0);
-        var path = new PathDto(Guid.NewGuid(), "Pad", PathMaterial.Grass, new ShapeDto(ShapeKind.Rect, 0, 5, 5, 0.6));
-        var marker = new MarkerDto(Guid.NewGuid(), MarkerKind.Line, "Muur", "#7a6a58", new ShapeDto(ShapeKind.Rect, 0, 6, 5, 0), 0.25);
+        var path = new PathDto(Guid.NewGuid(), "Pad", PathMaterial.Grass, [new(0, 5), new(5, 5), new(5, 9)], 0.6);
+        var marker = new MarkerDto(Guid.NewGuid(), MarkerKind.Line, "Hek", "#7a6a58", null, [new(0, 6), new(5, 6), new(5, 10)], 0.25);
         var layout = new SiteLayoutDto([plot], [bed], [path], [], [], [marker]);
 
         var saved = await Read<SiteLayoutDto>(await Put($"/api/sites/{site.Id}/layout", layout));
         Assert.Equal(bed.Id, Assert.Single(saved.Beds).Id);
-        Assert.Equal(marker, Assert.Single(saved.Markers));
+        var savedPath = Assert.Single(saved.Paths);
+        Assert.Equal(path.Points, savedPath.Points);
+        Assert.Equal(0.6, savedPath.Width);
+        var savedMarker = Assert.Single(saved.Markers);
+        Assert.Equal(marker.Points, savedMarker.Points);
+        Assert.Null(savedMarker.Shape);
 
         var moved = layout with { Beds = [bed with { Shape = bed.Shape with { X = 1.5 } }], Paths = [], Markers = [] };
         saved = await Read<SiteLayoutDto>(await Put($"/api/sites/{site.Id}/layout", moved));
@@ -72,7 +78,7 @@ public sealed class GardenTests(SeededApiFactory factory) : IClassFixture<Seeded
     {
         var site = await Read<SiteDto>(await Post("/api/sites", new SiteInput("Kiwituin", null)));
         TreeDto Kiwi(string name, double x, PollinationNeed need) =>
-            new(Guid.NewGuid(), name, null, TreeKind.Shrub, x, 0, 2, null, [], new PollinationDto(need, "Kiwi", 15));
+            new(Guid.NewGuid(), name, null, TreeKind.Shrub, null, x, 0, ShapeKind.Ellipse, 2, 2, null, [], new PollinationDto(need, "Kiwi", 15));
         var female = Kiwi("Kiwi ♀", 0, PollinationNeed.Female);
         var layout = new SiteLayoutDto([], [], [], [], [female, Kiwi("Kiwi ♂ ver", 40, PollinationNeed.Male)], []);
 
@@ -96,13 +102,42 @@ public sealed class GardenTests(SeededApiFactory factory) : IClassFixture<Seeded
     {
         var home = await Home();
         var layout = await Layout(home.Id);
-        var line = new MarkerDto(Guid.NewGuid(), MarkerKind.Line, null, "#7a6a58", new ShapeDto(ShapeKind.Rect, 0, 0, 0.05, 0), 0.25);
+        var line = new MarkerDto(Guid.NewGuid(), MarkerKind.Line, null, "#7a6a58", null, [new(0, 0), new(0.05, 0)], 0.25);
         Assert.Equal("lineTooShort", await Code(await Put($"/api/sites/{home.Id}/layout", layout with { Markers = [line] }), HttpStatusCode.BadRequest));
+        Assert.Equal("inclusiveBetween", await Code(await Put($"/api/sites/{home.Id}/layout",
+            layout with { Markers = [line with { Points = [new(0, 0)] }] }), HttpStatusCode.BadRequest));
 
-        var area = new MarkerDto(Guid.NewGuid(), MarkerKind.Area, "Terras", "#d9d4c8", new ShapeDto(ShapeKind.Keyhole, 0, 0, 3, 2), 0.2);
+        var area = new MarkerDto(Guid.NewGuid(), MarkerKind.Area, "Terras", "#d9d4c8", new ShapeDto(ShapeKind.Keyhole, 0, 0, 3, 2), null, 0.2);
         Assert.Equal("isInEnum", await Code(await Put($"/api/sites/{home.Id}/layout", layout with { Markers = [area] }), HttpStatusCode.BadRequest));
         Assert.Equal("color", await Code(await Put($"/api/sites/{home.Id}/layout",
-            layout with { Markers = [area with { Color = "rood", Shape = area.Shape with { Kind = ShapeKind.Rect } }] }), HttpStatusCode.BadRequest));
+            layout with { Markers = [area with { Color = "rood", Shape = area.Shape! with { Kind = ShapeKind.Rect } }] }), HttpStatusCode.BadRequest));
+    }
+
+    [Fact]
+    public async Task A_tree_of_a_variety_gets_its_care_and_pollination_and_keeps_the_variety_in_use()
+    {
+        var site = await Read<SiteDto>(await Post("/api/sites", new SiteInput("Leibomen", null)));
+        var categoryId = (await Get<VarietyDto[]>("/api/varieties"))![0].CategoryId;
+        var kiwi = await Read<VarietyDto>(await Post("/api/varieties", new VarietyInput(
+            categoryId, null, "Kiwi (test)", "Jenny", null, Life.Perennial, null, 300, 300, 400, [SunExposure.Full], null, null, null, new MonthWindowDto(3, 4),
+            new MonthWindowDto(10, 11), null, null, null, null, null, [new YearlyActionDto("Wintersnoei", 1, 60)], [],
+            Pollination: new PollinationDto(PollinationNeed.Female, "Kiwi", 15))));
+        var espalier = new TreeDto(Guid.NewGuid(), "Kiwi aan de muur", null, TreeKind.Shrub, kiwi.Id, 0, 0, ShapeKind.Rect, 4, 0.5, null,
+            [new YearlyActionDto("Zomersnoei", 7, 30)]);
+
+        var saved = await Read<SiteLayoutDto>(await Put($"/api/sites/{site.Id}/layout", new SiteLayoutDto([], [], [], [], [espalier], [])));
+        var tree = Assert.Single(saved.Trees);
+        Assert.Equal((kiwi.Id, ShapeKind.Rect, 4.0, 0.5), (tree.VarietyId, tree.Outline, tree.CrownWidth, tree.CrownDepth));
+        Assert.Empty(tree.Pollinators!); // the variety's pollination applies: a female without a male
+
+        var tasks = await Get<JsonElement>($"/api/tasks?from=2027-01-01&to=2027-12-31&siteId={site.Id}");
+        var titles = tasks.EnumerateArray().Select(t => t.GetProperty("title").GetString()).ToList();
+        Assert.Contains("Wintersnoei", titles);
+        Assert.Contains("Zomersnoei", titles);
+
+        Assert.Equal("variety.inUse", await Code(await _client.DeleteAsync($"/api/varieties/{kiwi.Id}", Ct), HttpStatusCode.Conflict));
+        var unknown = new SiteLayoutDto([], [], [], [], [espalier with { VarietyId = Guid.NewGuid() }], []);
+        Assert.Equal("unknownVariety", await Code(await Put($"/api/sites/{site.Id}/layout", unknown), HttpStatusCode.BadRequest));
     }
 
     [Fact]

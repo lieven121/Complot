@@ -21,10 +21,14 @@ internal static class DemoGarden
 
     private sealed record SeedPlot(string Key, string Name, PlotType Type, SeedShape Shape);
     private sealed record SeedBed(string Code, string Plot, SeedShape Shape, SunExposure Sun, string? Soil, BedKind Kind = BedKind.Strips);
-    private sealed record SeedPath(string Name, PathMaterial Material, SeedShape Shape);
+    private sealed record SeedPoint(double X, double Y);
+    private sealed record SeedPath(string Name, PathMaterial Material, List<SeedPoint> Points, double Width);
     private sealed record SeedFeature(string Name, FeatureType Type, SeedShape Shape);
-    private sealed record SeedTree(string Name, string? Cultivar, TreeKind Kind, double X, double Y, double CrownDiameter, DateOnly? PlantedOn, List<YearlyAction> Actions, Pollination? Pollination = null);
-    private sealed record SeedMarker(MarkerKind Kind, string? Label, string Color, ShapeKind Outline, double X, double Y, double Width, double Height, double Thickness = 0.2);
+    private sealed record SeedTree(string Name, string? Cultivar, TreeKind Kind, double X, double Y, double CrownWidth, DateOnly? PlantedOn, List<YearlyAction> Actions, Pollination? Pollination = null,
+        ShapeKind Outline = ShapeKind.Ellipse, double? CrownDepth = null);
+    private sealed record SeedMarker(
+        MarkerKind Kind, string? Label, string Color, ShapeKind Outline, double X, double Y, double Width, double Height, double Thickness = 0.2,
+        List<SeedPoint>? Points = null);
     private sealed record SeedSite(
         string Name, List<SeedPlot> Plots, List<SeedBed> Beds, List<SeedPath> Paths, List<SeedFeature> Features, List<SeedTree> Trees,
         List<SeedMarker>? Markers);
@@ -80,19 +84,22 @@ internal static class DemoGarden
                 bedsByCode[b.Code] = bed;
                 db.Beds.Add(bed);
             }
-            db.Paths.AddRange(s.Paths.Select(p => new GardenPath { SiteId = site.Id, Name = p.Name, Material = p.Material, Shape = p.Shape.ToDomain() }));
+            db.Paths.AddRange(s.Paths.Select(p => new GardenPath
+            {
+                SiteId = site.Id, Name = p.Name, Material = p.Material, Points = ToDomain(p.Points), Width = p.Width,
+            }));
             db.Features.AddRange(s.Features.Select(f => new GardenFeature { SiteId = site.Id, Name = f.Name, Type = f.Type, Shape = f.Shape.ToDomain() }));
             db.Markers.AddRange((s.Markers ?? []).Select(m => new MapMarker
             {
                 SiteId = site.Id, Kind = m.Kind, Label = m.Label, Color = m.Color, Outline = m.Outline,
-                X = m.X, Y = m.Y, Width = m.Width, Height = m.Height, Thickness = m.Thickness,
+                X = m.X, Y = m.Y, Width = m.Width, Height = m.Height, Thickness = m.Thickness, Points = ToDomain(m.Points ?? []),
             }));
             foreach (var t in s.Trees)
             {
                 trees[t.Name] = new Tree
                 {
-                    SiteId = site.Id, Name = t.Name, Cultivar = t.Cultivar, Kind = t.Kind, X = t.X, Y = t.Y,
-                    CrownDiameter = t.CrownDiameter, PlantedOn = t.PlantedOn, Actions = t.Actions, Pollination = t.Pollination,
+                    SiteId = site.Id, Name = t.Name, Cultivar = t.Cultivar, Kind = t.Kind, X = t.X, Y = t.Y, Outline = t.Outline,
+                    CrownWidth = t.CrownWidth, CrownDepth = t.CrownDepth ?? t.CrownWidth, PlantedOn = t.PlantedOn, Actions = t.Actions, Pollination = t.Pollination,
                 };
                 db.Trees.Add(trees[t.Name]);
             }
@@ -165,6 +172,8 @@ internal static class DemoGarden
         AddWorkHistory(db, plantings.Values, trees.Values, people.Values.ToList(), today);
         await db.SaveChangesAsync(ct);
     }
+
+    private static List<MapPoint> ToDomain(List<SeedPoint> points) => [.. points.Select(p => new MapPoint { X = p.X, Y = p.Y })];
 
     /// <summary>Marks past work as done with a plausible actual duration, so the estimates have something to learn from.</summary>
     private static void AddWorkHistory(ComplotDbContext db, IEnumerable<Planting> plantings, IEnumerable<Tree> trees, List<Person> people, DateOnly today)

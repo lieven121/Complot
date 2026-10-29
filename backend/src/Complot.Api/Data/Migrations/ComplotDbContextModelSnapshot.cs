@@ -585,6 +585,9 @@ namespace Complot.Api.Data.Migrations
                     b.Property<int>("Kind")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("Layer")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Notes")
                         .HasMaxLength(2000)
                         .HasColumnType("TEXT");
@@ -644,6 +647,9 @@ namespace Complot.Api.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("Layer")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -694,6 +700,9 @@ namespace Complot.Api.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("Layer")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("Material")
                         .HasColumnType("INTEGER");
 
@@ -708,25 +717,8 @@ namespace Complot.Api.Data.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "Shape", "Complot.Domain.Garden.GardenPath.Shape#Shape", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<double>("Height")
-                                .HasColumnType("REAL");
-
-                            b1.Property<int>("Kind")
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<double>("Width")
-                                .HasColumnType("REAL");
-
-                            b1.Property<double>("X")
-                                .HasColumnType("REAL");
-
-                            b1.Property<double>("Y")
-                                .HasColumnType("REAL");
-                        });
+                    b.Property<double>("Width")
+                        .HasColumnType("REAL");
 
                     b.HasKey("Id");
 
@@ -758,6 +750,9 @@ namespace Complot.Api.Data.Migrations
                     b.Property<string>("Label")
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("Layer")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Outline")
                         .HasColumnType("INTEGER");
@@ -795,6 +790,9 @@ namespace Complot.Api.Data.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("Layer")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -875,7 +873,10 @@ namespace Complot.Api.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<double>("CrownDiameter")
+                    b.Property<double>("CrownDepth")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("CrownWidth")
                         .HasColumnType("REAL");
 
                     b.Property<string>("Cultivar")
@@ -885,10 +886,16 @@ namespace Complot.Api.Data.Migrations
                     b.Property<int>("Kind")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("Layer")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("Outline")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateOnly?>("PlantedOn")
                         .HasColumnType("TEXT");
@@ -897,6 +904,9 @@ namespace Complot.Api.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("VarietyId")
                         .HasColumnType("TEXT");
 
                     b.Property<double>("X")
@@ -922,6 +932,8 @@ namespace Complot.Api.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("SiteId");
+
+                    b.HasIndex("VarietyId");
 
                     b.ToTable("Trees");
                 });
@@ -1579,6 +1591,31 @@ namespace Complot.Api.Data.Migrations
                         .HasForeignKey("SiteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.OwnsMany("Complot.Domain.Garden.MapPoint", "Points", b1 =>
+                        {
+                            b1.Property<Guid>("GardenPathId");
+
+                            b1.Property<int>("__synthesizedOrdinal")
+                                .ValueGeneratedOnAddOrUpdate();
+
+                            b1.Property<double>("X");
+
+                            b1.Property<double>("Y");
+
+                            b1.HasKey("GardenPathId", "__synthesizedOrdinal");
+
+                            b1.ToTable("Paths");
+
+                            b1
+                                .ToJson("Points")
+                                .HasColumnType("TEXT");
+
+                            b1.WithOwner()
+                                .HasForeignKey("GardenPathId");
+                        });
+
+                    b.Navigation("Points");
                 });
 
             modelBuilder.Entity("Complot.Domain.Garden.MapMarker", b =>
@@ -1588,6 +1625,31 @@ namespace Complot.Api.Data.Migrations
                         .HasForeignKey("SiteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.OwnsMany("Complot.Domain.Garden.MapPoint", "Points", b1 =>
+                        {
+                            b1.Property<Guid>("MapMarkerId");
+
+                            b1.Property<int>("__synthesizedOrdinal")
+                                .ValueGeneratedOnAddOrUpdate();
+
+                            b1.Property<double>("X");
+
+                            b1.Property<double>("Y");
+
+                            b1.HasKey("MapMarkerId", "__synthesizedOrdinal");
+
+                            b1.ToTable("Markers");
+
+                            b1
+                                .ToJson("Points")
+                                .HasColumnType("TEXT");
+
+                            b1.WithOwner()
+                                .HasForeignKey("MapMarkerId");
+                        });
+
+                    b.Navigation("Points");
                 });
 
             modelBuilder.Entity("Complot.Domain.Garden.Plot", b =>
@@ -1606,6 +1668,11 @@ namespace Complot.Api.Data.Migrations
                         .HasForeignKey("SiteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Complot.Domain.Catalog.PlantVariety", "Variety")
+                        .WithMany()
+                        .HasForeignKey("VarietyId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.OwnsMany("Complot.Domain.Common.YearlyAction", "Actions", b1 =>
                         {
@@ -1634,6 +1701,8 @@ namespace Complot.Api.Data.Migrations
                         });
 
                     b.Navigation("Actions");
+
+                    b.Navigation("Variety");
                 });
 
             modelBuilder.Entity("Complot.Domain.Planner.CalendarLink", b =>

@@ -13,6 +13,7 @@ import type {
   MarkerKind,
   PathDto,
   PlotDto,
+  PointDto,
   PollinationDto,
   ShapeDto,
   TreeDto,
@@ -25,6 +26,7 @@ import ColorInput from '@/shared/ui/ColorInput.vue'
 import FormField from '@/shared/ui/FormField.vue'
 import PollinationInput from '@/shared/ui/PollinationInput.vue'
 import { useCatalogLookups } from '@/features/catalog/queries'
+import { lineLength, treeCare } from '../map'
 import { useSaveLayout } from '../queries'
 import type { ItemKind, useDesigner } from '../useDesigner'
 
@@ -43,7 +45,7 @@ const { month } = useFormat()
 const notify = useNotify()
 const saveLayout = useSaveLayout()
 const d = props.designer
-const { varieties } = useCatalogLookups()
+const { varieties, varietyById } = useCatalogLookups()
 
 onMounted(() => document.addEventListener('keydown', d.handleKey))
 onBeforeUnmount(() => document.removeEventListener('keydown', d.handleKey))
@@ -78,7 +80,12 @@ interface EditableItem {
   material?: PathDto['material']
   x?: number
   y?: number
-  crownDiameter?: number
+  points?: PointDto[]
+  width?: number
+  varietyId?: string
+  outline?: TreeDto['outline']
+  crownWidth?: number
+  crownDepth?: number
   cultivar?: string
   plantedOn?: string
   actions?: YearlyActionDto[]
@@ -90,24 +97,20 @@ const item = computed(() => d.selected.value as EditableItem | undefined)
 const set = (field: string, value: unknown) => d.edit(field, () => Object.assign(item.value!, { [field]: value }))
 const setShape = (field: keyof ShapeDto, value: unknown) =>
   d.edit(`shape.${field}`, () => (item.value!.shape = { ...item.value!.shape!, [field]: value }))
-/** A line marker is edited by its two ends; moving one end keeps the other in place. */
-const lineEnd = (axis: 'x' | 'y') => {
-  const s = item.value!.shape!
-  return axis === 'x' ? s.x + s.width : s.y + s.height
-}
-const setLineStart = (axis: 'x' | 'y', value: number) => {
-  const end = lineEnd(axis)
-  d.edit(`line.start.${axis}`, () => {
-    const s = item.value!.shape!
-    item.value!.shape = axis === 'x' ? { ...s, x: value, width: end - value } : { ...s, y: value, height: end - value }
+/** A line (path, wall, fence) is edited by its points. */
+const points = computed(() => item.value?.points)
+const setPoint = (index: number, axis: 'x' | 'y', value: number) =>
+  d.edit(`point${index}.${axis}`, () => (item.value!.points![index] = { ...item.value!.points![index]!, [axis]: value }))
+/** A new point continues the line by its last part (or 1 m east). */
+const addPoint = () =>
+  d.edit(`points+${points.value!.length}`, () => {
+    const p = item.value!.points!
+    const [a, b] = [p.at(-2)!, p.at(-1)!]
+    const step = Math.hypot(b.x - a.x, b.y - a.y) > 0 ? { x: b.x - a.x, y: b.y - a.y } : { x: 1, y: 0 }
+    p.push({ x: Math.round((b.x + step.x) * 100) / 100, y: Math.round((b.y + step.y) * 100) / 100 })
   })
-}
-const setLineEnd = (axis: 'x' | 'y', value: number) =>
-  d.edit(`line.end.${axis}`, () => {
-    const s = item.value!.shape!
-    item.value!.shape = axis === 'x' ? { ...s, width: value - s.x } : { ...s, height: value - s.y }
-  })
-const isLine = computed(() => kind.value === 'marker' && item.value?.kind === 'line')
+const removePoint = (index: number) => d.edit(`points-${index}`, () => item.value!.points!.splice(index, 1))
+const isLine = computed(() => !!points.value)
 const area = computed(() => {
   const s = item.value?.shape
   if (!s) return 0
@@ -122,6 +125,32 @@ const plantedOn = computed({
   set: (date) => set('plantedOn', toIsoDate(date)),
 })
 const actions = computed(() => item.value?.actions ?? [])
+
+// A tree of a catalog variety follows its care and pollination; perennials are offered first.
+const treeVarieties = computed(() =>
+  [...(varieties.data.value ?? [])]
+    .sort((a, b) => Number(b.life === 'perennial') - Number(a.life === 'perennial') || a.name.localeCompare(b.name))
+    .map((v) => ({ value: v.id, label: [v.name, v.cultivar].filter(Boolean).join(' – ') })),
+)
+const treeVariety = computed(() => (item.value?.varietyId ? varietyById.value.get(item.value.varietyId) : undefined))
+const inheritedActions = computed(() => treeCare({ actions: actions.value }, treeVariety.value).filter((c) => c.inherited))
+/** Choosing a variety names a tree that has no name of its own yet. */
+const setVariety = (id: string | undefined) =>
+  d.edit('varietyId', () => {
+    const tree = item.value!
+    const variety = id ? varietyById.value.get(id) : undefined
+    tree.varietyId = id ?? undefined
+    if (variety && (!tree.name?.trim() || tree.name === t('design.newTree'))) tree.name = variety.name
+  })
+const treeOutlines = computed(() => options<TreeDto['outline']>(['ellipse', 'rect'], 'design.treeOutline'))
+/** A round crown has one diameter. */
+const setDiameter = (value: number) => d.edit('crownDiameter', () => Object.assign(item.value!, { crownWidth: value, crownDepth: value }))
+const setOutline = (outline: TreeDto['outline']) =>
+  d.edit('outline', () => {
+    const tree = item.value!
+    tree.outline = outline
+    if (outline === 'ellipse') tree.crownDepth = tree.crownWidth
+  })
 const setAction = (index: number, field: keyof YearlyActionDto, value: unknown) =>
   d.edit(`action${index}.${field}`, () => (item.value!.actions![index] = { ...item.value!.actions![index]!, [field]: value }))
 const addAction = () =>
@@ -247,6 +276,33 @@ async function save() {
       <div class="full row">
         <b>{{ kind === 'marker' ? t(`design.markerKind.${item.kind}`) : t(`design.kind.${kind}`) }}</b>
         <span class="grow" />
+        <Button
+          icon="pi pi-clone"
+          size="small"
+          severity="secondary"
+          text
+          :aria-label="t('design.duplicate')"
+          v-tooltip.bottom="`${t('design.duplicate')} (Ctrl+D)`"
+          @click="d.duplicate"
+        />
+        <Button
+          icon="pi pi-angle-double-up"
+          size="small"
+          severity="secondary"
+          text
+          :aria-label="t('design.toFront')"
+          v-tooltip.bottom="`${t('design.toFront')} (Ctrl+])`"
+          @click="d.arrange('front')"
+        />
+        <Button
+          icon="pi pi-angle-double-down"
+          size="small"
+          severity="secondary"
+          text
+          :aria-label="t('design.toBack')"
+          v-tooltip.bottom="`${t('design.toBack')} (Ctrl+[)`"
+          @click="d.arrange('back')"
+        />
         <Button icon="pi pi-trash" :label="t('common.delete')" size="small" severity="danger" text @click="d.remove" />
       </div>
 
@@ -265,28 +321,28 @@ async function save() {
         <InputText id="d-name" :model-value="item.name" @update:model-value="set('name', $event)" />
       </FormField>
 
-      <template v-if="isLine && item.shape">
-        <FormField v-for="axis in ['x', 'y'] as const" :key="`s${axis}`" :label="t(`design.lineStart.${axis}`)" :for="`d-s${axis}`">
+      <template v-if="isLine && points">
+        <FormField v-if="kind === 'path'" :label="t('design.materialLabel')"
+          ><Select
+            :model-value="item.material"
+            :options="materials"
+            option-label="label"
+            option-value="value"
+            @update:model-value="set('material', $event)"
+        /></FormField>
+        <FormField v-if="kind === 'path'" :label="t('design.width')" for="d-pw">
           <InputNumber
-            :input-id="`d-s${axis}`"
-            :model-value="item.shape[axis]"
+            input-id="d-pw"
+            :model-value="item.width"
+            :min="0.1"
+            :max="20"
             :max-fraction-digits="2"
-            :step="0.1"
+            :step="0.05"
             suffix=" m"
-            @update:model-value="setLineStart(axis, $event ?? 0)"
+            @update:model-value="set('width', $event ?? 0.8)"
           />
         </FormField>
-        <FormField v-for="axis in ['x', 'y'] as const" :key="`e${axis}`" :label="t(`design.lineEnd.${axis}`)" :for="`d-e${axis}`">
-          <InputNumber
-            :input-id="`d-e${axis}`"
-            :model-value="lineEnd(axis)"
-            :max-fraction-digits="2"
-            :step="0.1"
-            suffix=" m"
-            @update:model-value="setLineEnd(axis, $event ?? 0)"
-          />
-        </FormField>
-        <FormField :label="t('design.thickness')" for="d-thickness">
+        <FormField v-else :label="t('design.thickness')" for="d-thickness">
           <InputNumber
             input-id="d-thickness"
             :model-value="item.thickness"
@@ -298,6 +354,41 @@ async function save() {
             @update:model-value="set('thickness', $event ?? 0.2)"
           />
         </FormField>
+        <p class="full small muted">
+          {{ t('design.lineLength') }}: <b>{{ lineLength(points).toLocaleString($i18n.locale, { maximumFractionDigits: 2 }) }} m</b> ·
+          {{ t('design.pointsHelp') }}
+        </p>
+        <div class="full stack">
+          <b class="small">{{ t('design.points') }}</b>
+          <div v-for="(p, i) in points" :key="i" class="point">
+            <span class="small muted">{{ i + 1 }}</span>
+            <InputNumber
+              :model-value="p.x"
+              :max-fraction-digits="2"
+              :step="0.1"
+              suffix=" m"
+              :aria-label="`${t('design.x')} ${i + 1}`"
+              @update:model-value="setPoint(i, 'x', $event ?? 0)"
+            />
+            <InputNumber
+              :model-value="p.y"
+              :max-fraction-digits="2"
+              :step="0.1"
+              suffix=" m"
+              :aria-label="`${t('design.y')} ${i + 1}`"
+              @update:model-value="setPoint(i, 'y', $event ?? 0)"
+            />
+            <Button
+              icon="pi pi-times"
+              text
+              severity="secondary"
+              :aria-label="t('common.remove')"
+              :disabled="points.length <= 2"
+              @click="removePoint(i)"
+            />
+          </div>
+          <div><Button :label="t('design.addPoint')" icon="pi pi-plus" text size="small" @click="addPoint" /></div>
+        </div>
       </template>
 
       <template v-else-if="kind === 'tree'">
@@ -317,17 +408,62 @@ async function save() {
             :step="0.1"
             @update:model-value="set('y', $event ?? 0)"
         /></FormField>
-        <FormField :label="t('design.crown')" for="d-crown">
+        <FormField :label="t('design.variety')" :hint="t('design.varietyHelp')" full>
+          <Select
+            :model-value="item.varietyId"
+            :options="treeVarieties"
+            option-label="label"
+            option-value="value"
+            filter
+            show-clear
+            :placeholder="t('design.noVariety')"
+            @update:model-value="setVariety($event)"
+          />
+        </FormField>
+        <FormField :label="t('design.shapeLabel')">
+          <Select
+            :model-value="item.outline"
+            :options="treeOutlines"
+            option-label="label"
+            option-value="value"
+            @update:model-value="setOutline($event)"
+          />
+        </FormField>
+        <FormField v-if="item.outline !== 'rect'" :label="t('design.crown')" for="d-crown">
           <InputNumber
             input-id="d-crown"
-            :model-value="item.crownDiameter"
+            :model-value="item.crownWidth"
             :min="0.1"
             :max-fraction-digits="2"
             :step="0.1"
             suffix=" m"
-            @update:model-value="set('crownDiameter', $event ?? 1)"
+            @update:model-value="setDiameter($event ?? 1)"
           />
         </FormField>
+        <template v-else>
+          <FormField :label="t('design.width')" for="d-cw">
+            <InputNumber
+              input-id="d-cw"
+              :model-value="item.crownWidth"
+              :min="0.1"
+              :max-fraction-digits="2"
+              :step="0.1"
+              suffix=" m"
+              @update:model-value="set('crownWidth', $event ?? 1)"
+            />
+          </FormField>
+          <FormField :label="t('design.length')" for="d-cd">
+            <InputNumber
+              input-id="d-cd"
+              :model-value="item.crownDepth"
+              :min="0.1"
+              :max-fraction-digits="2"
+              :step="0.1"
+              suffix=" m"
+              @update:model-value="set('crownDepth', $event ?? 1)"
+            />
+          </FormField>
+        </template>
         <FormField :label="t('design.type')"
           ><Select
             :model-value="item.kind"
@@ -342,7 +478,19 @@ async function save() {
         <FormField :label="t('map.tree.planted')" for="d-planted"
           ><DatePicker v-model="plantedOn" input-id="d-planted" show-icon date-format="dd/mm/yy"
         /></FormField>
+        <p v-if="treeVariety?.pollination" class="full small muted">
+          {{ t('map.tree.pollination') }}:
+          {{
+            t('pollination.summary', {
+              need: t(`pollination.need.${treeVariety.pollination.need}`),
+              group: treeVariety.pollination.group,
+              range: treeVariety.pollination.rangeMeters,
+            })
+          }}
+          · {{ t('map.tree.fromVariety') }}
+        </p>
         <PollinationInput
+          v-else
           class="full"
           :model-value="item.pollination"
           :groups="pollinationGroups"
@@ -350,6 +498,11 @@ async function save() {
         />
         <div class="full stack">
           <b class="small">{{ t('design.actions') }}</b>
+          <div v-for="(c, i) in inheritedActions" :key="`v${i}`" class="small inherited">
+            ✂️ {{ c.action.title }} · {{ month(c.action.month) }} · {{ c.action.estimatedMinutes }} {{ t('common.minutesUnit') }}
+            <span class="muted">· {{ t('map.tree.fromVariety') }}</span>
+          </div>
+          <p v-if="treeVariety" class="small muted">{{ t('design.ownActionsHelp') }}</p>
           <div v-for="(a, i) in actions" :key="i" class="action">
             <InputText :model-value="a.title" :aria-label="t('design.action')" @update:model-value="setAction(i, 'title', $event)" />
             <Select
@@ -468,14 +621,6 @@ async function save() {
             option-value="value"
             @update:model-value="set('type', $event)"
         /></FormField>
-        <FormField v-if="kind === 'path'" :label="t('design.materialLabel')"
-          ><Select
-            :model-value="item.material"
-            :options="materials"
-            option-label="label"
-            option-value="value"
-            @update:model-value="set('material', $event)"
-        /></FormField>
         <FormField v-if="kind === 'feature'" :label="t('design.type')"
           ><Select
             :model-value="item.type"
@@ -518,6 +663,15 @@ async function save() {
   border-radius: 12px;
   padding: 12px;
   grid-template-columns: 1fr 1fr;
+}
+.point {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr) minmax(0, 1fr) auto;
+  gap: 5px;
+  align-items: center;
+}
+.inherited {
+  padding: 4px 0;
 }
 .action {
   display: grid;

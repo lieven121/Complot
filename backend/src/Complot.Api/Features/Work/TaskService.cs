@@ -18,7 +18,7 @@ public sealed class TaskService(ComplotDbContext db)
         var plantings = await db.Plantings.AsNoTracking().Include(p => p.Bed).Include(p => p.Variety)
             .Where(p => siteIds.Contains(p.Bed.SiteId) && p.SowOn <= to && (p.ClearOn == null || p.ClearOn >= from))
             .ToListAsync(ct);
-        var trees = await db.Trees.AsNoTracking().Where(t => siteIds.Contains(t.SiteId)).ToListAsync(ct);
+        var trees = await db.Trees.AsNoTracking().Include(t => t.Variety).Where(t => siteIds.Contains(t.SiteId)).ToListAsync(ct);
         var manual = await db.ManualTasks.AsNoTracking()
             .Where(t => (t.SiteId == null ? includeSiteless : siteIds.Contains(t.SiteId.Value)) && t.DueOn >= from && t.DueOn <= to)
             .ToListAsync(ct);
@@ -42,7 +42,7 @@ public sealed class TaskService(ComplotDbContext db)
         {
             "planting" => await db.Plantings.AsNoTracking().Include(p => p.Bed).Include(p => p.Variety).FirstOrDefaultAsync(p => p.Id == id, ct)
                 is { } planting ? TaskGenerator.ForPlanting(planting, FirstYear, LastYear) : [],
-            "tree" => await db.Trees.AsNoTracking().FirstOrDefaultAsync(t => t.Id == id, ct)
+            "tree" => await db.Trees.AsNoTracking().Include(t => t.Variety).FirstOrDefaultAsync(t => t.Id == id, ct)
                 is { } tree ? TaskGenerator.ForTree(tree, FirstYear, LastYear) : [],
             "manual" => await db.ManualTasks.AsNoTracking().FirstOrDefaultAsync(t => t.Id == id, ct)
                 is { } manual ? [TaskGenerator.ForManual(manual)] : [],

@@ -417,7 +417,8 @@
       "pollinatedBy": "Pollinated by",
       "noPollinator": "No pollinator of the group \"{group}\" within {range} m.",
       "noMale": "No male of the group \"{group}\" within {range} m.",
-      "pollinatorAt": "{name} · {distance} m"
+      "pollinatorAt": "{name} · {distance} m",
+      "fromVariety": "from the variety"
     },
     "plan": {
       "open": "Plan a planting",
@@ -520,6 +521,10 @@
         "rowWith": "Top up {amount}",
         "rowUnknown": "Top up: unknown"
       }
+    },
+    "measure": {
+      "label": "Measuring tape",
+      "help": "Click points to measure (Alt: without lining up) · Esc clears"
     }
   },
   "checks": {
@@ -627,7 +632,7 @@
     "active": "Design mode",
     "stop": "Stop designing",
     "title": "Design",
-    "help": "Drag items to move them (10 cm grid) or type exact dimensions. Ctrl+Z undoes, Ctrl+Y redoes.",
+    "help": "Drag items to move them: they line up with the edges and centres of other items, or else snap to a 10 cm grid; hold Alt to drag freely. The middle mouse button always pans the map. Ctrl+Z undoes, Ctrl+Y redoes, Ctrl+C / Ctrl+V copies and pastes, Ctrl+D duplicates, Delete removes.",
     "undo": "Undo",
     "redo": "Redo",
     "save": "Save",
@@ -702,20 +707,27 @@
     },
     "markerKind": {
       "area": "Area",
-      "line": "Line / wall"
+      "line": "Line / wall / fence"
     },
-    "markerHelp": "Areas and lines are only reference points (terrace, wall, fence): they don't count in the planning.",
+    "markerHelp": "Areas and lines are reference points only (terrace, wall, fence): they do not count in the planning.",
     "label": "Label",
     "color": "Colour",
     "thickness": "Thickness",
-    "lineStart": {
-      "x": "Start X (east)",
-      "y": "Start Y (south)"
+    "duplicate": "Duplicate",
+    "toFront": "Bring to front",
+    "toBack": "Send to back",
+    "lineLength": "Length",
+    "points": "Points",
+    "pointsHelp": "Drag a point on the map, drag a midpoint to add a corner, double-click a point to remove it.",
+    "addPoint": "Add point",
+    "variety": "Variety from the catalogue",
+    "varietyHelp": "Its yearly actions and pollination then come from the variety.",
+    "noVariety": "None (enter everything yourself)",
+    "treeOutline": {
+      "ellipse": "Round (crown)",
+      "rect": "Rectangle (espalier, hedge shrub)"
     },
-    "lineEnd": {
-      "x": "End X (east)",
-      "y": "End Y (south)"
-    }
+    "ownActionsHelp": "Own actions are added; an own action with the same name replaces the variety's."
   },
   "notes": {
     "title": "Log",
